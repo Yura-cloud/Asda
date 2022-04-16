@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Asda.Integration.Domain.Models.Order
 {
-    //[JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum PaymentStatus
     {
         /// <summary>

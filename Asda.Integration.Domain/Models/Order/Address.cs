@@ -1,4 +1,4 @@
-﻿namespace Asda.Integration.Domain.Models.Order;
+﻿namespace Asda.Integration.Domain.Models.Order;     
 
     public class Address
     {

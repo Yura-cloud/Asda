@@ -1,4 +1,4 @@
-using Asda.Integration.Business.Services;
+using System.Text.Json.Serialization;
 using Asda.Integration.Business.Services.Adapters;
 using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Service.Intefaces;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace Asda.Integration.Api.Controllers
+namespace SampleChannel
 {
     public class Startup
     {
@@ -25,11 +25,18 @@ namespace Asda.Integration.Api.Controllers
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(opt =>
+                {
+                    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    opt.JsonSerializerOptions.IgnoreNullValues = true;
+                    opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Asda.Integration.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleChannel", Version = "v1" });
             });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddSingleton<IConfigStages, ConfigStages>();
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
@@ -42,7 +49,7 @@ namespace Asda.Integration.Api.Controllers
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Asda.Integration.Api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SampleChannel v1"));
             }
 
             app.UseHttpsRedirection();
