@@ -26,12 +26,16 @@ namespace SampleChannel
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddControllers()
-                .AddNewtonsoftJson(opt => { opt.SerializerSettings.Converters.Add(new StringEnumConverter()); });
+                .AddNewtonsoftJson(opt =>
+                {
+                    opt.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "SampleChannel", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleChannel", Version = "v1" });
             });
-
+            services.AddSwaggerGenNewtonsoftSupport();
+            
 
             services.AddSingleton<IConfigStages, ConfigStages>();
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
@@ -53,7 +57,10 @@ namespace SampleChannel
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
