@@ -1,4 +1,5 @@
-﻿using Asda.Integration.Domain.Models.User;
+﻿using System;
+using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Interfaces;
 
 namespace Asda.Integration.Business.Services.Adapters

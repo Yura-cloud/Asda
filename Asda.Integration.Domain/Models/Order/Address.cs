@@ -1,4 +1,5 @@
-﻿namespace Asda.Integration.Domain.Models.Order;     
+﻿namespace Asda.Integration.Domain.Models.Order
+{
 
     public class Address
     {
@@ -25,7 +26,7 @@
         /// <summary>
         /// Third line of address.
         /// </summary>
-        public string Address3 { get; set; } 
+        public string Address3 { get; set; }
 
         /// <summary>
         /// Town.
@@ -62,3 +63,4 @@
         /// </summary>
         public string EmailAddress { get; set; }
     }
+}

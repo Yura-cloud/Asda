@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Asda.Integration.Business.Services.Adapters;
 using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Service.Intefaces;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 
 namespace SampleChannel
 {
@@ -26,17 +26,12 @@ namespace SampleChannel
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddControllers()
-                .AddJsonOptions(opt =>
-                {
-                    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                    opt.JsonSerializerOptions.IgnoreNullValues = true;
-                    opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                });
+                .AddNewtonsoftJson(opt => { opt.SerializerSettings.Converters.Add(new StringEnumConverter()); });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleChannel", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "SampleChannel", Version = "v1"});
             });
-            services.AddSwaggerGenNewtonsoftSupport();
+
 
             services.AddSingleton<IConfigStages, ConfigStages>();
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
@@ -58,10 +53,7 @@ namespace SampleChannel
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Asda.Integration.Domain.Interfaces;
+﻿using System.IO;
+using Asda.Integration.Domain.Interfaces;
 
 namespace Asda.Integration.Business.Services.Helpers
 {

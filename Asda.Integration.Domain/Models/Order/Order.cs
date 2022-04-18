@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Asda.Integration.Domain.Models.Order
 {
@@ -64,6 +66,7 @@ namespace Asda.Integration.Domain.Models.Order
         /// <summary>
         /// Payment status of the order <see cref="Models.Order.PaymentStatus"/>.
         /// </summary>
+        //[JsonConverter(typeof(StringEnumConverter))]
         public PaymentStatus PaymentStatus { get; set; }
 
         /// <summary>
