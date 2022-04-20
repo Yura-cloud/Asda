@@ -6,22 +6,25 @@ using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 
 namespace Asda.Integration.Api.Controllers
 {
-
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ConfigController : ControllerBase
     {
         private readonly IUserConfigAdapter _userConfigAdapter;
         private readonly IConfigStages _configStages;
+        private readonly ILogger<ConfigController> _logger;
 
-        public ConfigController(IUserConfigAdapter userConfigAdapter, IConfigStages configStages)
+        public ConfigController(IUserConfigAdapter userConfigAdapter, IConfigStages configStages,
+            ILogger<ConfigController> logger)
         {
             _userConfigAdapter = userConfigAdapter;
             _configStages = configStages;
+            _logger = logger;
         }
 
         /// <summary>
@@ -67,6 +70,7 @@ namespace Asda.Integration.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Failed while using ConfigDeleted action, with message {ex.Message}");
                 return new BaseResponse {Error = ex.Message};
             }
         }
@@ -95,6 +99,7 @@ namespace Asda.Integration.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Failed while using ConfigTest action, with message {ex.Message}");
                 return new BaseResponse {Error = ex.Message};
             }
         }
@@ -190,6 +195,7 @@ namespace Asda.Integration.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Failed while using UserConfig action, with message {ex.Message}");
                 return new UserConfigResponse {Error = ex.Message};
             }
         }
@@ -221,6 +227,7 @@ namespace Asda.Integration.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Failed while using SaveConfigSave action, with message {ex.Message}");
                 return new UserConfigResponse {Error = ex.Message};
             }
         }

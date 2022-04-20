@@ -1,3 +1,4 @@
+using Asda.Integration.Business.Services;
 using Asda.Integration.Business.Services.Adapters;
 using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Service.Intefaces;
@@ -24,6 +25,7 @@ namespace SampleChannel
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddControllers()
                 .AddNewtonsoftJson(opt =>
@@ -35,7 +37,16 @@ namespace SampleChannel
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleChannel", Version = "v1" });
             });
             services.AddSwaggerGenNewtonsoftSupport();
+
+            services.AddScoped<IOrderService, OrderService>();
             
+            services.AddScoped<IXmlConvertor,XmlConvertor>();
+
+            services.AddScoped<IFtpServerService, FtpServerService>();
+
+            services.AddScoped<IFtpConfigManagerService, FtpConfigManagerService>();
+
+            services.AddScoped<ILocalConfigManagerService, LocalConfigManagerService>();
 
             services.AddSingleton<IConfigStages, ConfigStages>();
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
@@ -59,8 +70,15 @@ namespace SampleChannel
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }
