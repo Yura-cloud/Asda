@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Asda.Integration.Domain.Models;
+using Asda.Integration.Domain.Models.Order;
 
-namespace Asda.Integration.Domain.Models.Order
+namespace Asda.Integration.Api.Mappers
 {
     public class OrderDespatchRequest : BaseRequest
     {

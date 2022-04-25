@@ -40,15 +40,18 @@ namespace SampleChannel
 
             services.AddScoped<IOrderService, OrderService>();
             
-            services.AddScoped<IXmlConvertor,XmlConvertor>();
+            services.AddScoped<IXmlService,XmlService>();
 
             services.AddScoped<IFtpServerService, FtpServerService>();
 
             services.AddScoped<IFtpConfigManagerService, FtpConfigManagerService>();
 
             services.AddScoped<ILocalConfigManagerService, LocalConfigManagerService>();
+            
+            services.AddScoped<IRemoteConfigManagerService, RemoteConfigManagerService>();
 
             services.AddSingleton<IConfigStages, ConfigStages>();
+            
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
         }
 

@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
-using Asda.Integration.Domain.Models.Business;
+using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Renci.SshNet;
 using SampleChannel.Helpers;
-using Address = Asda.Integration.Domain.Models.Order.Address;
 
 namespace Asda.Integration.Api.Controllers
 {
@@ -49,15 +43,15 @@ namespace Asda.Integration.Api.Controllers
                 return new OrdersResponse {Error = "Invalid page number"};
             }
 
-            var user = _userConfigAdapter.Load(request.AuthorizationToken);
-            if (user == null)
-            {
-                _logger.LogError($"User with AuthToken: {request.AuthorizationToken} - not found.");
-                return new OrdersResponse {Error = "User not found"};
-            }
-
             try
             {
+                var user = _userConfigAdapter.Load(request.AuthorizationToken);
+                if (user == null)
+                {
+                    _logger.LogError($"User with AuthToken: {request.AuthorizationToken} - not found.");
+                    return new OrdersResponse {Error = "User not found"};
+                }
+
                 var purchaseOrder = _orderService.GetPurchaseOrder();
                 var order = Mapper.MapToOrder(purchaseOrder);
 
@@ -86,27 +80,33 @@ namespace Asda.Integration.Api.Controllers
         public OrderDespatchResponse Despatch([FromBody] OrderDespatchRequest request)
         {
             if (request.Orders == null || request.Orders.Count == 0)
-                return new OrderDespatchResponse {Error = "Invalid page number"};
+            {
+                var message = $"Failed while working with Despatch Action, with message: Orders are Null or empty";
+                _logger.LogError(message);
+                return new OrderDespatchResponse {Error = message};
+            }
 
             try
             {
-                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-
-                return new OrderDespatchResponse()
+                var user = _userConfigAdapter.Load(request.AuthorizationToken);
+                if (user == null)
                 {
-                    Orders = new List<OrderDespatchError>()
-                    {
-                        new OrderDespatchError
-                        {
-                            ReferenceNumber = request.Orders.First().ReferenceNumber,
-                            Error = "Despatch failed for some reason"
-                        }
-                    }
-                };
+                    var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";
+                    _logger.LogError(message);
+                    return new OrderDespatchResponse {Error = message};
+                }
+
+                var shipmentConfirmations = ShipmentMapper.MapToShipmentConfirmations(request.Orders);
+                _orderService.SentDispatchFile(shipmentConfirmations);
+                return new OrderDespatchResponse();
             }
             catch (Exception ex)
             {
-                return new OrderDespatchResponse {Error = ex.Message};
+                var message = $"Failed while working with Despatch Action, with message {ex.Message}";
+                _logger.LogError(message);
+
+                return new OrderDespatchResponse
+                    {Error = message, Orders = OrderControllerHelper.AddReferenceNumbersFromRequest(request.Orders)};
             }
         }
     }

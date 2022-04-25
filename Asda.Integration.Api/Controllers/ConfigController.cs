@@ -1,7 +1,5 @@
 ﻿using System;
 using Asda.Integration.Domain.Models;
-using Asda.Integration.Domain.Models.Payment;
-using Asda.Integration.Domain.Models.Shipping;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;

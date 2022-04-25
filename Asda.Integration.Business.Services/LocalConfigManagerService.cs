@@ -12,6 +12,8 @@ namespace Asda.Integration.Business.Services
             _configuration = configuration;
         }
 
-        public string LocalFilePath => _configuration.GetSection(("FtpSettings")).GetSection("LocalFilePath").Value;
-    }
+        public string OrderPath => _configuration.GetSection(("LocalFileStorage")).GetSection("OrderPath").Value;
+
+        public string DispatchPath => _configuration.GetSection(("LocalFileStorage")).GetSection("DispatchPath").Value;
+       }
 }

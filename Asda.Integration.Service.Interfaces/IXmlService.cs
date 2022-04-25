@@ -4,10 +4,9 @@ using Asda.Integration.Domain.Models.Business.ShipmentConfirmation;
 
 namespace Asda.Integration.Service.Intefaces
 {
-    public interface IOrderService
+    public interface IXmlService
     {
-        PurchaseOrder GetPurchaseOrder();
-
-        void SentDispatchFile(List<ShipmentConfirmation> shipmentConfirmations);
+        PurchaseOrder GetPurchaseOrderFromXml(string path);
+        void CreateLocalDispatchXmlFile(List<ShipmentConfirmation> shipmentConfirmations, string path);
     }
 }
