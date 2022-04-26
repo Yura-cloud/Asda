@@ -9,7 +9,7 @@ using Address = Asda.Integration.Domain.Models.Order.Address;
 
 namespace Asda.Integration.Api.Mappers
 {
-    public static class Mapper
+    public static class OrderMapper
     {
         public static Order MapToOrder(PurchaseOrder purchaseOrder)
         {

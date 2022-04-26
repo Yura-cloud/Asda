@@ -4,5 +4,6 @@ namespace Asda.Integration.Service.Intefaces
     {
         string OrderPath { get; }
         string DispatchPath { get; }
+        string AcknowledgmentPath { get; }
     }
 }

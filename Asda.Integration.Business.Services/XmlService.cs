@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
+using Asda.Integration.Domain.Models.Business.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.ShipmentConfirmation;
 using Asda.Integration.Service.Intefaces;
 
@@ -31,6 +32,7 @@ namespace Asda.Integration.Business.Services
             try
             {
                 var writer = new XmlSerializer(typeof(List<ShipmentConfirmation>));
+                
                 var file = File.Create(path);
 
                 var ns = new XmlSerializerNamespaces();
@@ -42,6 +44,25 @@ namespace Asda.Integration.Business.Services
             catch (Exception e)
             {
                 throw new Exception($"Failed while working with CreateLocalDispatchXmlFile, with message {e.Message}");
+            }
+        }
+        public  void CreateLocalAcknowledgmentXmlFile(Acknowledgment acknowledgment, string path)
+        {
+            try
+            {
+                var writer = new XmlSerializer(typeof(Acknowledgment));
+                
+                var file = File.Create(path);
+
+                var ns = new XmlSerializerNamespaces();
+                ns.Add("", "");
+
+                writer.Serialize(file, acknowledgment, ns);
+                file.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Failed while working with CreateLocalAcknowledgmentXmlFile, with message {e.Message}");
             }
         }
     }

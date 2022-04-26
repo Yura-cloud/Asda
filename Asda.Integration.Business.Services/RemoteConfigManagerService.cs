@@ -14,5 +14,7 @@ namespace Asda.Integration.Business.Services
 
         public string DispatchPath => _configuration.GetSection(("RemoteFileStorage")).GetSection("DispatchPath").Value;
 
+        public string AcknowledgmentPath =>
+            _configuration.GetSection(("RemoteFileStorage")).GetSection("AcknowledgmentPath").Value;
     }
 }

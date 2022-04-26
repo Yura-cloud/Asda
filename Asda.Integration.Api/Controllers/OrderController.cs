@@ -36,7 +36,7 @@ namespace Asda.Integration.Api.Controllers
         /// <param name="request"><see cref="OrdersRequest"/></param>
         /// <returns><see cref="OrdersResponse"/></returns>
         [HttpPost]
-        public OrdersResponse Orders([FromBody] OrdersRequest request)
+        public OrdersResponse PullOrdersFromAsda([FromBody] OrdersRequest request)
         {
             if (request.PageNumber <= 0)
             {
@@ -53,7 +53,10 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var purchaseOrder = _orderService.GetPurchaseOrder();
-                var order = Mapper.MapToOrder(purchaseOrder);
+                var order = OrderMapper.MapToOrder(purchaseOrder);
+
+                var acknowledgment = AcknowledgmentMapper.MapToAcknowledgment(order.ReferenceNumber);
+                _orderService.SendAcknowledgmentFile(acknowledgment);
 
                 return new OrdersResponse
                 {
@@ -97,7 +100,7 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var shipmentConfirmations = ShipmentMapper.MapToShipmentConfirmations(request.Orders);
-                _orderService.SentDispatchFile(shipmentConfirmations);
+                _orderService.SendDispatchFile(shipmentConfirmations);
                 return new OrderDespatchResponse();
             }
             catch (Exception ex)

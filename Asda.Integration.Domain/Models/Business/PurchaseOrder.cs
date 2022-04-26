@@ -7,9 +7,11 @@ namespace Asda.Integration.Domain.Models.Business
     [XmlRoot(ElementName = "cXML")]
     public class PurchaseOrder
     {
-        [XmlElement(ElementName = "Header")] public Header Header { get; set; }
+        [XmlElement(ElementName = "Header")] 
+        public Header Header { get; set; }
 
-        [XmlElement(ElementName = "Request")] public Request Request { get; set; }
+        [XmlElement(ElementName = "Request")] 
+        public Request Request { get; set; }
 
         [XmlAttribute(AttributeName = "payloadID")]
         public string PayloadID { get; set; }
@@ -17,20 +19,24 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "timestamp")]
         public DateTime Timestamp { get; set; }
 
-        [XmlAttribute(AttributeName = "lang")] public string Lang { get; set; }
+        [XmlAttribute(AttributeName = "lang")] 
+        public string Lang { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Credential")]
     public class Credential
     {
-        [XmlElement(ElementName = "Identity")] public string Identity { get; set; }
+        [XmlElement(ElementName = "Identity")] 
+        public string Identity { get; set; }
 
         [XmlAttribute(AttributeName = "domain")]
         public string Domain { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "From")]
@@ -60,19 +66,24 @@ namespace Asda.Integration.Domain.Models.Business
     [XmlRoot(ElementName = "Header")]
     public class Header
     {
-        [XmlElement(ElementName = "From")] public From From { get; set; }
+        [XmlElement(ElementName = "From")] 
+        public From From { get; set; }
 
-        [XmlElement(ElementName = "To")] public To To { get; set; }
+        [XmlElement(ElementName = "To")] 
+        public To To { get; set; }
 
-        [XmlElement(ElementName = "Sender")] public Sender Sender { get; set; }
+        [XmlElement(ElementName = "Sender")] 
+        public Sender Sender { get; set; }
     }
 
     [XmlRoot(ElementName = "Name")]
     public class Name
     {
-        [XmlAttribute(AttributeName = "lang")] public string Lang { get; set; }
+        [XmlAttribute(AttributeName = "lang")] 
+        public string Lang { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Country")]
@@ -81,7 +92,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "isoCountryCode")]
         public string IsoCountryCode { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "PostalAddress")]
@@ -90,16 +102,20 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlElement(ElementName = "DeliverTo")]
         public string DeliverTo { get; set; }
 
-        [XmlElement(ElementName = "Street")] public string Street { get; set; }
+        [XmlElement(ElementName = "Street")] 
+        public string Street { get; set; }
 
-        [XmlElement(ElementName = "City")] public string City { get; set; }
+        [XmlElement(ElementName = "City")] 
+        public string City { get; set; }
 
-        [XmlElement(ElementName = "State")] public string State { get; set; }
+        [XmlElement(ElementName = "State")] 
+        public string State { get; set; }
 
         [XmlElement(ElementName = "PostalCode")]
         public string PostalCode { get; set; }
 
-        [XmlElement(ElementName = "Country")] public Country Country { get; set; }
+        [XmlElement(ElementName = "Country")] 
+        public Country Country { get; set; }
     }
 
     [XmlRoot(ElementName = "CountryCode")]
@@ -108,7 +124,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "isoCountryCode")]
         public string IsoCountryCode { get; set; }
 
-        [XmlText] public int Text { get; set; }
+        [XmlText] 
+        public int Text { get; set; }
     }
 
     [XmlRoot(ElementName = "TelephoneNumber")]
@@ -120,7 +137,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlElement(ElementName = "AreaOrCityCode")]
         public object AreaOrCityCode { get; set; }
 
-        [XmlElement(ElementName = "Number")] public string Number { get; set; }
+        [XmlElement(ElementName = "Number")] 
+        public string Number { get; set; }
     }
 
     [XmlRoot(ElementName = "Phone")]
@@ -129,44 +147,54 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlElement(ElementName = "TelephoneNumber")]
         public TelephoneNumber TelephoneNumber { get; set; }
 
-        [XmlAttribute(AttributeName = "name")] public string Name { get; set; }
+        [XmlAttribute(AttributeName = "name")] 
+        public string Name { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Address")]
     public class Address
     {
-        [XmlElement(ElementName = "Name")] public Name Name { get; set; }
+        [XmlElement(ElementName = "Name")] 
+        public Name Name { get; set; }
 
         [XmlElement(ElementName = "PostalAddress")]
         public PostalAddress PostalAddress { get; set; }
 
-        [XmlElement(ElementName = "Phone")] public Phone Phone { get; set; }
+        [XmlElement(ElementName = "Phone")] 
+        public Phone Phone { get; set; }
 
-        [XmlElement(ElementName = "Email")] public string Email { get; set; }
+        [XmlElement(ElementName = "Email")] 
+        public string Email { get; set; }
     }
 
     [XmlRoot(ElementName = "ShipTo")]
     public class ShipTo
     {
-        [XmlElement(ElementName = "Address")] public Address Address { get; set; }
+        [XmlElement(ElementName = "Address")] 
+        public Address Address { get; set; }
     }
 
     [XmlRoot(ElementName = "Comments")]
     public class Comments
     {
-        [XmlAttribute(AttributeName = "lang")] public string Lang { get; set; }
+        [XmlAttribute(AttributeName = "lang")] 
+        public string Lang { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "OrderRequestHeader")]
     public class OrderRequestHeader
     {
-        [XmlElement(ElementName = "ShipTo")] public ShipTo ShipTo { get; set; }
+        [XmlElement(ElementName = "ShipTo")] 
+        public ShipTo ShipTo { get; set; }
 
-        [XmlElement(ElementName = "Comments")] public Comments Comments { get; set; }
+        [XmlElement(ElementName = "Comments")] 
+        public Comments Comments { get; set; }
 
         [XmlAttribute(AttributeName = "orderID")]
         public int OrderID { get; set; }
@@ -186,9 +214,11 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "FulfilmentType")]
         public string FulfilmentType { get; set; }
 
-        [XmlAttribute(AttributeName = "type")] public string Type { get; set; }
+        [XmlAttribute(AttributeName = "type")] 
+        public string Type { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "ItemID")]
@@ -207,29 +237,35 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "currency")]
         public string Currency { get; set; }
 
-        [XmlText] public double Text { get; set; }
+        [XmlText] 
+        public double Text { get; set; }
     }
 
     [XmlRoot(ElementName = "UnitPrice")]
     public class UnitPrice
     {
-        [XmlElement(ElementName = "Money")] public Money Money { get; set; }
+        [XmlElement(ElementName = "Money")] 
+        public Money Money { get; set; }
     }
 
     [XmlRoot(ElementName = "Extrinsic")]
     public class Extrinsic
     {
-        [XmlAttribute(AttributeName = "name")] public string Name { get; set; }
+        [XmlAttribute(AttributeName = "name")] 
+        public string Name { get; set; }
 
-        [XmlText] public double Text { get; set; }
+        [XmlText] 
+        public double Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Description")]
     public class Description
     {
-        [XmlAttribute(AttributeName = "lang")] public string Lang { get; set; }
+        [XmlAttribute(AttributeName = "lang")] 
+        public string Lang { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Classification")]
@@ -238,7 +274,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "domain")]
         public string Domain { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "ItemDetail")]
@@ -266,20 +303,24 @@ namespace Asda.Integration.Domain.Models.Business
     [XmlRoot(ElementName = "Shipping")]
     public class Shipping
     {
-        [XmlElement(ElementName = "Money")] public Money Money { get; set; }
+        [XmlElement(ElementName = "Money")] 
+        public Money Money { get; set; }
     }
 
     [XmlRoot(ElementName = "ItemOut")]
     public class ItemOut
     {
-        [XmlElement(ElementName = "ItemID")] public ItemID ItemID { get; set; }
+        [XmlElement(ElementName = "ItemID")] 
+        public ItemID ItemID { get; set; }
 
         [XmlElement(ElementName = "ItemDetail")]
         public ItemDetail ItemDetail { get; set; }
 
-        [XmlElement(ElementName = "Shipping")] public Shipping Shipping { get; set; }
+        [XmlElement(ElementName = "Shipping")] 
+        public Shipping Shipping { get; set; }
 
-        [XmlElement(ElementName = "Comments")] public string Comments { get; set; }
+        [XmlElement(ElementName = "Comments")] 
+        public string Comments { get; set; }
 
         [XmlAttribute(AttributeName = "lineNumber")]
         public int LineNumber { get; set; }
@@ -287,7 +328,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "quantity")]
         public int Quantity { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "OrderRequest")]
@@ -296,7 +338,8 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlElement(ElementName = "OrderRequestHeader")]
         public OrderRequestHeader OrderRequestHeader { get; set; }
 
-        [XmlElement(ElementName = "ItemOut")] public List<ItemOut> ItemOut { get; set; }
+        [XmlElement(ElementName = "ItemOut")] 
+        public List<ItemOut> ItemOut { get; set; }
     }
 
     [XmlRoot(ElementName = "Request")]
@@ -308,6 +351,7 @@ namespace Asda.Integration.Domain.Models.Business
         [XmlAttribute(AttributeName = "deploymentMode")]
         public string DeploymentMode { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 }
