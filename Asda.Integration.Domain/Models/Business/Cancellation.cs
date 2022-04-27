@@ -1,10 +1,10 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Asda.Integration.Domain.Models.Business.Acknowledgment
+namespace Asda.Integration.Domain.Models.Business.Cancellation
 {
     [XmlRoot(ElementName = "cXML")]
-    public class Acknowledgment
+    public class Cancellation
     {
         [XmlElement(ElementName = "Header")]
         public Header Header { get; set; }
@@ -102,6 +102,41 @@ namespace Asda.Integration.Domain.Models.Business.Acknowledgment
         public int OrderID { get; set; }
     }
 
+    [XmlRoot(ElementName = "ConfirmationStatus")]
+    public class ConfirmationStatus
+    {
+        [XmlElement(ElementName = "UnitOfMeasure")]
+        public string UnitOfMeasure { get; set; }
+
+        [XmlAttribute(AttributeName = "type")]
+        public string Type { get; set; }
+
+        [XmlAttribute(AttributeName = "quantity")]
+        public int Quantity { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+    [XmlRoot(ElementName = "ConfirmationItem")]
+    public class ConfirmationItem
+    {
+        [XmlElement(ElementName = "UnitOfMeasure")]
+        public string UnitOfMeasure { get; set; }
+
+        [XmlElement(ElementName = "ConfirmationStatus")]
+        public ConfirmationStatus ConfirmationStatus { get; set; }
+
+        [XmlAttribute(AttributeName = "lineNumber")]
+        public int LineNumber { get; set; }
+
+        [XmlAttribute(AttributeName = "quantity")]
+        public int Quantity { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
+    }
+
     [XmlRoot(ElementName = "ConfirmationRequest")]
     public class ConfirmationRequest
     {
@@ -110,6 +145,9 @@ namespace Asda.Integration.Domain.Models.Business.Acknowledgment
 
         [XmlElement(ElementName = "OrderReference")]
         public OrderReference OrderReference { get; set; }
+
+        [XmlElement(ElementName = "ConfirmationItem")]
+        public ConfirmationItem ConfirmationItem { get; set; }
     }
 
     [XmlRoot(ElementName = "Request")]

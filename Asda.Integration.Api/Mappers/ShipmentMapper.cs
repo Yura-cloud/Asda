@@ -40,7 +40,7 @@ namespace Asda.Integration.Api.Mappers
                         {
                             Credential = new Credential
                             {
-                                Domain = "Wasp",
+                                Domain = "Linnworks",
                                 Identity = orderDespatch.ReferenceNumber
                             }
                         }

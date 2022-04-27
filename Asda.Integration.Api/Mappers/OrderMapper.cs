@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
 using Address = Asda.Integration.Domain.Models.Order.Address;
 

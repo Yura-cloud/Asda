@@ -15,7 +15,9 @@ namespace Asda.Integration.Api.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IUserConfigAdapter _userConfigAdapter;
+
         private readonly IOrderService _orderService;
+
         private readonly ILogger<OrderController> _logger;
 
         public OrderController(IUserConfigAdapter userConfigAdapter, IOrderService orderService,
@@ -82,7 +84,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost]
         public OrderDespatchResponse Despatch([FromBody] OrderDespatchRequest request)
         {
-            if (request.Orders == null || request.Orders.Count == 0)
+            if (request?.Orders == null || request.Orders?.Count == 0)
             {
                 var message = $"Failed while working with Despatch Action, with message: Orders are Null or empty";
                 _logger.LogError(message);
@@ -111,6 +113,38 @@ namespace Asda.Integration.Api.Controllers
                 return new OrderDespatchResponse
                     {Error = message, Orders = OrderControllerHelper.AddReferenceNumbersFromRequest(request.Orders)};
             }
+        }
+
+        [HttpPost]
+        public OrderCancelResponse CancelOrders([FromBody] OrderCancelRequest request)
+        {
+            if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
+            {
+                var message = $"Failed while working with CancelOrders Action, with message: Items are Null or empty";
+                _logger.LogError(message);
+                return new OrderCancelResponse {Error = message, HasError = true};
+            }
+
+            try
+            {
+                var user = _userConfigAdapter.Load(request.AuthorizationToken);
+                if (user == null)
+                {
+                    var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";
+                    _logger.LogError(message);
+                    return new OrderCancelResponse() {Error = message, HasError = true};
+                }
+                
+                
+            }
+            catch (Exception e)
+            {
+                var message = $"Failed while working with CancelOrders Action, with message {e.Message}";
+                _logger.LogError(message);
+                return null;
+            }
+
+            return null;
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Asda.Integration.Domain.Models.Business.Acknowledgment
+namespace Asda.Integration.Domain.Models.Business.XML.Acknowledgment
 {
     [XmlRoot(ElementName = "cXML")]
     public class Acknowledgment
