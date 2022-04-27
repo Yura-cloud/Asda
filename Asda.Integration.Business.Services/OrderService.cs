@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.Acknowledgment;
-using Asda.Integration.Domain.Models.Business.ShipmentConfirmation;
+using Asda.Integration.Domain.Models.Business.XML;
+using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
+using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
+using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Business.Services

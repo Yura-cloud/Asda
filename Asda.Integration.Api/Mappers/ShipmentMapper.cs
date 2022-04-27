@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Asda.Integration.Domain.Models.Business.ShipmentConfirmation;
+using Asda.Integration.Domain.Models.Business.XML;
+using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
 
 namespace Asda.Integration.Api.Mappers
@@ -18,6 +19,7 @@ namespace Asda.Integration.Api.Mappers
                     Lang = "en",
                     Text = "",
                     Timestamp = DateTime.Now,
+
                     Header = new Header
                     {
                         From = new From
@@ -78,7 +80,7 @@ namespace Asda.Integration.Api.Mappers
                     {
                         LineNumber = Convert.ToInt32(item.OrderLineNumber),
                         Quantity = item.DespatchedQuantity,
-                        UnitOfMeasure = "each"
+                        UnitOfMeasure = "EACH"
                     };
                     shipNoticeItems.Add(shipNoteiceItem);
                 }

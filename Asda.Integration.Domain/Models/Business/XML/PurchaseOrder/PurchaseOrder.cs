@@ -2,87 +2,45 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Asda.Integration.Domain.Models.Business.XML
+namespace Asda.Integration.Domain.Models.Business.XML.PurchaseOrder
 {
     [XmlRoot(ElementName = "cXML")]
-    public class PurchaseOrder
+    public class PurchaseOrder : HeaderBase
     {
-        [XmlElement(ElementName = "Header")] 
-        public Header Header { get; set; }
-
-        [XmlElement(ElementName = "Request")] 
+        [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
+    }
 
-        [XmlAttribute(AttributeName = "payloadID")]
-        public string PayloadID { get; set; }
+    [XmlRoot(ElementName = "Request")]
+    public class Request
+    {
+        [XmlElement(ElementName = "OrderRequest")]
+        public OrderRequest OrderRequest { get; set; }
 
-        [XmlAttribute(AttributeName = "timestamp")]
-        public DateTime Timestamp { get; set; }
+        [XmlAttribute(AttributeName = "deploymentMode")]
+        public string DeploymentMode { get; set; }
 
-        [XmlAttribute(AttributeName = "lang")] 
-        public string Lang { get; set; }
-
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
-    [XmlRoot(ElementName = "Credential")]
-    public class Credential
+    [XmlRoot(ElementName = "OrderRequest")]
+    public class OrderRequest
     {
-        [XmlElement(ElementName = "Identity")] 
-        public string Identity { get; set; }
+        [XmlElement(ElementName = "OrderRequestHeader")]
+        public OrderRequestHeader OrderRequestHeader { get; set; }
 
-        [XmlAttribute(AttributeName = "domain")]
-        public string Domain { get; set; }
-
-        [XmlText] 
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "From")]
-    public class From
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-    }
-
-    [XmlRoot(ElementName = "To")]
-    public class To
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Sender")]
-    public class Sender
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-
-        [XmlElement(ElementName = "UserAgent")]
-        public string UserAgent { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Header")]
-    public class Header
-    {
-        [XmlElement(ElementName = "From")] 
-        public From From { get; set; }
-
-        [XmlElement(ElementName = "To")] 
-        public To To { get; set; }
-
-        [XmlElement(ElementName = "Sender")] 
-        public Sender Sender { get; set; }
+        [XmlElement(ElementName = "ItemOut")]
+        public List<ItemOut> ItemOut { get; set; }
     }
 
     [XmlRoot(ElementName = "Name")]
     public class Name
     {
-        [XmlAttribute(AttributeName = "lang")] 
+        [XmlAttribute(AttributeName = "lang")]
         public string Lang { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -92,7 +50,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "isoCountryCode")]
         public string IsoCountryCode { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -102,19 +60,19 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlElement(ElementName = "DeliverTo")]
         public string DeliverTo { get; set; }
 
-        [XmlElement(ElementName = "Street")] 
+        [XmlElement(ElementName = "Street")]
         public string Street { get; set; }
 
-        [XmlElement(ElementName = "City")] 
+        [XmlElement(ElementName = "City")]
         public string City { get; set; }
 
-        [XmlElement(ElementName = "State")] 
+        [XmlElement(ElementName = "State")]
         public string State { get; set; }
 
         [XmlElement(ElementName = "PostalCode")]
         public string PostalCode { get; set; }
 
-        [XmlElement(ElementName = "Country")] 
+        [XmlElement(ElementName = "Country")]
         public Country Country { get; set; }
     }
 
@@ -124,7 +82,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "isoCountryCode")]
         public string IsoCountryCode { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public int Text { get; set; }
     }
 
@@ -137,7 +95,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlElement(ElementName = "AreaOrCityCode")]
         public object AreaOrCityCode { get; set; }
 
-        [XmlElement(ElementName = "Number")] 
+        [XmlElement(ElementName = "Number")]
         public string Number { get; set; }
     }
 
@@ -147,53 +105,53 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlElement(ElementName = "TelephoneNumber")]
         public TelephoneNumber TelephoneNumber { get; set; }
 
-        [XmlAttribute(AttributeName = "name")] 
+        [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Address")]
     public class Address
     {
-        [XmlElement(ElementName = "Name")] 
+        [XmlElement(ElementName = "Name")]
         public Name Name { get; set; }
 
         [XmlElement(ElementName = "PostalAddress")]
         public PostalAddress PostalAddress { get; set; }
 
-        [XmlElement(ElementName = "Phone")] 
+        [XmlElement(ElementName = "Phone")]
         public Phone Phone { get; set; }
 
-        [XmlElement(ElementName = "Email")] 
+        [XmlElement(ElementName = "Email")]
         public string Email { get; set; }
     }
 
     [XmlRoot(ElementName = "ShipTo")]
     public class ShipTo
     {
-        [XmlElement(ElementName = "Address")] 
+        [XmlElement(ElementName = "Address")]
         public Address Address { get; set; }
     }
 
     [XmlRoot(ElementName = "Comments")]
     public class Comments
     {
-        [XmlAttribute(AttributeName = "lang")] 
+        [XmlAttribute(AttributeName = "lang")]
         public string Lang { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "OrderRequestHeader")]
     public class OrderRequestHeader
     {
-        [XmlElement(ElementName = "ShipTo")] 
+        [XmlElement(ElementName = "ShipTo")]
         public ShipTo ShipTo { get; set; }
 
-        [XmlElement(ElementName = "Comments")] 
+        [XmlElement(ElementName = "Comments")]
         public Comments Comments { get; set; }
 
         [XmlAttribute(AttributeName = "orderID")]
@@ -214,10 +172,10 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "FulfilmentType")]
         public string FulfilmentType { get; set; }
 
-        [XmlAttribute(AttributeName = "type")] 
+        [XmlAttribute(AttributeName = "type")]
         public string Type { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -237,34 +195,34 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "currency")]
         public string Currency { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public double Text { get; set; }
     }
 
     [XmlRoot(ElementName = "UnitPrice")]
     public class UnitPrice
     {
-        [XmlElement(ElementName = "Money")] 
+        [XmlElement(ElementName = "Money")]
         public Money Money { get; set; }
     }
 
     [XmlRoot(ElementName = "Extrinsic")]
     public class Extrinsic
     {
-        [XmlAttribute(AttributeName = "name")] 
+        [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public double Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Description")]
     public class Description
     {
-        [XmlAttribute(AttributeName = "lang")] 
+        [XmlAttribute(AttributeName = "lang")]
         public string Lang { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -274,7 +232,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "domain")]
         public string Domain { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -303,23 +261,23 @@ namespace Asda.Integration.Domain.Models.Business.XML
     [XmlRoot(ElementName = "Shipping")]
     public class Shipping
     {
-        [XmlElement(ElementName = "Money")] 
+        [XmlElement(ElementName = "Money")]
         public Money Money { get; set; }
     }
 
     [XmlRoot(ElementName = "ItemOut")]
     public class ItemOut
     {
-        [XmlElement(ElementName = "ItemID")] 
+        [XmlElement(ElementName = "ItemID")]
         public ItemID ItemID { get; set; }
 
         [XmlElement(ElementName = "ItemDetail")]
         public ItemDetail ItemDetail { get; set; }
 
-        [XmlElement(ElementName = "Shipping")] 
+        [XmlElement(ElementName = "Shipping")]
         public Shipping Shipping { get; set; }
 
-        [XmlElement(ElementName = "Comments")] 
+        [XmlElement(ElementName = "Comments")]
         public string Comments { get; set; }
 
         [XmlAttribute(AttributeName = "lineNumber")]
@@ -328,30 +286,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
         [XmlAttribute(AttributeName = "quantity")]
         public int Quantity { get; set; }
 
-        [XmlText] 
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "OrderRequest")]
-    public class OrderRequest
-    {
-        [XmlElement(ElementName = "OrderRequestHeader")]
-        public OrderRequestHeader OrderRequestHeader { get; set; }
-
-        [XmlElement(ElementName = "ItemOut")] 
-        public List<ItemOut> ItemOut { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Request")]
-    public class Request
-    {
-        [XmlElement(ElementName = "OrderRequest")]
-        public OrderRequest OrderRequest { get; set; }
-
-        [XmlAttribute(AttributeName = "deploymentMode")]
-        public string DeploymentMode { get; set; }
-
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 }

@@ -2,79 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
- namespace Asda.Integration.Domain.Models.Business.ShipmentConfirmation
+namespace Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation
 {
-
-[XmlRoot(ElementName = "cXML")]
-public class ShipmentConfirmation
+    [XmlRoot(ElementName = "cXML")]
+    public class ShipmentConfirmation : HeaderBase
     {
-        [XmlElement(ElementName = "Header")] 
-        public Header Header { get; set; }
-
         [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
-
-        [XmlAttribute(AttributeName = "lang")] 
-        public string Lang { get; set; }
-
-        [XmlAttribute(AttributeName = "payloadID")]
-        public string PayloadID { get; set; }
-
-        [XmlAttribute(AttributeName = "timestamp")]
-        public DateTime Timestamp { get; set; }
-
-        [XmlText] 
-        public string Text { get; set; }
     }
 
-    [XmlRoot(ElementName = "Credential")]
-    public class Credential
+    [XmlRoot(ElementName = "Request")]
+    public class Request
     {
-        [XmlElement(ElementName = "Identity")] 
-        public string Identity { get; set; }
-
-        [XmlAttribute(AttributeName = "domain")]
-        public string Domain { get; set; }
-
-        [XmlText] 
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "From")]
-    public class From
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-    }
-
-    [XmlRoot(ElementName = "To")]
-    public class To
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Sender")]
-    public class Sender
-    {
-        [XmlElement(ElementName = "Credential")]
-        public Credential Credential { get; set; }
-
-        [XmlElement(ElementName = "UserAgent")]
-        public string UserAgent { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Header")]
-    public class Header
-    {
-        [XmlElement(ElementName = "From")] 
-        public From From { get; set; }
-
-        [XmlElement(ElementName = "To")] 
-        public To To { get; set; }
-
-        [XmlElement(ElementName = "Sender")] 
-        public Sender Sender { get; set; }
+        [XmlElement(ElementName = "ShipNoticeRequest")]
+        public ShipNoticeRequest ShipNoticeRequest { get; set; }
     }
 
     [XmlRoot(ElementName = "ShipNoticeHeader")]
@@ -102,7 +43,7 @@ public class ShipmentConfirmation
         [XmlAttribute(AttributeName = "domain")]
         public string Domain { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -145,7 +86,7 @@ public class ShipmentConfirmation
         [XmlAttribute(AttributeName = "quantity")]
         public int Quantity { get; set; }
 
-        [XmlText] 
+        [XmlText]
         public string Text { get; set; }
     }
 
@@ -171,13 +112,4 @@ public class ShipmentConfirmation
         [XmlElement(ElementName = "ShipNoticePortion")]
         public ShipNoticePortion ShipNoticePortion { get; set; }
     }
-
-    [XmlRoot(ElementName = "Request")]
-    public class Request
-    {
-        [XmlElement(ElementName = "ShipNoticeRequest")]
-        public ShipNoticeRequest ShipNoticeRequest { get; set; }
-    }
-
-    
 }

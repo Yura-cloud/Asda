@@ -1,6 +1,6 @@
 using System;
-using Asda.Integration.Domain.Models.Business.Acknowledgment;
-using Request = Asda.Integration.Domain.Models.Business.Acknowledgment.Request;
+using Asda.Integration.Domain.Models.Business.XML;
+using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 
 
 namespace Asda.Integration.Api.Mappers
