@@ -57,7 +57,7 @@ namespace Asda.Integration.Api.Mappers
                         },
                         ConfirmationItem = new ConfirmationItem
                         {
-                            LineNumber = itemNumber,
+                            LineNumber = itemNumber + 1,
                             Quantity = orderCancellation.Items[itemNumber].CancellationQuantity,
                             UnitOfMeasure = "EACH",
                             ConfirmationStatus = new ConfirmationStatus

@@ -138,7 +138,7 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var cancellations = GetCancellations(request);
-                //_orderService.
+                _orderService.SendCancellationsFile(cancellations);
             }
             catch (Exception e)
             {

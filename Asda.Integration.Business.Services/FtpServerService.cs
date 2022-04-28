@@ -69,8 +69,8 @@ namespace Asda.Integration.Business.Services
                     var di = new DirectoryInfo(localPath);
                     foreach (var file in di.GetFiles())
                     {
-                        using var s = File.OpenRead(file.FullName);
-                        client.UploadFile(s, Path.Combine(remotePath, file.Name, file.Extension));
+                        using var fileStream = File.OpenRead(file.FullName);
+                        client.UploadFile(fileStream, $"{remotePath}{file.Name}");
                     }
                 }
             }

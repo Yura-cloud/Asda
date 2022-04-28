@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
@@ -76,16 +75,18 @@ namespace Asda.Integration.Business.Services
             try
             {
                 DeletePreviousFiles(path);
-                foreach (var cancellation in cancellations)
+                for (var i = 0; i < cancellations.Count; i++)
                 {
-                    var fileStream = File.Create(Path.Combine(path, CancellationFileName,
-                        $"_{cancellation.Request.ConfirmationRequest.ConfirmationItem}", FileType));
+                    var cancellation = cancellations[i];
+                    var filePath = Path.Combine(path, $"{CancellationFileName}_{i+1}{FileType}");
+                    var fileStream = File.Create(filePath);
 
                     var writer = new XmlSerializer(typeof(Cancellation));
                     var namespaces = new XmlSerializerNamespaces();
                     namespaces.Add("", "");
 
                     writer.Serialize(fileStream, cancellation, namespaces);
+                    fileStream.Close();
                 }
             }
             catch (Exception e)

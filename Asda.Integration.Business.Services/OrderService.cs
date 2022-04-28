@@ -48,6 +48,7 @@ namespace Asda.Integration.Business.Services
         public void SendCancellationsFile(List<Cancellation> cancellations)
         {
             _xmlService.CreateLocalCancellationXmlFiles(cancellations, _localConfig.CancellationPath);
+            _ftpServer.SentFilesToServerTest(_localConfig.CancellationPath, _remoteConfig.CancellationPath);
            
         }
     }
