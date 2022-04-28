@@ -2,7 +2,7 @@
 using System;
 using Asda.Integration.Domain.Models;
 using Asda.Integration.Domain.Models.PostSale;
-using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 
 namespace Asda.Integration.Api.Controllers
 {

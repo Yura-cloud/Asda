@@ -1,5 +1,5 @@
 using System;
-using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Asda.Integration.Business.Services

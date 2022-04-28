@@ -1,6 +1,6 @@
 using Asda.Integration.Domain.Models.Business;
 
-namespace Asda.Integration.Service.Intefaces
+namespace Asda.Integration.Service.Interfaces
 {
     public interface IFtpServerService
     {

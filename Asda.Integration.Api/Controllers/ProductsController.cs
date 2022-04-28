@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Products;
-using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Asda.Integration.Api.Controllers{

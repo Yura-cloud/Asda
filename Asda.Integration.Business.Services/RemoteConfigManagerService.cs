@@ -1,4 +1,4 @@
-using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Asda.Integration.Business.Services
@@ -16,5 +16,8 @@ namespace Asda.Integration.Business.Services
 
         public string AcknowledgmentPath =>
             _configuration.GetSection(("RemoteFileStorage")).GetSection("AcknowledgmentPath").Value;
+
+        public string CancellationPath =>
+            _configuration.GetSection(("RemoteFileStorage")).GetSection("CancellationPath").Value;
     }
 }

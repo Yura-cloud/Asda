@@ -1,7 +1,6 @@
 ﻿using System;
 using Asda.Integration.Domain.Models;
 using Asda.Integration.Domain.Models.User;
-using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

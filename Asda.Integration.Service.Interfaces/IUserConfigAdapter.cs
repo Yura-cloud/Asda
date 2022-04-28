@@ -2,7 +2,7 @@
 using Asda.Integration.Domain.Models.User;
 
 
-namespace Asda.Integration.Service.Intefaces
+namespace Asda.Integration.Service.Interfaces
 {
     public interface IUserConfigAdapter
     {

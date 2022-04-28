@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Asda.Integration.Api.Mappers;
+using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SampleChannel.Helpers;
@@ -134,8 +136,9 @@ namespace Asda.Integration.Api.Controllers
                     _logger.LogError(message);
                     return new OrderCancelResponse() {Error = message, HasError = true};
                 }
-                
-                
+
+                var cancellations = GetCancellations(request);
+                //_orderService.
             }
             catch (Exception e)
             {
@@ -145,6 +148,18 @@ namespace Asda.Integration.Api.Controllers
             }
 
             return null;
+        }
+
+        private List<Cancellation> GetCancellations(OrderCancelRequest request)
+        {
+            var cancellations = new List<Cancellation>();
+            for (int i = 0; i < request.Cancellation.Items.Count; i++)
+            {
+                var cancellation = CancellationMapper.MapToCancellation(request.Cancellation, i);
+                cancellations.Add(cancellation);
+            }
+
+            return cancellations;
         }
     }
 }

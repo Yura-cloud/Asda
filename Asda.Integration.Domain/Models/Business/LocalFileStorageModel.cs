@@ -2,15 +2,17 @@ namespace Asda.Integration.Domain.Models.Business
 {
     public class LocalFileStorageModel
     {
-        public string OrderPath { get; }
-        public string DispatchPath { get; }
-        public string AcknowledgmentPath { get; }
+        public string OrderPath { get; set; }
+        public string DispatchPath { get; set; }
+        public string AcknowledgmentPath { get; set; }
+        public string CancellationPath { get; set; }
 
-        public LocalFileStorageModel(string orderPath, string dispatchPath, string acknowledgmentPath)
+        public LocalFileStorageModel(LocalFileStorageModel localConfigLocalFileStorage)
         {
-            OrderPath = orderPath;
-            DispatchPath = dispatchPath;
-            AcknowledgmentPath = acknowledgmentPath;
+            OrderPath = localConfigLocalFileStorage.OrderPath;
+            DispatchPath = localConfigLocalFileStorage.DispatchPath;
+            AcknowledgmentPath = localConfigLocalFileStorage.AcknowledgmentPath;
+            CancellationPath = localConfigLocalFileStorage.CancellationPath;
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Service.Intefaces;
+using Asda.Integration.Service.Interfaces;
 using Renci.SshNet;
 
 namespace Asda.Integration.Business.Services
@@ -48,6 +48,30 @@ namespace Asda.Integration.Business.Services
                 {
                     using var s = File.OpenRead(localPath);
                     client.UploadFile(s, remotePath);
+                }
+            }
+            catch (Exception e)
+            {
+                var message = $"Failed while working with with SentFileToServer, with message {e.Message}";
+                throw new Exception(message);
+            }
+        }
+
+        public void SentFilesToServerTest(string localPath, string remotePath)
+        {
+            try
+            {
+                using var client = new SftpClient(FtpSettings.Host, FtpSettings.Port, FtpSettings.UserName,
+                    FtpSettings.Password);
+                client.Connect();
+                if (client.IsConnected)
+                {
+                    var di = new DirectoryInfo(localPath);
+                    foreach (var file in di.GetFiles())
+                    {
+                        using var s = File.OpenRead(file.FullName);
+                        client.UploadFile(s, Path.Combine(remotePath, file.Name, file.Extension));
+                    }
                 }
             }
             catch (Exception e)
