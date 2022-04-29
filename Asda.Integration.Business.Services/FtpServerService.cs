@@ -37,27 +37,7 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        public void SentFileToServer(string localPath, string remotePath)
-        {
-            try
-            {
-                using var client = new SftpClient(FtpSettings.Host, FtpSettings.Port, FtpSettings.UserName,
-                    FtpSettings.Password);
-                client.Connect();
-                if (client.IsConnected)
-                {
-                    using var s = File.OpenRead(localPath);
-                    client.UploadFile(s, remotePath);
-                }
-            }
-            catch (Exception e)
-            {
-                var message = $"Failed while working with with SentFileToServer, with message {e.Message}";
-                throw new Exception(message);
-            }
-        }
-
-        public void SentFilesToServerTest(string localPath, string remotePath)
+        public void SentFilesToServer(string localPath, string remotePath)
         {
             try
             {

@@ -8,88 +8,82 @@ namespace Asda.Integration.Api.Mappers
 {
     public static class ShipmentMapper
     {
-        public static List<ShipmentConfirmation> MapToShipmentConfirmations(List<OrderDespatch> orderDespatches)
+        public static ShipmentConfirmation MapToShipmentConfirmation(OrderDespatch orderDespatch)
         {
-            var shipmentConfirmations = new List<ShipmentConfirmation>();
-            foreach (var orderDespatch in orderDespatches)
+            var shipmentConfirmation = new ShipmentConfirmation
             {
-                var shipmentConfirmation = new ShipmentConfirmation
+                PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com",
+                Lang = "en",
+                Text = "",
+                Timestamp = DateTime.Now,
+                Header = new Header
                 {
-                    PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com",
-                    Lang = "en",
-                    Text = "",
-                    Timestamp = DateTime.Now,
-
-                    Header = new Header
+                    From = new From
                     {
-                        From = new From
+                        Credential = new Credential
                         {
-                            Credential = new Credential
-                            {
-                                Domain = "AsdaOrganisation",
-                                Identity = "ASDA-123456-DC"
-                            }
-                        },
-                        To = new To
-                        {
-                            Credential = new Credential
-                            {
-                                Domain = "AsdaOrganisation",
-                                Identity = "ASDA"
-                            }
-                        },
-                        Sender = new Sender
-                        {
-                            Credential = new Credential
-                            {
-                                Domain = "Linnworks",
-                                Identity = orderDespatch.ReferenceNumber
-                            }
+                            Domain = "AsdaOrganisation",
+                            Identity = "ASDA-123456-DC"
                         }
                     },
-                    Request = new Request
+                    To = new To
                     {
-                        ShipNoticeRequest = new ShipNoticeRequest
+                        Credential = new Credential
                         {
-                            ShipNoticeHeader = new ShipNoticeHeader
+                            Domain = "AsdaOrganisation",
+                            Identity = "ASDA"
+                        }
+                    },
+                    Sender = new Sender
+                    {
+                        Credential = new Credential
+                        {
+                            Domain = "Linnworks",
+                            Identity = orderDespatch.ReferenceNumber
+                        }
+                    }
+                },
+                Request = new Request
+                {
+                    ShipNoticeRequest = new ShipNoticeRequest
+                    {
+                        ShipNoticeHeader = new ShipNoticeHeader
+                        {
+                            ShipmentID = "S89823-123",
+                            CarrierId = orderDespatch.ShippingVendor ?? "toyou"
+                        },
+                        ShipControl = new ShipControl
+                        {
+                            ShipmentIdentifier = orderDespatch.TrackingNumber
+                        },
+                        ShipNoticePortion = new ShipNoticePortion
+                        {
+                            OrderReference = new OrderReference
                             {
-                                ShipmentID = "S89823-123",
-                                CarrierId = orderDespatch.ShippingVendor ?? "toyou"
-                            },
-                            ShipControl = new ShipControl
-                            {
-                                ShipmentIdentifier = orderDespatch.TrackingNumber
-                            },
-                            ShipNoticePortion = new ShipNoticePortion
-                            {
-                                OrderReference = new OrderReference
+                                DocumentReference = new DocumentReference
                                 {
-                                    DocumentReference = new DocumentReference
-                                    {
-                                        PayloadID = orderDespatch.ReferenceNumber
-                                    }
+                                    PayloadID = orderDespatch.ReferenceNumber
                                 }
                             }
                         }
                     }
-                };
-                var shipNoticeItems = new List<ShipNoticeItem>();
-                foreach (var item in orderDespatch.Items)
-                {
-                    var shipNoteiceItem = new ShipNoticeItem
-                    {
-                        LineNumber = Convert.ToInt32(item.OrderLineNumber),
-                        Quantity = item.DespatchedQuantity,
-                        UnitOfMeasure = "EACH"
-                    };
-                    shipNoticeItems.Add(shipNoteiceItem);
                 }
-
-                shipmentConfirmation.Request.ShipNoticeRequest.ShipNoticePortion.ShipNoticeItem = shipNoticeItems;
-                shipmentConfirmations.Add(shipmentConfirmation);
+            };
+            var shipNoticeItems = new List<ShipNoticeItem>();
+            foreach (var item in orderDespatch.Items)
+            {
+                var shipNoteiceItem = new ShipNoticeItem
+                {
+                    LineNumber = Convert.ToInt32(item.OrderLineNumber),
+                    Quantity = item.DespatchedQuantity,
+                    UnitOfMeasure = "EACH"
+                };
+                shipNoticeItems.Add(shipNoteiceItem);
             }
 
-            return shipmentConfirmations;
+            shipmentConfirmation.Request.ShipNoticeRequest.ShipNoticePortion.ShipNoticeItem = shipNoticeItems;
+
+            return shipmentConfirmation;
         }
     }
 }

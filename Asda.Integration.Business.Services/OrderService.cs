@@ -33,22 +33,22 @@ namespace Asda.Integration.Business.Services
             return _xmlService.GetPurchaseOrderFromXml(_localConfig.OrderPath);
         }
 
-        public void SendDispatchFile(List<ShipmentConfirmation> shipmentConfirmations)
+        public void SendDispatchFiles(List<ShipmentConfirmation> shipmentConfirmations)
         {
-            _xmlService.CreateLocalDispatchXmlFile(shipmentConfirmations, _localConfig.DispatchPath);
-            _ftpServer.SentFileToServer(_localConfig.DispatchPath, _remoteConfig.DispatchPath);
+            _xmlService.CreateLocalDispatchXmlFiles(shipmentConfirmations, _localConfig.DispatchPath);
+            _ftpServer.SentFilesToServer(_localConfig.DispatchPath, _remoteConfig.DispatchPath);
         }
 
         public void SendAcknowledgmentFile(Acknowledgment acknowledgment)
         {
             _xmlService.CreateLocalAcknowledgmentXmlFile(acknowledgment, _localConfig.AcknowledgmentPath);
-            _ftpServer.SentFileToServer(_localConfig.AcknowledgmentPath, _remoteConfig.AcknowledgmentPath);
+            _ftpServer.SentFilesToServer(_localConfig.AcknowledgmentPath, _remoteConfig.AcknowledgmentPath);
         }
 
         public void SendCancellationsFile(List<Cancellation> cancellations)
         {
             _xmlService.CreateLocalCancellationXmlFiles(cancellations, _localConfig.CancellationPath);
-            _ftpServer.SentFilesToServerTest(_localConfig.CancellationPath, _remoteConfig.CancellationPath);
+            _ftpServer.SentFilesToServer(_localConfig.CancellationPath, _remoteConfig.CancellationPath);
            
         }
     }

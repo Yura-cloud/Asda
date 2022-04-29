@@ -10,7 +10,7 @@ namespace Asda.Integration.Service.Intefaces
     {
         PurchaseOrder GetPurchaseOrder();
 
-        void SendDispatchFile(List<ShipmentConfirmation> shipmentConfirmations);
+        void SendDispatchFiles(List<ShipmentConfirmation> shipmentConfirmations);
         void SendAcknowledgmentFile(Acknowledgment acknowledgment);
         void SendCancellationsFile(List<Cancellation> cancellations);
     }

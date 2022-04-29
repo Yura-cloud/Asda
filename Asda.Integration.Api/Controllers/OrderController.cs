@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
+using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
@@ -84,7 +84,7 @@ namespace Asda.Integration.Api.Controllers
         /// <param name="request"><see cref="OrderDespatchRequest"/></param>
         /// <returns><see cref="OrderDespatchResponse"/></returns>
         [HttpPost]
-        public OrderDespatchResponse Despatch([FromBody] OrderDespatchRequest request)
+        public OrderDespatchResponse Dispatch([FromBody] OrderDespatchRequest request)
         {
             if (request?.Orders == null || request.Orders?.Count == 0)
             {
@@ -103,8 +103,8 @@ namespace Asda.Integration.Api.Controllers
                     return new OrderDespatchResponse {Error = message};
                 }
 
-                var shipmentConfirmations = ShipmentMapper.MapToShipmentConfirmations(request.Orders);
-                _orderService.SendDispatchFile(shipmentConfirmations);
+                var shipmentConfirmations = GetShipmentConfirmations(request);
+                _orderService.SendDispatchFiles(shipmentConfirmations);
                 return new OrderDespatchResponse();
             }
             catch (Exception ex)
@@ -144,10 +144,22 @@ namespace Asda.Integration.Api.Controllers
             {
                 var message = $"Failed while working with CancelOrders Action, with message {e.Message}";
                 _logger.LogError(message);
-                return null;
+                return new OrderCancelResponse {Error = message, HasError = true};
             }
 
-            return null;
+            return new OrderCancelResponse();
+        }
+
+        private List<ShipmentConfirmation> GetShipmentConfirmations(OrderDespatchRequest request)
+        {
+            var shipmentConfirmations = new List<ShipmentConfirmation>();
+            foreach (var orderDespatch in request.Orders)
+            {
+                var shipmentConfirmation = ShipmentMapper.MapToShipmentConfirmation(orderDespatch);
+                shipmentConfirmations.Add(shipmentConfirmation);
+            }
+
+            return shipmentConfirmations;
         }
 
         private List<Cancellation> GetCancellations(OrderCancelRequest request)
