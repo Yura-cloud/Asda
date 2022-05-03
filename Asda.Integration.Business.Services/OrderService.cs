@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Service.Intefaces;
@@ -49,7 +50,12 @@ namespace Asda.Integration.Business.Services
         {
             _xmlService.CreateLocalCancellationXmlFiles(cancellations, _localConfig.CancellationPath);
             _ftpServer.SentFilesToServer(_localConfig.CancellationPath, _remoteConfig.CancellationPath);
-           
+        }
+
+        public void SendSnapInventoriesFile(List<InventorySnapshot> inventorySnapshots)
+        {
+            _xmlService.CreateLocalSnapInventoriesXmlFiles(inventorySnapshots, _localConfig.SnapInventoryPath);
+            _ftpServer.SentFilesToServer(_localConfig.SnapInventoryPath, _remoteConfig.SnapInventoryPath);
         }
     }
 }

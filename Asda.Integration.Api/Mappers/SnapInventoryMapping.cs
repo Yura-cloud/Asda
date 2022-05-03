@@ -1,15 +1,15 @@
 using System;
 using Asda.Integration.Domain.Models.Business.XML;
-using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
-
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
+using Asda.Integration.Domain.Models.Products;
 
 namespace Asda.Integration.Api.Mappers
 {
-    public static class AcknowledgmentMapper
+    public static class SnapInventoryMapping
     {
-        public static Acknowledgment MapToAcknowledgment(string referenceNumber)
+        public static InventorySnapshot MapToInventorySnapshot(ProductInventory productInventory)
         {
-            var acknowledgment = new Acknowledgment
+            var inventorySnapshot = new InventorySnapshot
             {
                 PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com",
                 Lang = "en",
@@ -44,22 +44,27 @@ namespace Asda.Integration.Api.Mappers
                 },
                 Request = new Request
                 {
-                    ConfirmationRequest = new ConfirmationRequest
+                    InventorySnapshotRequest = new InventorySnapshotRequest
                     {
-                        ConfirmationHeader = new ConfirmationHeader
+                        InventorySnapshotRequestHeader = new InventorySnapshotRequestHeader
                         {
-                            Type = "accept"
+                            SnapshotDate = DateTime.Now.ToString(),
+                            Description = "",
+                            ListId = ""
                         },
-                        OrderReference = new OrderReference
+                        Records = new Records
                         {
-                            OrderID = Convert.ToInt32(referenceNumber)
+                            Record = new Record
+                            {
+                                ProductId = productInventory.SKU,
+                                AllocationQty = productInventory.Quantity.ToString()
+                            }
                         }
+                        
                     }
-                },
+                }
             };
-            return acknowledgment;
+            return inventorySnapshot;
         }
-
-       
     }
 }

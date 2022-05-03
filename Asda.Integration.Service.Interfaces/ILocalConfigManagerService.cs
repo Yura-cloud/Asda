@@ -8,6 +8,7 @@ namespace Asda.Integration.Service.Interfaces
         string DispatchPath { get; }
         string AcknowledgmentPath { get; }
         string CancellationPath { get; }
+        string SnapInventoryPath { get; }
 
     }
 }

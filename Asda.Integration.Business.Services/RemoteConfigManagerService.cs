@@ -19,5 +19,8 @@ namespace Asda.Integration.Business.Services
 
         public string CancellationPath =>
             _configuration.GetSection(("RemoteFileStorage")).GetSection("CancellationPath").Value;
+
+        public string SnapInventoryPath =>
+            _configuration.GetSection(("RemoteFileStorage")).GetSection("SnapInventoryPath").Value;
     }
 }

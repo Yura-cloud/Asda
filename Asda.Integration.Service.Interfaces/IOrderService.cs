@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 
@@ -13,5 +14,6 @@ namespace Asda.Integration.Service.Intefaces
         void SendDispatchFiles(List<ShipmentConfirmation> shipmentConfirmations);
         void SendAcknowledgmentFile(Acknowledgment acknowledgment);
         void SendCancellationsFile(List<Cancellation> cancellations);
+        void SendSnapInventoriesFile(List<InventorySnapshot> inventorySnapshots );
     }
 }

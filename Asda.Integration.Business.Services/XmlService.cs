@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Service.Interfaces;
@@ -13,8 +14,12 @@ namespace Asda.Integration.Business.Services
     public class XmlService : IXmlService
     {
         private const string CancellationFileName = "Cancellation";
+
         private const string DispatchFileName = "DispatchConfirmation";
+
         private const string AcknowledgmentFileName = "Acknowledgment";
+
+        private const string SnapShotFileName = "SnapShot";
 
         private const string FileType = ".xml";
 
@@ -41,10 +46,10 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < shipmentConfirmations.Count; i++)
                 {
                     var shipmentConfirmation = shipmentConfirmations[i];
-                    
+
                     var filePath = Path.Combine(path, $"{DispatchFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
-                    
+
                     var namespaces = new XmlSerializerNamespaces();
                     namespaces.Add("", "");
 
@@ -70,7 +75,7 @@ namespace Asda.Integration.Business.Services
 
                 var namespaces = new XmlSerializerNamespaces();
                 namespaces.Add("", "");
-                
+
                 var writer = new XmlSerializer(typeof(Acknowledgment));
                 writer.Serialize(fileStream, acknowledgment, namespaces);
                 fileStream.Close();
@@ -90,10 +95,10 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < cancellations.Count; i++)
                 {
                     var cancellation = cancellations[i];
-                    
+
                     var filePath = Path.Combine(path, $"{CancellationFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
-                    
+
                     var namespaces = new XmlSerializerNamespaces();
                     namespaces.Add("", "");
 
@@ -106,6 +111,33 @@ namespace Asda.Integration.Business.Services
             {
                 throw new Exception(
                     $"Failed while working with CreateLocalCancellationsXmlFile, with message {e.Message}");
+            }
+        }
+
+        public void CreateLocalSnapInventoriesXmlFiles(List<InventorySnapshot> inventorySnapshots,
+            string path)
+        {
+            try
+            {
+                DeletePreviousFiles(path);
+                for (var i = 0; i < inventorySnapshots.Count; i++)
+                {
+                    var inventorySnapshot = inventorySnapshots[i];
+                    var filePath = Path.Combine(path, $"{SnapShotFileName}_{i + 1}{FileType}");
+                    var fileStream = File.Create(filePath);
+
+                    var namespaces = new XmlSerializerNamespaces();
+                    namespaces.Add("", "");
+
+                    var writer = new XmlSerializer(typeof(InventorySnapshot));
+                    writer.Serialize(fileStream, inventorySnapshot, namespaces);
+                    fileStream.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(
+                    $"Failed while working with CreateLocalSnapInventoriesXmlFiles, with message {e.Message}");
             }
         }
 

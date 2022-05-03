@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using Asda.Integration.Api.Mappers;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
+using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace Asda.Integration.Api.Controllers{
-
+namespace Asda.Integration.Api.Controllers
+{
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class ProductsController : ControllerBase
     {
         private readonly IUserConfigAdapter _userConfigAdapter;
 
-        public ProductsController(IUserConfigAdapter userConfigAdapter)
+        private readonly ILogger<ProductsController> _logger;
+
+        private readonly IOrderService _orderService;
+
+        public ProductsController(IUserConfigAdapter userConfigAdapter, ILogger<ProductsController> logger,
+            IOrderService orderService)
         {
-            this._userConfigAdapter = userConfigAdapter;
+            _userConfigAdapter = userConfigAdapter;
+            _logger = logger;
+            _orderService = orderService;
         }
 
-        /// <summary>
-        /// This call is used to get a list of Channel products for the purpose of mapping.
-        /// </summary>
-        /// <param name="request"><see cref="ProductsRequest"/></param>
-        /// <returns><see cref="ProductsResponse"/></returns>
+
         [HttpPost]
         public ProductsResponse Products([FromBody] ProductsRequest request)
         {
@@ -78,22 +85,25 @@ namespace Asda.Integration.Api.Controllers{
         public ProductInventoryUpdateResponse InventoryUpdate([FromBody] ProductInventoryUpdateRequest request)
         {
             if (request.Products == null || request.Products.Length == 0)
+            {
+                _logger.LogError($"Error while updating inventory. There aren't any products");
                 return new ProductInventoryUpdateResponse {Error = "Products not supplied"};
+            }
 
             try
             {
-                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
+                var user = _userConfigAdapter.Load(request.AuthorizationToken);
 
-                var response = new ProductInventoryUpdateResponse();
-
-                foreach (var product in request.Products)
+                if (user == null)
                 {
-                    if (product.SKU == "MyNonExistantSKU")
-                    {
-                        response.Products.Add(new ProductInventoryResponse
-                            {SKU = product.SKU, Error = "SKU does not exist"});
-                    }
+                    _logger.LogError($"User with ID: {request.AuthorizationToken} - not found.");
+                    return new ProductInventoryUpdateResponse {Error = "User not found"};
                 }
+
+                var inventoryItems = GetInventoryItems(request.Products);
+                _orderService.SendSnapInventoriesFile(inventoryItems);
+                
+                var response = FillInResponse(request);
 
                 return response;
             }
@@ -101,6 +111,35 @@ namespace Asda.Integration.Api.Controllers{
             {
                 return new ProductInventoryUpdateResponse {Error = ex.Message};
             }
+        }
+
+        private ProductInventoryUpdateResponse FillInResponse(ProductInventoryUpdateRequest request)
+        {
+            var response = new ProductInventoryUpdateResponse
+            {
+                Products = new List<ProductInventoryResponse>()
+            };
+            foreach (var productInventory in request.Products)
+            {
+                response.Products.Add(new ProductInventoryResponse
+                {
+                    SKU = productInventory.SKU
+                });
+            }
+
+            return response;
+        }
+
+        private List<InventorySnapshot> GetInventoryItems(ProductInventory[] requestProducts)
+        {
+            var inventoryItems = new List<InventorySnapshot>();
+            foreach (var productInventory in requestProducts)
+            {
+                var inventoryItem = SnapInventoryMapping.MapToInventorySnapshot(productInventory);
+                inventoryItems.Add(inventoryItem);
+            }
+
+            return inventoryItems;
         }
 
         /// <summary>

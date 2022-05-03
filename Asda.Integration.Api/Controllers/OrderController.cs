@@ -30,15 +30,6 @@ namespace Asda.Integration.Api.Controllers
             _logger = logger;
         }
 
-
-        /// <summary>
-        /// This call is made by Linnworks automation to get a list of orders since the last time it
-        /// requested orders. These calls are made every 10 to 15 minutes usually. The request expects
-        /// a page result back, if there are a lot of orders to return it is suggested to split the
-        /// result into pages of 100 maximum.
-        /// </summary>
-        /// <param name="request"><see cref="OrdersRequest"/></param>
-        /// <returns><see cref="OrdersResponse"/></returns>
         [HttpPost]
         public OrdersResponse PullOrdersFromAsda([FromBody] OrdersRequest request)
         {
@@ -76,13 +67,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// When an order is despatched in Linnworks this call is made to update the channel with the
-        /// correct despatch details. Entire orders may be submitted or partial orders depending if
-        /// the order has been split.
-        /// </summary>
-        /// <param name="request"><see cref="OrderDespatchRequest"/></param>
-        /// <returns><see cref="OrderDespatchResponse"/></returns>
         [HttpPost]
         public OrderDespatchResponse Dispatch([FromBody] OrderDespatchRequest request)
         {
@@ -118,7 +102,7 @@ namespace Asda.Integration.Api.Controllers
         }
 
         [HttpPost]
-        public OrderCancelResponse CancelOrders([FromBody] OrderCancelRequest request)
+        public OrderCancelResponse CanceledOrders([FromBody] OrderCancelRequest request)
         {
             if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
             {

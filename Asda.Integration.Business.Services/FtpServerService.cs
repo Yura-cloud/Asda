@@ -50,7 +50,7 @@ namespace Asda.Integration.Business.Services
                     foreach (var file in di.GetFiles())
                     {
                         using var fileStream = File.OpenRead(file.FullName);
-                        client.UploadFile(fileStream, $"{remotePath}{file.Name}");
+                        client.UploadFile(fileStream, $"{remotePath}/{file.Name}");
                     }
                 }
             }
