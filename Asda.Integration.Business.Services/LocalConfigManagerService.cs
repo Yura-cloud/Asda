@@ -1,3 +1,4 @@
+using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -5,24 +6,17 @@ namespace Asda.Integration.Business.Services
 {
     public class LocalConfigManagerService : ILocalConfigManagerService
     {
-        private readonly IConfiguration _configuration;
+        public LocalFileStorageModel LocalFileStorage { get; }
 
         public LocalConfigManagerService(IConfiguration configuration)
         {
-            _configuration = configuration;
+            LocalFileStorage = new LocalFileStorageModel(
+                configuration.GetSection(("LocalFileStorage")).GetSection("OrderPath").Value,
+                configuration.GetSection(("LocalFileStorage")).GetSection("DispatchPath").Value,
+                configuration.GetSection(("LocalFileStorage")).GetSection("AcknowledgmentPath").Value,
+                configuration.GetSection(("LocalFileStorage")).GetSection("CancellationPath").Value,
+                configuration.GetSection(("LocalFileStorage")).GetSection("SnapInventoryPath").Value
+            );
         }
-
-        public string OrderPath => _configuration.GetSection(("LocalFileStorage")).GetSection("OrderPath").Value;
-
-        public string DispatchPath => _configuration.GetSection(("LocalFileStorage")).GetSection("DispatchPath").Value;
-
-        public string AcknowledgmentPath =>
-            _configuration.GetSection(("LocalFileStorage")).GetSection("AcknowledgmentPath").Value;
-
-        public string CancellationPath =>
-            _configuration.GetSection(("LocalFileStorage")).GetSection("CancellationPath").Value;
-
-        public string SnapInventoryPath =>
-            _configuration.GetSection(("LocalFileStorage")).GetSection("SnapInventoryPath").Value;
     }
 }

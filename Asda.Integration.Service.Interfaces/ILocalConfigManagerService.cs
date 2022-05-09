@@ -4,11 +4,6 @@ namespace Asda.Integration.Service.Interfaces
 {
     public interface ILocalConfigManagerService
     {
-        string OrderPath { get; }
-        string DispatchPath { get; }
-        string AcknowledgmentPath { get; }
-        string CancellationPath { get; }
-        string SnapInventoryPath { get; }
-
+        public LocalFileStorageModel LocalFileStorage { get; }
     }
 }

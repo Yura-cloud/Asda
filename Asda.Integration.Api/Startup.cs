@@ -42,7 +42,7 @@ namespace SampleChannel
             
             services.AddScoped<IXmlService,XmlService>();
 
-            services.AddScoped<IFtpServerService, FtpServerService>();
+            services.AddScoped<IFtpServerService, FtpService>();
 
             services.AddScoped<IFtpConfigManagerService, FtpConfigManagerService>();
 

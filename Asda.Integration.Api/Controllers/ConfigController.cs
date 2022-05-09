@@ -1,5 +1,7 @@
 ﻿using System;
 using Asda.Integration.Domain.Models;
+using Asda.Integration.Domain.Models.Payment;
+using Asda.Integration.Domain.Models.Shipping;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,9 @@ namespace Asda.Integration.Api.Controllers
     public class ConfigController : ControllerBase
     {
         private readonly IUserConfigAdapter _userConfigAdapter;
+
         private readonly IConfigStages _configStages;
+
         private readonly ILogger<ConfigController> _logger;
 
         public ConfigController(IUserConfigAdapter userConfigAdapter, IConfigStages configStages,
@@ -24,11 +28,6 @@ namespace Asda.Integration.Api.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Create a new user configuration.
-        /// </summary>
-        /// <param name="request"><see cref="AddNewUserRequest"/></param>
-        /// <returns><see cref="AddNewUserResponse"/></returns>
         [HttpPost]
         public AddNewUserResponse AddNewUser([FromBody] AddNewUserRequest request)
         {
@@ -50,12 +49,6 @@ namespace Asda.Integration.Api.Controllers
             };
         }
 
-        /// <summary>
-        /// This call is made when the channel config is deleted from Linnworks. Note that this is
-        /// a notification of deletion, if there is an error the config will still be deleted from Linnworks.
-        /// </summary>
-        /// <param name="request"><see cref="BaseRequest"/></param>
-        /// <returns><see cref="BaseResponse"/></returns>
         [HttpPost]
         public BaseResponse ConfigDeleted([FromBody] BaseRequest request)
         {
@@ -72,13 +65,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// This call is made when the test button is pressed in the user config. It should test the
-        /// customer's integration is valid. It may also be used in automation jobs to check if there
-        /// #is a constant or global error.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost]
         public BaseResponse ConfigTest([FromBody] BaseRequest request)
         {
@@ -91,8 +77,9 @@ namespace Asda.Integration.Api.Controllers
                 {
                     return new BaseResponse {Error = "User not found"};
                 }
-
-                return new BaseResponse();
+                
+                //return new BaseResponse();
+                return new BaseResponse() {Error = null};
             }
             catch (Exception ex)
             {
@@ -101,69 +88,70 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        //
-        // /// <summary>
-        // /// This call is expected to return an array of shipping methods friendly names and their tags
-        // /// to generate a pre-populated list in the config shipping mapping screen.
-        // /// </summary>
-        // /// <param name="request"><see cref="BaseRequest"/></param>
-        // /// <returns><see cref="PaymentTagResponse"/></returns>
-        // [HttpPost]
-        // public PaymentTagResponse PaymentTags([FromBody] BaseRequest request)
-        // {
-        //     try
-        //     {
-        //         var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-        //
-        //         return new PaymentTagResponse
-        //         {
-        //             PaymentTags = new[]
-        //             {
-        //                 new PaymentTag { FriendlyName = "PayPal",  Site = "", Tag = "paypal_verified" },
-        //                 new PaymentTag { FriendlyName = "Credit Card - Master Card",  Site = "", Tag = "mastercard" },
-        //                 new PaymentTag { FriendlyName = "Credit Card - Visa",  Site = "", Tag = "visa_credit" },
-        //                 new PaymentTag { FriendlyName = "Credit Card - Unknown",  Site = "", Tag = "credit_unknown" },
-        //                 new PaymentTag { FriendlyName = "Bank payments",  Site = "", Tag = "bank" },
-        //             }
-        //         };
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return new PaymentTagResponse { Error = ex.Message };
-        //     }
-        // }
-        //
-        // /// <summary>
-        // /// This call is expected to return an array of shipping methods friendly names and their tags
-        // /// to generate a pre-populated list in the config shipping mapping screen.
-        // /// </summary>
-        // /// <param name="request"><see cref="BaseRequest"/></param>
-        // /// <returns><see cref="ShippingTagResponse"/></returns>
-        // [HttpPost]
-        // public ShippingTagResponse ShippingTags([FromBody] BaseRequest request)
-        // {
-        //     try
-        //     {
-        //         var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-        //
-        //         return new ShippingTagResponse
-        //         {
-        //             ShippingTags = new[]
-        //             {
-        //                 new ShippingTag { FriendlyName = "Royal Mail First Class",  Site = "", Tag = "RM CLR01" },
-        //                 new ShippingTag { FriendlyName = "Royal Mail Special Delivery",  Site = "", Tag = "RM_SpecialDelivery_9am" },
-        //                 new ShippingTag { FriendlyName = "DPD - Next Day",  Site = "", Tag = "dpd" },
-        //                 new ShippingTag { FriendlyName = "Fedex - Ground",  Site = "", Tag = "fedex_ground" },
-        //                 new ShippingTag { FriendlyName = "Some other service",  Site = "", Tag = "matrix_rate_10221" },
-        //             }
-        //         };
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return new ShippingTagResponse { Error = ex.Message };
-        //     }
-        // }
-        //
+
+        /// <summary>
+        /// This call is expected to return an array of shipping methods friendly names and their tags
+        /// to generate a pre-populated list in the config shipping mapping screen.
+        /// </summary>
+        /// <param name="request"><see cref="BaseRequest"/></param>
+        /// <returns><see cref="PaymentTagResponse"/></returns>
+        [HttpPost]
+        public PaymentTagResponse PaymentTags([FromBody] BaseRequest request)
+        {
+            try
+            {
+                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
+
+                return new PaymentTagResponse
+                {
+                    PaymentTags = new[]
+                    {
+                        new PaymentTag {FriendlyName = "PayPal", Site = "", Tag = "paypal_verified"},
+                        new PaymentTag {FriendlyName = "Credit Card - Master Card", Site = "", Tag = "mastercard"},
+                        new PaymentTag {FriendlyName = "Credit Card - Visa", Site = "", Tag = "visa_credit"},
+                        new PaymentTag {FriendlyName = "Credit Card - Unknown", Site = "", Tag = "credit_unknown"},
+                        new PaymentTag {FriendlyName = "Bank payments", Site = "", Tag = "bank"},
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PaymentTagResponse {Error = ex.Message};
+            }
+        }
+
+        /// <summary>
+        /// This call is expected to return an array of shipping methods friendly names and their tags
+        /// to generate a pre-populated list in the config shipping mapping screen.
+        /// </summary>
+        /// <param name="request"><see cref="BaseRequest"/></param>
+        /// <returns><see cref="ShippingTagResponse"/></returns>
+        [HttpPost]
+        public ShippingTagResponse ShippingTags([FromBody] BaseRequest request)
+        {
+            try
+            {
+                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
+
+                return new ShippingTagResponse
+                {
+                    ShippingTags = new[]
+                    {
+                        new ShippingTag {FriendlyName = "Royal Mail First Class", Site = "", Tag = "RM CLR01"},
+                        new ShippingTag
+                            {FriendlyName = "Royal Mail Special Delivery", Site = "", Tag = "RM_SpecialDelivery_9am"},
+                        new ShippingTag {FriendlyName = "DPD - Next Day", Site = "", Tag = "dpd"},
+                        new ShippingTag {FriendlyName = "Fedex - Ground", Site = "", Tag = "fedex_ground"},
+                        new ShippingTag {FriendlyName = "Some other service", Site = "", Tag = "matrix_rate_10221"},
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ShippingTagResponse {Error = ex.Message};
+            }
+        }
+
         /// <summary>
         /// This request is made in two situations:
         /// 

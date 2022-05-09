@@ -13,7 +13,7 @@ namespace Asda.Integration.Api.Controllers
 
         public ProcessedOrdersController(IUserConfigAdapter userConfigAdapter)
         {
-            this._userConfigAdapter = userConfigAdapter;
+            _userConfigAdapter = userConfigAdapter;
         }
 
         /// <summary>

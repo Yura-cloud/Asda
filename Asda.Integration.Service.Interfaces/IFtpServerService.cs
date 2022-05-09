@@ -6,6 +6,6 @@ namespace Asda.Integration.Service.Interfaces
     {
         FtpSettingsModel FtpSettings { get; set; }
         void DownloadXmlFileFromServer(string path);
-        void SentFilesToServer(string localPath, string remotePath);
+        void SendFilesToServer(string localPath, string remotePath);
     }
 }

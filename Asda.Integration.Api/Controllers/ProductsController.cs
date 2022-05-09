@@ -75,12 +75,7 @@ namespace Asda.Integration.Api.Controllers
                 return new ProductsResponse {Error = ex.Message};
             }
         }
-
-        /// <summary>
-        /// This call is made when inventory is updated in Linnworks and is required to push to the channel.
-        /// </summary>
-        /// <param name="request"><see cref="ProductInventoryUpdateRequest"/></param>
-        /// <returns><see cref="ProductInventoryUpdateResponse"/></returns>
+        
         [HttpPost]
         public ProductInventoryUpdateResponse InventoryUpdate([FromBody] ProductInventoryUpdateRequest request)
         {
@@ -101,7 +96,7 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var inventoryItems = GetInventoryItems(request.Products);
-                _orderService.SendSnapInventoriesFile(inventoryItems);
+                _orderService.SendSnapInventoriesFiles(inventoryItems);
                 
                 var response = FillInResponse(request);
 
@@ -110,6 +105,35 @@ namespace Asda.Integration.Api.Controllers
             catch (Exception ex)
             {
                 return new ProductInventoryUpdateResponse {Error = ex.Message};
+            }
+        }
+        
+        [HttpPost]
+        public ProductPriceUpdateResponse PriceUpdate([FromBody] ProductPriceUpdateRequest request)
+        {
+            if (request.Products == null || request.Products.Length == 0)
+                return new ProductPriceUpdateResponse {Error = "Products not supplied"};
+
+            try
+            {
+                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
+
+                var response = new ProductPriceUpdateResponse();
+
+                foreach (var product in request.Products)
+                {
+                    if (product.SKU == "MyNonExistantSKU")
+                    {
+                        response.Products.Add(
+                            new ProductPriceResponse {SKU = product.SKU, Error = "SKU does not exist"});
+                    }
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new ProductPriceUpdateResponse {Error = ex.Message};
             }
         }
 
@@ -140,40 +164,6 @@ namespace Asda.Integration.Api.Controllers
             }
 
             return inventoryItems;
-        }
-
-        /// <summary>
-        /// This call is made when inventory price is updated in linnworks and is required to push to the channel.
-        /// </summary>
-        /// <param name="request"><see cref="ProductPriceUpdateRequest"/></param>
-        /// <returns><see cref="ProductPriceUpdateResponse"/></returns>
-        [HttpPost]
-        public ProductPriceUpdateResponse PriceUpdate([FromBody] ProductPriceUpdateRequest request)
-        {
-            if (request.Products == null || request.Products.Length == 0)
-                return new ProductPriceUpdateResponse {Error = "Products not supplied"};
-
-            try
-            {
-                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-
-                var response = new ProductPriceUpdateResponse();
-
-                foreach (var product in request.Products)
-                {
-                    if (product.SKU == "MyNonExistantSKU")
-                    {
-                        response.Products.Add(
-                            new ProductPriceResponse {SKU = product.SKU, Error = "SKU does not exist"});
-                    }
-                }
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new ProductPriceUpdateResponse {Error = ex.Message};
-            }
         }
     }
 }

@@ -6,15 +6,14 @@ using Renci.SshNet;
 
 namespace Asda.Integration.Business.Services
 {
-    public class FtpServerService : IFtpServerService
+    public class FtpService : IFtpServerService
     {
         public FtpSettingsModel FtpSettings { get; set; }
 
 
-        public FtpServerService(IFtpConfigManagerService ftpConfig)
+        public FtpService(IFtpConfigManagerService ftpConfig)
         {
-            FtpSettings = new FtpSettingsModel(ftpConfig.Port, ftpConfig.UserName, ftpConfig.Password,
-                ftpConfig.Host, ftpConfig.ServerFilePath);
+            FtpSettings = ftpConfig.FtpSettings;
         }
 
         public void DownloadXmlFileFromServer(string path)
@@ -26,18 +25,18 @@ namespace Asda.Integration.Business.Services
                 client.Connect();
                 if (client.IsConnected)
                 {
-                    using var stream = System.IO.File.Create(path);
+                    using var stream = File.Create(path);
                     client.DownloadFile(FtpSettings.ServerFilePath, stream);
                 }
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with with GetXmlFileFromServer, with message {e.Message}";
+                var message = $"Failed while working with GetXmlFileFromServer, with message {e.Message}";
                 throw new Exception(message);
             }
         }
 
-        public void SentFilesToServer(string localPath, string remotePath)
+        public void SendFilesToServer(string localPath, string remotePath)
         {
             try
             {
@@ -56,7 +55,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with with SentFileToServer, with message {e.Message}";
+                var message = $"Failed while working with SentFileToServer, with message {e.Message}";
                 throw new Exception(message);
             }
         }

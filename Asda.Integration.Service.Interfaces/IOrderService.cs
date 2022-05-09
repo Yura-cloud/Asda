@@ -13,7 +13,7 @@ namespace Asda.Integration.Service.Intefaces
 
         void SendDispatchFiles(List<ShipmentConfirmation> shipmentConfirmations);
         void SendAcknowledgmentFile(Acknowledgment acknowledgment);
-        void SendCancellationsFile(List<Cancellation> cancellations);
-        void SendSnapInventoriesFile(List<InventorySnapshot> inventorySnapshots );
+        void SendCancellationsFiles(List<Cancellation> cancellations);
+        void SendSnapInventoriesFiles(List<InventorySnapshot> inventorySnapshots );
     }
 }

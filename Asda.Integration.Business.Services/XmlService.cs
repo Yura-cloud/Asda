@@ -33,7 +33,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with with GetXmlFileFromServer, with message {e.Message}";
+                var message = $"Failed while working with GetXmlFileFromServer, with message {e.Message}";
                 throw new Exception(message);
             }
         }
@@ -46,7 +46,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < shipmentConfirmations.Count; i++)
                 {
                     var shipmentConfirmation = shipmentConfirmations[i];
-
+                    
                     var filePath = Path.Combine(path, $"{DispatchFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 
@@ -72,7 +72,7 @@ namespace Asda.Integration.Business.Services
 
                 var filePath = Path.Combine(path, $"{AcknowledgmentFileName}{FileType}");
                 var fileStream = File.Create(filePath);
-
+                
                 var namespaces = new XmlSerializerNamespaces();
                 namespaces.Add("", "");
 
@@ -95,7 +95,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < cancellations.Count; i++)
                 {
                     var cancellation = cancellations[i];
-
+                    
                     var filePath = Path.Combine(path, $"{CancellationFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 
@@ -123,6 +123,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < inventorySnapshots.Count; i++)
                 {
                     var inventorySnapshot = inventorySnapshots[i];
+                    
                     var filePath = Path.Combine(path, $"{SnapShotFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 
