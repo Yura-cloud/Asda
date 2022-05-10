@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Order;
 using Address = Asda.Integration.Domain.Models.Order.Address;

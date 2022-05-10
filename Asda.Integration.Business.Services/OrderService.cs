@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
-using Asda.Integration.Domain.Models.Business.XML.Cancellation;
-using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
-using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 
@@ -35,33 +31,17 @@ namespace Asda.Integration.Business.Services
             return _xmlService.GetPurchaseOrderFromXml(_localFileStorage.OrderPath);
         }
 
-        public void SendDispatchFiles(List<ShipmentConfirmation> shipmentConfirmations)
+        public List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list, XmlModelType modelType)
         {
-            _xmlService.CreateLocalDispatchXmlFiles(shipmentConfirmations, _localFileStorage.DispatchPath);
-            _ftpServer.SendFilesToServer(_localFileStorage.DispatchPath, _remoteConfig.DispatchPath);
-        }
+            var path = modelType switch
+            {
+                XmlModelType.Acknowledgment => _remoteConfig.AcknowledgmentPath,
+                XmlModelType.Cancellations => _remoteConfig.CancellationPath,
+                XmlModelType.Dispatch => _remoteConfig.DispatchPath,
+                XmlModelType.SnapInventory => _remoteConfig.SnapInventoryPath
+            };
 
-        public void SendAcknowledgmentFile(Acknowledgment acknowledgment)
-        {
-            _xmlService.CreateLocalAcknowledgmentXmlFile(acknowledgment,
-                _localFileStorage.AcknowledgmentPath);
-            _ftpServer.SendFilesToServer(_localFileStorage.AcknowledgmentPath,
-                _remoteConfig.AcknowledgmentPath);
-        }
-
-        public void SendCancellationsFiles(List<Cancellation> cancellations)
-        {
-            _xmlService.CreateLocalCancellationXmlFiles(cancellations, _localFileStorage.CancellationPath);
-            _ftpServer.SendFilesToServer(_localFileStorage.CancellationPath,
-                _remoteConfig.CancellationPath);
-        }
-
-        public void SendSnapInventoriesFiles(List<InventorySnapshot> inventorySnapshots)
-        {
-            _xmlService.CreateLocalSnapInventoriesXmlFiles(inventorySnapshots,
-                _localFileStorage.SnapInventoryPath);
-            _ftpServer.SendFilesToServer(_localFileStorage.SnapInventoryPath,
-                _remoteConfig.SnapInventoryPath);
+            return _ftpServer.CreateFiles(list, path);
         }
     }
 }

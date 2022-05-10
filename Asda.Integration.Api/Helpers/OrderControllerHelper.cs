@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Order;
 
 namespace SampleChannel.Helpers

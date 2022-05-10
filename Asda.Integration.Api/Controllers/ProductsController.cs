@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Asda.Integration.Api.Mappers;
+using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
 using Asda.Integration.Service.Intefaces;
@@ -75,7 +78,7 @@ namespace Asda.Integration.Api.Controllers
                 return new ProductsResponse {Error = ex.Message};
             }
         }
-        
+
         [HttpPost]
         public ProductInventoryUpdateResponse InventoryUpdate([FromBody] ProductInventoryUpdateRequest request)
         {
@@ -96,10 +99,21 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var inventoryItems = GetInventoryItems(request.Products);
-                _orderService.SendSnapInventoriesFiles(inventoryItems);
-                
-                var response = FillInResponse(request);
+                var xmlErrors = _orderService.CreateXmlFilesOnFtp(inventoryItems, XmlModelType.SnapInventory);
 
+                var response = FillInResponse(request);
+                if (!xmlErrors.Any())
+                {
+                    return response;
+                }
+
+                var messages = new StringBuilder();
+                foreach (var xmlError in xmlErrors)
+                {
+                    messages.Append(xmlError.Message).AppendLine();
+                }
+
+                response.Error = messages.ToString();
                 return response;
             }
             catch (Exception ex)
@@ -107,7 +121,7 @@ namespace Asda.Integration.Api.Controllers
                 return new ProductInventoryUpdateResponse {Error = ex.Message};
             }
         }
-        
+
         [HttpPost]
         public ProductPriceUpdateResponse PriceUpdate([FromBody] ProductPriceUpdateRequest request)
         {

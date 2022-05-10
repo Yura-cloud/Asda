@@ -46,7 +46,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < shipmentConfirmations.Count; i++)
                 {
                     var shipmentConfirmation = shipmentConfirmations[i];
-                    
+
                     var filePath = Path.Combine(path, $"{DispatchFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 
@@ -72,7 +72,7 @@ namespace Asda.Integration.Business.Services
 
                 var filePath = Path.Combine(path, $"{AcknowledgmentFileName}{FileType}");
                 var fileStream = File.Create(filePath);
-                
+
                 var namespaces = new XmlSerializerNamespaces();
                 namespaces.Add("", "");
 
@@ -95,7 +95,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < cancellations.Count; i++)
                 {
                     var cancellation = cancellations[i];
-                    
+
                     var filePath = Path.Combine(path, $"{CancellationFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 
@@ -114,8 +114,7 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        public void CreateLocalSnapInventoriesXmlFiles(List<InventorySnapshot> inventorySnapshots,
-            string path)
+        public void CreateLocalSnapInventoriesXmlFiles(List<InventorySnapshot> inventorySnapshots, string path)
         {
             try
             {
@@ -123,7 +122,7 @@ namespace Asda.Integration.Business.Services
                 for (var i = 0; i < inventorySnapshots.Count; i++)
                 {
                     var inventorySnapshot = inventorySnapshots[i];
-                    
+
                     var filePath = Path.Combine(path, $"{SnapShotFileName}_{i + 1}{FileType}");
                     var fileStream = File.Create(filePath);
 

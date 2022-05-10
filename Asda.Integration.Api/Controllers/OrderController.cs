@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Asda.Integration.Api.Mappers;
+using Asda.Integration.Domain.Models.Business;
+using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
@@ -51,13 +55,20 @@ namespace Asda.Integration.Api.Controllers
                 var order = OrderMapper.MapToOrder(purchaseOrder);
 
                 var acknowledgment = AcknowledgmentMapper.MapToAcknowledgment(order.ReferenceNumber);
-                _orderService.SendAcknowledgmentFile(acknowledgment);
+                var errorsIndex = _orderService.CreateXmlFilesOnFtp(new List<Acknowledgment> {acknowledgment},
+                    XmlModelType.Acknowledgment);
 
-                return new OrdersResponse
+                if (!errorsIndex.Any())
                 {
-                    Orders = new[] {order},
-                    HasMorePages = false
-                };
+                    return new OrdersResponse
+                    {
+                        Orders = new[] {order},
+                        HasMorePages = false,
+                    };
+                }
+
+                var message = $"There was en Error in this OrderReferenceNumber => {order.ReferenceNumber}";
+                return new OrdersResponse {Error = message};
             }
             catch (Exception ex)
             {
@@ -88,12 +99,34 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var shipmentConfirmations = GetShipmentConfirmations(request);
-                _orderService.SendDispatchFiles(shipmentConfirmations);
-                return new OrderDespatchResponse();
+                var xmlErrors = _orderService.CreateXmlFilesOnFtp(shipmentConfirmations, XmlModelType.Dispatch);
+                if (!xmlErrors.Any())
+                {
+                    return new OrderDespatchResponse();
+                }
+
+                var response = new OrderDespatchResponse
+                {
+                    Orders = new List<OrderDespatchError>()
+                };
+
+                foreach (var xmlError in xmlErrors)
+                {
+                    var error = new OrderDespatchError
+                    {
+                        ReferenceNumber = shipmentConfirmations[xmlError.Index].Request.ShipNoticeRequest
+                            .ShipNoticePortion
+                            .OrderReference.OrderID.ToString(),
+                        Error = xmlError.Message
+                    };
+                    response.Orders.Add(error);
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
-                var message = $"Failed while working with Despatch Action, with message {ex.Message}";
+                var message = $"Failed while working with Dispatch Action, with message {ex.Message}";
                 _logger.LogError(message);
 
                 return new OrderDespatchResponse
@@ -122,7 +155,26 @@ namespace Asda.Integration.Api.Controllers
                 }
 
                 var cancellations = GetCancellations(request);
-                _orderService.SendCancellationsFiles(cancellations);
+                var xmlErrors = _orderService.CreateXmlFilesOnFtp(cancellations, XmlModelType.Cancellations);
+
+                if (!xmlErrors.Any())
+                {
+                    return new OrderCancelResponse();
+                }
+
+                var response = new OrderCancelResponse
+                {
+                    HasError = true
+                };
+
+                var messages = new StringBuilder();
+                foreach (var xmlError in xmlErrors)
+                {
+                    messages.Append(xmlError.Message).AppendLine();
+                }
+
+                response.Error = messages.ToString();
+                return response;
             }
             catch (Exception e)
             {
@@ -130,16 +182,14 @@ namespace Asda.Integration.Api.Controllers
                 _logger.LogError(message);
                 return new OrderCancelResponse {Error = message, HasError = true};
             }
-
-            return new OrderCancelResponse();
         }
 
         private List<ShipmentConfirmation> GetShipmentConfirmations(OrderDespatchRequest request)
         {
             var shipmentConfirmations = new List<ShipmentConfirmation>();
-            foreach (var orderDespatch in request.Orders)
+            foreach (var orderDispatch in request.Orders)
             {
-                var shipmentConfirmation = ShipmentMapper.MapToShipmentConfirmation(orderDespatch);
+                var shipmentConfirmation = ShipmentMapper.MapToShipmentConfirmation(orderDispatch);
                 shipmentConfirmations.Add(shipmentConfirmation);
             }
 
