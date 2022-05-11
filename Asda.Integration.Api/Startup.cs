@@ -28,30 +28,29 @@ namespace SampleChannel
             services.AddControllersWithViews();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddControllers()
-                .AddNewtonsoftJson(opt =>
-                {
-                    opt.SerializerSettings.Converters.Add(new StringEnumConverter());
-                });
+                .AddNewtonsoftJson(opt => { opt.SerializerSettings.Converters.Add(new StringEnumConverter()); });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleChannel", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "SampleChannel", Version = "v1"});
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddScoped<IOrderService, OrderService>();
-            
-            services.AddScoped<IXmlService,XmlService>();
 
-            services.AddScoped<IFtpServerService, FtpService>();
+            services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<IXmlService, XmlService>();
+
+            services.AddScoped<IFtpService, FtpService>();
 
             services.AddScoped<IFtpConfigManagerService, FtpConfigManagerService>();
 
             services.AddScoped<ILocalConfigManagerService, LocalConfigManagerService>();
-            
+
             services.AddScoped<IRemoteConfigManagerService, RemoteConfigManagerService>();
 
             services.AddSingleton<IConfigStages, ConfigStages>();
-            
+
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
         }
 
@@ -77,11 +76,7 @@ namespace SampleChannel
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-            
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -71,14 +71,12 @@ namespace Asda.Integration.Api.Controllers
             try
             {
                 var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-
-                //Would normally do something here to test.
+                
                 if (user == null)
                 {
                     return new BaseResponse {Error = "User not found"};
                 }
                 
-                //return new BaseResponse();
                 return new BaseResponse() {Error = null};
             }
             catch (Exception ex)

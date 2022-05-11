@@ -3,11 +3,9 @@ using Asda.Integration.Domain.Models.Business;
 
 namespace Asda.Integration.Service.Interfaces
 {
-    public interface IFtpServerService
+    public interface IFtpService
     {
-        FtpSettingsModel FtpSettings { get; set; }
-        void DownloadXmlFileFromServer(string path);
-        void SendFilesToServer(string localPath, string remotePath);
+        void DownloadXmlFileFromFtp(string path);
         List<XmlError> CreateFiles<T>(List<T> models, string remotePath);
     }
 }

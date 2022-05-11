@@ -2,26 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
-using Asda.Integration.Domain.Models.Business.XML.Cancellation;
-using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
+using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
-using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Service.Interfaces;
 
 namespace Asda.Integration.Business.Services
 {
     public class XmlService : IXmlService
     {
-        private const string CancellationFileName = "Cancellation";
+        private readonly IRemoteConfigManagerService _remoteConfig;
+        private readonly IFtpService _ftp;
 
-        private const string DispatchFileName = "DispatchConfirmation";
-
-        private const string AcknowledgmentFileName = "Acknowledgment";
-
-        private const string SnapShotFileName = "SnapShot";
-
-        private const string FileType = ".xml";
+        public XmlService(IRemoteConfigManagerService remoteConfig, IFtpService ftp)
+        {
+            _remoteConfig = remoteConfig;
+            _ftp = ftp;
+        }
 
         public PurchaseOrder GetPurchaseOrderFromXml(string path)
         {
@@ -37,118 +33,17 @@ namespace Asda.Integration.Business.Services
                 throw new Exception(message);
             }
         }
-
-        public void CreateLocalDispatchXmlFiles(List<ShipmentConfirmation> shipmentConfirmations, string path)
+        public List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list, XmlModelType modelType)
         {
-            try
+            var path = modelType switch
             {
-                DeletePreviousFiles(path);
-                for (var i = 0; i < shipmentConfirmations.Count; i++)
-                {
-                    var shipmentConfirmation = shipmentConfirmations[i];
+                XmlModelType.Acknowledgment => _remoteConfig.AcknowledgmentPath,
+                XmlModelType.Cancellations => _remoteConfig.CancellationPath,
+                XmlModelType.Dispatch => _remoteConfig.DispatchPath,
+                XmlModelType.SnapInventory => _remoteConfig.SnapInventoryPath
+            };
 
-                    var filePath = Path.Combine(path, $"{DispatchFileName}_{i + 1}{FileType}");
-                    var fileStream = File.Create(filePath);
-
-                    var namespaces = new XmlSerializerNamespaces();
-                    namespaces.Add("", "");
-
-                    var writer = new XmlSerializer(typeof(ShipmentConfirmation));
-                    writer.Serialize(fileStream, shipmentConfirmation, namespaces);
-                    fileStream.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Failed while working with CreateLocalDispatchXmlFile, with message {e.Message}");
-            }
-        }
-
-        public void CreateLocalAcknowledgmentXmlFile(Acknowledgment acknowledgment, string path)
-        {
-            try
-            {
-                DeletePreviousFiles(path);
-
-                var filePath = Path.Combine(path, $"{AcknowledgmentFileName}{FileType}");
-                var fileStream = File.Create(filePath);
-
-                var namespaces = new XmlSerializerNamespaces();
-                namespaces.Add("", "");
-
-                var writer = new XmlSerializer(typeof(Acknowledgment));
-                writer.Serialize(fileStream, acknowledgment, namespaces);
-                fileStream.Close();
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    $"Failed while working with CreateLocalAcknowledgmentXmlFile, with message {e.Message}");
-            }
-        }
-
-        public void CreateLocalCancellationXmlFiles(List<Cancellation> cancellations, string path)
-        {
-            try
-            {
-                DeletePreviousFiles(path);
-                for (var i = 0; i < cancellations.Count; i++)
-                {
-                    var cancellation = cancellations[i];
-
-                    var filePath = Path.Combine(path, $"{CancellationFileName}_{i + 1}{FileType}");
-                    var fileStream = File.Create(filePath);
-
-                    var namespaces = new XmlSerializerNamespaces();
-                    namespaces.Add("", "");
-
-                    var writer = new XmlSerializer(typeof(Cancellation));
-                    writer.Serialize(fileStream, cancellation, namespaces);
-                    fileStream.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    $"Failed while working with CreateLocalCancellationsXmlFile, with message {e.Message}");
-            }
-        }
-
-        public void CreateLocalSnapInventoriesXmlFiles(List<InventorySnapshot> inventorySnapshots, string path)
-        {
-            try
-            {
-                DeletePreviousFiles(path);
-                for (var i = 0; i < inventorySnapshots.Count; i++)
-                {
-                    var inventorySnapshot = inventorySnapshots[i];
-
-                    var filePath = Path.Combine(path, $"{SnapShotFileName}_{i + 1}{FileType}");
-                    var fileStream = File.Create(filePath);
-
-                    var namespaces = new XmlSerializerNamespaces();
-                    namespaces.Add("", "");
-
-                    var writer = new XmlSerializer(typeof(InventorySnapshot));
-                    writer.Serialize(fileStream, inventorySnapshot, namespaces);
-                    fileStream.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    $"Failed while working with CreateLocalSnapInventoriesXmlFiles, with message {e.Message}");
-            }
-        }
-
-        private void DeletePreviousFiles(string path)
-        {
-            var di = new DirectoryInfo(path);
-
-            foreach (var file in di.GetFiles())
-            {
-                file.Delete();
-            }
+            return _ftp.CreateFiles(list, path);
         }
     }
 }

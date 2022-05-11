@@ -1,13 +1,13 @@
-using System.Collections.Generic;
-using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
+using Asda.Integration.Api.Mappers;
+using Asda.Integration.Domain.Models.Order;
 
 namespace Asda.Integration.Service.Intefaces
 {
     public interface IOrderService
     {
-        PurchaseOrder GetPurchaseOrder();
-
-        List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list, XmlModelType modelType);
+    
+        OrdersResponse GetOrdersAndSendManifest(OrdersRequest request);
+        OrderDespatchResponse SendDispatch(OrderDespatchRequest request);
+        OrderCancelResponse SendCanceledOrders(OrderCancelRequest request);
     }
 }
