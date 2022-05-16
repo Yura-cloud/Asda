@@ -81,30 +81,31 @@ namespace Asda.Integration.Business.Services.Adapters
                 WizardStepDescription = "Definition of tax settings and items to return",
                 ConfigItems = new[]
                 {
+                    
                     new ConfigItem
                     {
                         ConfigItemId = "PriceIncTax",
                         Description = "Defines if the price of an item includes tax",
                         GroupName = "Tax",
-                        MustBeSpecified = true,
+                        MustBeSpecified = false,
                         Name = "Price Includes Tax",
-                        ReadOnly = false,
+                        ReadOnly = true,
                         SelectedValue = userConfig.PriceIncTax.ToString(),
                         SortOrder = 1,
                         ValueType = ConfigValueType.BOOLEAN
                     },
-                    new ConfigItem
-                    {
-                        ConfigItemId = "DownloadVirtualItems",
-                        Description = "Check to allow the download of virtual items",
-                        GroupName = "Items",
-                        MustBeSpecified = false,
-                        Name = "Download Virtual Items",
-                        ReadOnly = false,
-                        //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
-                        SortOrder = 2,
-                        ValueType = ConfigValueType.BOOLEAN
-                    }
+                    // new ConfigItem
+                    // {
+                    //     ConfigItemId = "DownloadVirtualItems",
+                    //     Description = "Check to allow the download of virtual items",
+                    //     GroupName = "Items",
+                    //     MustBeSpecified = false,
+                    //     Name = "Download Virtual Items",
+                    //     ReadOnly = false,
+                    //     //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
+                    //     SortOrder = 2,
+                    //     ValueType = ConfigValueType.BOOLEAN
+                    // }
                 }
             };
         }
@@ -118,7 +119,7 @@ namespace Asda.Integration.Business.Services.Adapters
                 AccountName = "Example account name",
                 WizardStepTitle = "UserConfig",
                 WizardStepDescription = "User Config",
-                ConfigItems = new[]
+                /*ConfigItems = new[]
                 {
                     new ConfigItem
                     {
@@ -156,7 +157,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         SortOrder = 3,
                         ValueType = ConfigValueType.BOOLEAN
                     }
-                }
+                }*/
             };
         }
     }

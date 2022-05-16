@@ -7,7 +7,7 @@ namespace Asda.Integration.Domain.Models.User
         public UserConfig() 
         {
             this.IsOauth = true;
-            this.StepName = ConfigStagesEnum.AddCredentials.ToString();
+            this.StepName = ConfigStagesEnum.OrderSetup.ToString();
         }
 
         public UserConfig(string authorizationToken)
