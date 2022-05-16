@@ -72,20 +72,20 @@ namespace Asda.Integration.Business.Services.Adapters
             switch (step)
             {
                 case ConfigStagesEnum.AddCredentials:
-                    userConfig.APIKey = configItems.FirstOrDefault(s => s.ConfigItemId == "APIKey");
-                    userConfig.APISecretKey = configItems.FirstOrDefault(s => s.ConfigItemId == "APISecretKey");
-                    userConfig.IsOauth = configItems.FirstOrDefault(s => s.ConfigItemId == "IsOauth");
+                    //userConfig.APIKey = configItems.FirstOrDefault(s => s.ConfigItemId == "APIKey");
+                    //userConfig.APISecretKey = configItems.FirstOrDefault(s => s.ConfigItemId == "APISecretKey");
+                    //userConfig.IsOauth = configItems.FirstOrDefault(s => s.ConfigItemId == "IsOauth");
                     userConfig.StepName = ConfigStagesEnum.OrderSetup.ToString();
                     break;
                 case ConfigStagesEnum.OrderSetup:
                     userConfig.PriceIncTax = configItems.FirstOrDefault(s => s.ConfigItemId == "PriceIncTax");
-                    userConfig.DownloadVirtualItems = configItems.FirstOrDefault(s => s.ConfigItemId == "DownloadVirtualItems");
+                    //userConfig.DownloadVirtualItems = configItems.FirstOrDefault(s => s.ConfigItemId == "DownloadVirtualItems");
                     userConfig.StepName = ConfigStagesEnum.UserConfig.ToString();
                     break;
                 case ConfigStagesEnum.UserConfig:
                     userConfig.IsOauth = configItems.FirstOrDefault(s => s.ConfigItemId == "IsOauth");
                     userConfig.PriceIncTax = configItems.FirstOrDefault(s => s.ConfigItemId == "PriceIncTax");
-                    userConfig.DownloadVirtualItems = configItems.FirstOrDefault(s => s.ConfigItemId == "DownloadVirtualItems");
+                    //userConfig.DownloadVirtualItems = configItems.FirstOrDefault(s => s.ConfigItemId == "DownloadVirtualItems");
                     break;
             }
 

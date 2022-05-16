@@ -23,10 +23,10 @@ namespace Asda.Integration.Domain.Models.User
         public string StepName { get; set; }
         public string AccountName { get; set; }
         public bool IsConfigActive { get; set; }
-        public string APIKey { get; set; }
-        public string APISecretKey { get; set; }
+        // public string APIKey { get; set; }
+        // public string APISecretKey { get; set; }
         public bool IsOauth { get; set; }
         public bool PriceIncTax { get; set; }
-        public bool DownloadVirtualItems { get; set; }
+       //public bool DownloadVirtualItems { get; set; }
     }
 }

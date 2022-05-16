@@ -9,13 +9,13 @@ namespace Asda.Integration.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ProductsController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IUserConfigAdapter _userConfigAdapter;
 
         private readonly IProductService _productService;
 
-        public ProductsController(IUserConfigAdapter userConfigAdapter, IProductService productService)
+        public ProductController(IUserConfigAdapter userConfigAdapter, IProductService productService)
         {
             _userConfigAdapter = userConfigAdapter;
             _productService = productService;
@@ -25,43 +25,9 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost]
         public ProductsResponse Products([FromBody] ProductsRequest request)
         {
-            if (request.PageNumber <= 0)
-                return new ProductsResponse {Error = "Invalid page number"};
-
             try
             {
-                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
-
-                Random rand = new(DateTime.UtcNow.Millisecond);
-
-                var products = new List<Product>();
-
-                int productCount = 1000;
-                if (request.PageNumber == 11)
-                {
-                    productCount = 22;
-                }
-                else if (request.PageNumber > 11)
-                {
-                    productCount = 0;
-                }
-
-                for (int i = 1; i <= productCount; i++)
-                {
-                    products.Add(new Product
-                    {
-                        SKU = string.Concat("ChannelProduct_", i * request.PageNumber),
-                        Title = string.Concat("Channel Tile of product ChannelProduct_", i * request.PageNumber),
-                        Price = (decimal) rand.NextDouble(),
-                        Quantity = rand.Next(0, 100)
-                    });
-                }
-
-                return new ProductsResponse
-                {
-                    Products = products.ToArray(),
-                    HasMorePages = request.PageNumber < 11
-                };
+                return new ProductsResponse();
             }
             catch (Exception ex)
             {

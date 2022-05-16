@@ -66,7 +66,7 @@ namespace Asda.Integration.Api.Mappers
                     {
                         IsService = false,
                         ItemTitle = item.ItemDetail.Description.Text,
-                        SKU = item.ItemID.SupplierProductID.ToString(),
+                        SKU = item.ItemID.AsdaItemID,
                         PricePerUnit = Convert.ToDecimal(item.ItemDetail.UnitPrice.Money.Text),
                         Qty = item.Quantity,
                         OrderLineNumber = item.LineNumber.ToString(),

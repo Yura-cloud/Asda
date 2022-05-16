@@ -43,9 +43,12 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var inventoryItems = GetInventoryItems(request.Products);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(inventoryItems, XmlModelType.SnapInventory);
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(inventoryItems);
 
-                var response = FillInResponse(request);
+                var response = new ProductInventoryUpdateResponse
+                {
+                    Products = request.Products.Select(p => new ProductInventoryResponse {SKU = p.SKU}).ToList()
+                };
                 return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, response);
             }
             catch (Exception ex)
@@ -64,23 +67,6 @@ namespace Asda.Integration.Business.Services
             }
 
             response.Error = messages.ToString();
-            return response;
-        }
-
-        private ProductInventoryUpdateResponse FillInResponse(ProductInventoryUpdateRequest request)
-        {
-            var response = new ProductInventoryUpdateResponse
-            {
-                Products = new List<ProductInventoryResponse>()
-            };
-            foreach (var productInventory in request.Products)
-            {
-                response.Products.Add(new ProductInventoryResponse
-                {
-                    SKU = productInventory.SKU
-                });
-            }
-
             return response;
         }
 

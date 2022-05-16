@@ -57,8 +57,7 @@ namespace Asda.Integration.Business.Services
                 var order = OrderMapper.MapToOrder(purchaseOrder);
 
                 var acknowledgment = AcknowledgmentMapper.MapToAcknowledgment(order.ReferenceNumber);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(new List<Acknowledgment> {acknowledgment},
-                    XmlModelType.Acknowledgment);
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(new List<Acknowledgment> {acknowledgment});
                 if (!xmlErrors.Any())
                 {
                     return new OrdersResponse {Orders = new[] {order}, HasMorePages = false,};
@@ -89,8 +88,8 @@ namespace Asda.Integration.Business.Services
                     return userUnauthorizedResponse;
                 }
 
-                var shipmentConfirmations = GetShipmentConfirmations(request);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(shipmentConfirmations, XmlModelType.Dispatch);
+                var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(shipmentConfirmations);
                 return !xmlErrors.Any()
                     ? new OrderDespatchResponse()
                     : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
@@ -120,7 +119,7 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var cancellations = GetCancellations(request);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(cancellations, XmlModelType.Cancellations);
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(cancellations);
 
                 return !xmlErrors.Any() ? new OrderCancelResponse() : ErrorCancelResponse(xmlErrors);
             }
@@ -131,7 +130,6 @@ namespace Asda.Integration.Business.Services
                 return new OrderCancelResponse {Error = message, HasError = true};
             }
         }
-
 
         private List<Cancellation> GetCancellations(OrderCancelRequest request)
         {
@@ -149,18 +147,6 @@ namespace Asda.Integration.Business.Services
         {
             _ftp.DownloadXmlFileFromFtp(_localFileStorage.OrderPath);
             return _xmlService.GetPurchaseOrderFromXml(_localFileStorage.OrderPath);
-        }
-
-        private List<ShipmentConfirmation> GetShipmentConfirmations(OrderDespatchRequest request)
-        {
-            var shipmentConfirmations = new List<ShipmentConfirmation>();
-            foreach (var orderDispatch in request.Orders)
-            {
-                var shipmentConfirmation = ShipmentMapper.MapToShipmentConfirmation(orderDispatch);
-                shipmentConfirmations.Add(shipmentConfirmation);
-            }
-
-            return shipmentConfirmations;
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)

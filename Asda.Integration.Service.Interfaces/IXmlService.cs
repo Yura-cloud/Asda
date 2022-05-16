@@ -7,7 +7,7 @@ namespace Asda.Integration.Service.Interfaces
     public interface IXmlService
     {
         PurchaseOrder GetPurchaseOrderFromXml(string path);
-        List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list, XmlModelType modelType);
+        List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list);
 
     }
 }

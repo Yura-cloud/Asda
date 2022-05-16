@@ -29,45 +29,45 @@ namespace Asda.Integration.Business.Services.Adapters
                 AccountName = "Example account name",
                 WizardStepTitle = "Add Credentials",
                 WizardStepDescription = "This is where you add your website credentials",
-                ConfigItems = new[]
-                {
-                    new ConfigItem
-                    {
-                        ConfigItemId = "APIKey",
-                        Description = "Website API Key",
-                        GroupName = "API Credentials",
-                        MustBeSpecified = true,
-                        Name = "API Key",
-                        ReadOnly = false,
-                        SelectedValue = userConfig.APIKey ?? string.Empty,
-                        SortOrder = 1,
-                        ValueType = ConfigValueType.PASSWORD
-                    },
-                    new ConfigItem
-                    {
-                        ConfigItemId = "APISecretKey",
-                        Description = "Website API Secret Key",
-                        GroupName = "API Credentials",
-                        MustBeSpecified = true,
-                        Name = "API Secret Key",
-                        ReadOnly = false,
-                        SelectedValue = userConfig.APISecretKey ?? string.Empty,
-                        SortOrder = 2,
-                        ValueType = ConfigValueType.PASSWORD
-                    },
-                    new ConfigItem
-                    {
-                        ConfigItemId = "IsOauth",
-                        Description = "Defines if the authentication type is Oauth",
-                        GroupName = "API Settings",
-                        MustBeSpecified = true,
-                        Name = "Is Oauth",
-                        ReadOnly = false,
-                        SelectedValue = userConfig.IsOauth.ToString(),
-                        SortOrder = 3,
-                        ValueType = ConfigValueType.BOOLEAN
-                    }
-                }
+                // ConfigItems = new[]
+                // {
+                //     new ConfigItem
+                //     {
+                //         ConfigItemId = "APIKey",
+                //         Description = "Website API Key",
+                //         GroupName = "API Credentials",
+                //         MustBeSpecified = true,
+                //         Name = "API Key",
+                //         ReadOnly = false,
+                //         //SelectedValue = userConfig.APIKey ?? string.Empty,
+                //         SortOrder = 1,
+                //         ValueType = ConfigValueType.PASSWORD
+                //     },
+                //     new ConfigItem
+                //     {
+                //         ConfigItemId = "APISecretKey",
+                //         Description = "Website API Secret Key",
+                //         GroupName = "API Credentials",
+                //         MustBeSpecified = true,
+                //         Name = "API Secret Key",
+                //         ReadOnly = false,
+                //         //SelectedValue = userConfig.APISecretKey ?? string.Empty,
+                //         SortOrder = 2,
+                //         ValueType = ConfigValueType.PASSWORD
+                //     },
+                //     new ConfigItem
+                //     {
+                //         ConfigItemId = "IsOauth",
+                //         Description = "Defines if the authentication type is Oauth",
+                //         GroupName = "API Settings",
+                //         MustBeSpecified = true,
+                //         Name = "Is Oauth",
+                //         ReadOnly = false,
+                //         SelectedValue = userConfig.IsOauth.ToString(),
+                //         SortOrder = 3,
+                //         ValueType = ConfigValueType.BOOLEAN
+                //     }
+                // }
             };
         }
 
@@ -101,7 +101,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = false,
                         Name = "Download Virtual Items",
                         ReadOnly = false,
-                        SelectedValue = userConfig.DownloadVirtualItems.ToString(),
+                        //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
                         SortOrder = 2,
                         ValueType = ConfigValueType.BOOLEAN
                     }
@@ -152,7 +152,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = false,
                         Name = "Download Virtual Items",
                         ReadOnly = false,
-                        SelectedValue = userConfig.DownloadVirtualItems.ToString(),
+                        //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
                         SortOrder = 3,
                         ValueType = ConfigValueType.BOOLEAN
                     }

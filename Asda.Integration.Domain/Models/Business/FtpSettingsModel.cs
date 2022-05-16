@@ -8,7 +8,6 @@ namespace Asda.Integration.Domain.Models.Business
         public string Host { get; }
         public string ServerFilePath { get; }
 
-
         public FtpSettingsModel(int port, string userName, string password, string host, string serverFilePath)
         {
             Port = port;

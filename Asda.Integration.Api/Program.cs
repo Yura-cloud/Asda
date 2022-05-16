@@ -20,7 +20,7 @@ namespace Asda.Integration.Api.Controllers
         {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
-                .WriteTo.File(new JsonFormatter(), Path.Combine("Logs", "log.json"))
+                .WriteTo.File(Path.Combine("Logs", "log.txt"))
                 .CreateLogger();
             try
             {

@@ -36,7 +36,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with GetXmlFileFromServer, with message {e.Message}";
+                var message = $"Failed while working with DownloadXmlFileFromFtp, with message {e.Message}";
                 throw new Exception(message);
             }
         }
