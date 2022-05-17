@@ -49,6 +49,7 @@ namespace Asda.Integration.Business.Services
             client.Connect();
             if (client.IsConnected)
             {
+                DeleteFiles(remotePath, client);
                 for (var i = 0; i < models.Count; i++)
                 {
                     try
@@ -73,6 +74,18 @@ namespace Asda.Integration.Business.Services
             }
 
             return errorsXml;
+        }
+
+        private void DeleteFiles(string remotePath, SftpClient client)
+        {
+            var files = client.ListDirectory(remotePath);
+            foreach (var sftpFile in files)
+            {
+                if (sftpFile.Name is not ("." or ".."))
+                {
+                    client.DeleteFile(sftpFile.FullName);
+                }
+            }
         }
     }
 }

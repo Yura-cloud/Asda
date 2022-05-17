@@ -1,4 +1,5 @@
-﻿using Asda.Integration.Api.Mappers;
+﻿using System;
+using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,13 @@ namespace Asda.Integration.Api.Controllers
         public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
+        }
+
+        [HttpGet]
+        public IActionResult GetPicture()
+        {
+            var b = System.IO.File.ReadAllBytes(@"wwwroot\images\Asda_60.png");
+            return File(b, "image/jpeg");
         }
 
         [HttpPost]

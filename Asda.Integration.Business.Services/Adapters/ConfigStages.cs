@@ -77,36 +77,38 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 StepName = "OrderSetup",
                 AccountName = "Example account name",
-                WizardStepTitle = "Order Setup",
-                WizardStepDescription = "Definition of tax settings and items to return",
-                ConfigItems = new[]
-                {
-                    
-                    new ConfigItem
-                    {
-                        ConfigItemId = "PriceIncTax",
-                        Description = "Defines if the price of an item includes tax",
-                        GroupName = "Tax",
-                        MustBeSpecified = false,
-                        Name = "Price Includes Tax",
-                        ReadOnly = true,
-                        SelectedValue = userConfig.PriceIncTax.ToString(),
-                        SortOrder = 1,
-                        ValueType = ConfigValueType.BOOLEAN
-                    },
-                    // new ConfigItem
-                    // {
-                    //     ConfigItemId = "DownloadVirtualItems",
-                    //     Description = "Check to allow the download of virtual items",
-                    //     GroupName = "Items",
-                    //     MustBeSpecified = false,
-                    //     Name = "Download Virtual Items",
-                    //     ReadOnly = false,
-                    //     //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
-                    //     SortOrder = 2,
-                    //     ValueType = ConfigValueType.BOOLEAN
-                    // }
-                }
+                //WizardStepTitle = "Order Setup",
+                WizardStepTitle = "Welcome to Asda",
+                //WizardStepDescription = "Definition of tax settings and items to return",
+                WizardStepDescription = "Click next to finish",
+                // ConfigItems = new[]
+                // {
+                //     
+                //     new ConfigItem
+                //     {
+                //         ConfigItemId = "PriceIncTax",
+                //         Description = "Defines if the price of an item includes tax",
+                //         GroupName = "Tax",
+                //         MustBeSpecified = false,
+                //         Name = "Price Includes Tax",
+                //         ReadOnly = true,
+                //         SelectedValue = userConfig.PriceIncTax.ToString(),
+                //         SortOrder = 1,
+                //         ValueType = ConfigValueType.BOOLEAN
+                //     },
+                //     // new ConfigItem
+                //     // {
+                //     //     ConfigItemId = "DownloadVirtualItems",
+                //     //     Description = "Check to allow the download of virtual items",
+                //     //     GroupName = "Items",
+                //     //     MustBeSpecified = false,
+                //     //     Name = "Download Virtual Items",
+                //     //     ReadOnly = false,
+                //     //     //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
+                //     //     SortOrder = 2,
+                //     //     ValueType = ConfigValueType.BOOLEAN
+                //     // }
+                // }
             };
         }
 

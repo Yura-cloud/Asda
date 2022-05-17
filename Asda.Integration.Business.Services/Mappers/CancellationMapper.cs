@@ -55,6 +55,7 @@ namespace Asda.Integration.Api.Mappers
                         {
                             OrderID = Convert.ToInt32(orderCancellation.ReferenceNumber)
                         },
+                        
                         ConfirmationItem = new ConfirmationItem
                         {
                             LineNumber = itemNumber + 1,

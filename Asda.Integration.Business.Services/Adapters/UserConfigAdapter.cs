@@ -78,7 +78,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     userConfig.StepName = ConfigStagesEnum.OrderSetup.ToString();
                     break;
                 case ConfigStagesEnum.OrderSetup:
-                    userConfig.PriceIncTax = configItems.FirstOrDefault(s => s.ConfigItemId == "PriceIncTax");
+                    //userConfig.PriceIncTax = configItems.FirstOrDefault(s => s.ConfigItemId == "PriceIncTax");
                     //userConfig.DownloadVirtualItems = configItems.FirstOrDefault(s => s.ConfigItemId == "DownloadVirtualItems");
                     userConfig.StepName = ConfigStagesEnum.UserConfig.ToString();
                     break;
