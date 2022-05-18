@@ -3,6 +3,7 @@ using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Asda.Integration.Api.Controllers
 {
@@ -12,9 +13,19 @@ namespace Asda.Integration.Api.Controllers
     {
         private readonly IOrderService _orderService;
 
-        public OrderController(IOrderService orderService)
+        private readonly ILogger<OrderController> _logger;
+
+        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
         {
             _orderService = orderService;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public IActionResult GetToken(string token, string tracking)
+        {
+            _logger.LogError($"THIS IS TOKEN {token}");
+            return Ok();
         }
 
         [HttpGet]

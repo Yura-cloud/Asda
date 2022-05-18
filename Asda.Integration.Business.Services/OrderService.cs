@@ -118,8 +118,8 @@ namespace Asda.Integration.Business.Services
                     return userUnauthorizedResponse;
                 }
 
-                var cancellations = GetCancellations(request);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(cancellations);
+                var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(new List<Cancellation> {cancellation});
 
                 return !xmlErrors.Any() ? new OrderCancelResponse() : ErrorCancelResponse(xmlErrors);
             }
@@ -129,18 +129,6 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError(message);
                 return new OrderCancelResponse {Error = message, HasError = true};
             }
-        }
-
-        private List<Cancellation> GetCancellations(OrderCancelRequest request)
-        {
-            var cancellations = new List<Cancellation>();
-            for (int i = 0; i < request.Cancellation.Items.Count; i++)
-            {
-                var cancellation = CancellationMapper.MapToCancellation(request.Cancellation, i);
-                cancellations.Add(cancellation);
-            }
-
-            return cancellations;
         }
 
         private PurchaseOrder GetPurchaseOrder()

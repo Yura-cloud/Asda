@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Asda.Integration.Domain.Models.Business.XML.Cancellation
@@ -27,7 +28,7 @@ namespace Asda.Integration.Domain.Models.Business.XML.Cancellation
         public OrderReference OrderReference { get; set; }
 
         [XmlElement(ElementName = "ConfirmationItem")]
-        public ConfirmationItem ConfirmationItem { get; set; }
+        public List<ConfirmationItem> ConfirmationItem { get; set; }
     }
 
     [XmlRoot(ElementName = "ConfirmationHeader")]

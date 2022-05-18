@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Order;
@@ -7,7 +9,7 @@ namespace Asda.Integration.Api.Mappers
 {
     public class CancellationMapper
     {
-        public static Cancellation MapToCancellation(OrderCancellation orderCancellation, int itemNumber)
+        public static Cancellation MapToCancellation(OrderCancellation orderCancellation)
         {
             var cancellation = new Cancellation
             {
@@ -54,23 +56,25 @@ namespace Asda.Integration.Api.Mappers
                         OrderReference = new OrderReference
                         {
                             OrderID = Convert.ToInt32(orderCancellation.ReferenceNumber)
-                        },
-                        
-                        ConfirmationItem = new ConfirmationItem
-                        {
-                            LineNumber = itemNumber + 1,
-                            Quantity = orderCancellation.Items[itemNumber].CancellationQuantity,
-                            UnitOfMeasure = "EACH",
-                            ConfirmationStatus = new ConfirmationStatus
-                            {
-                                Type = "reject",
-                                Quantity = orderCancellation.Items[itemNumber].CancellationQuantity,
-                                UnitOfMeasure = "EACH"
-                            }
                         }
                     }
                 }
             };
+            var confirmationItems = orderCancellation.Items
+                .Select(item => new ConfirmationItem
+                {
+                    LineNumber = Convert.ToInt32(item.OrderLineNumber),
+                    Quantity = item.CancellationQuantity,
+                    UnitOfMeasure = "EACH",
+                    ConfirmationStatus = new ConfirmationStatus
+                    {
+                        Type = "reject",
+                        Quantity = item.CancellationQuantity,
+                        UnitOfMeasure = "EACH"
+                    }
+                }).ToList();
+            cancellation.Request.ConfirmationRequest.ConfirmationItem = confirmationItems;
+            
             return cancellation;
         }
     }
