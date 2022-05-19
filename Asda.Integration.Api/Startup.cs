@@ -55,6 +55,8 @@ namespace SampleChannel
             services.AddSingleton<IConfigStages, ConfigStages>();
 
             services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
+            
+            services.AddSingleton<IAuthTokenService, AuthTokenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

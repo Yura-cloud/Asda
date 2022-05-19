@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SampleChannel;
 using Serilog;
-using Serilog.Formatting.Json;
 
 namespace Asda.Integration.Api.Controllers
 {

@@ -481,6 +481,7 @@
         "dependencies": {
           "Asda.Integration.Domain.Interfaces": "1.0.0",
           "Asda.Integration.Service.Interfaces": "1.0.0",
+          "LinnworksMacroHelpers": "1.0.0",
           "SSH.NET": "2020.0.1"
         },
         "compile": {
@@ -524,6 +525,33 @@
         },
         "runtime": {
           "bin/placeholder/Asda.Integration.Service.Interfaces.dll": {}
+        }
+      },
+      "LinnworksAPI/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1"
+        },
+        "compile": {
+          "bin/placeholder/LinnworksAPI.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LinnworksAPI.dll": {}
+        }
+      },
+      "LinnworksMacroHelpers/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "LinnworksAPI": "1.0.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "2.0.0"
+        },
+        "compile": {
+          "bin/placeholder/LinnworksMacroHelpers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LinnworksMacroHelpers.dll": {}
         }
       }
     }
@@ -1379,6 +1407,16 @@
       "type": "project",
       "path": "../Asda.Integration.Service.Interfaces/Asda.Integration.Service.Interfaces.csproj",
       "msbuildProject": "../Asda.Integration.Service.Interfaces/Asda.Integration.Service.Interfaces.csproj"
+    },
+    "LinnworksAPI/1.0.0": {
+      "type": "project",
+      "path": "../LinnworksAPI/LinnworksAPI.csproj",
+      "msbuildProject": "../LinnworksAPI/LinnworksAPI.csproj"
+    },
+    "LinnworksMacroHelpers/1.0.0": {
+      "type": "project",
+      "path": "../LinnworksMacroHelpers/LinnworksMacroHelpers.csproj",
+      "msbuildProject": "../LinnworksMacroHelpers/LinnworksMacroHelpers.csproj"
     }
   },
   "projectFileDependencyGroups": {

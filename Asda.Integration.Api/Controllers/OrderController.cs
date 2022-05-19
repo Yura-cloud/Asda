@@ -1,5 +1,4 @@
-﻿using System;
-using Asda.Integration.Api.Mappers;
+﻿using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +18,6 @@ namespace Asda.Integration.Api.Controllers
         {
             _orderService = orderService;
             _logger = logger;
-        }
-
-        [HttpGet]
-        public IActionResult GetToken(string token, string tracking)
-        {
-            _logger.LogError($"THIS IS TOKEN {token}");
-            return Ok();
         }
 
         [HttpGet]
