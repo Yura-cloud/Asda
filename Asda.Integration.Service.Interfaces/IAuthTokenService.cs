@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Web.Mvc;
 
 namespace Asda.Integration.Service.Intefaces
 {
     public interface IAuthTokenService
     {
-        void GetUsersInfo(string token);
+        HttpStatusCodeResult GetUsersInfo(string token);
     }
 }

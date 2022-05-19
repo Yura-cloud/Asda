@@ -1,10 +1,10 @@
-using System;
+using System.Web.Mvc;
 using Asda.Integration.Service.Intefaces;
-using Microsoft.AspNetCore.Mvc;
+using ControllerBase = Microsoft.AspNetCore.Mvc.ControllerBase;
 
 namespace Asda.Integration.Api.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/[controller]/[action]")]
     public class IdentificationController : ControllerBase
     {
         private readonly IAuthTokenService _authTokenService;
@@ -14,13 +14,10 @@ namespace Asda.Integration.Api.Controllers
             _authTokenService = authTokenService;
         }
 
-        [HttpGet]
-        public IActionResult AuthToken(string token)
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        public HttpStatusCodeResult AuthToken(string token)
         {
-            _authTokenService.GetUsersInfo(token);
-
-
-            return Ok();
+           return _authTokenService.GetUsersInfo(token);
         }
     }
 }

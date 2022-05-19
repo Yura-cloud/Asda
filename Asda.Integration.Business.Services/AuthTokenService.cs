@@ -1,10 +1,9 @@
 using System;
+using System.Net;
+using System.Web.Mvc;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using LinnworksAPI;
-using LinnworksMacroHelpers;
-using LinnworksMacroHelpers.Helpers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -12,13 +11,11 @@ namespace Asda.Integration.Business.Services
 {
     public class AuthTokenService : IAuthTokenService
     {
-        private LinnworksMacroBase LinnWorks { get; }
-
         private readonly IConfiguration _configuration;
 
-        private readonly ILogger<AuthTokenService> _logger;
-
         private readonly IUserConfigAdapter _userConfigAdapter;
+
+        private readonly ILogger<AuthTokenService> _logger;
 
         public AuthTokenService(IConfiguration configuration, ILogger<AuthTokenService> logger,
             IUserConfigAdapter userConfigAdapter)
@@ -26,45 +23,48 @@ namespace Asda.Integration.Business.Services
             _configuration = configuration;
             _logger = logger;
             _userConfigAdapter = userConfigAdapter;
-            LinnWorks = new LinnworksMacroBase();
         }
 
-
-        public void GetUsersInfo(string token)
+        public HttpStatusCodeResult GetUsersInfo(string token)
         {
             try
             {
-                _logger.LogInformation($"This is Token => {token}");
-                
-                _logger.LogInformation("Iniasializing Linnworks");
-                LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, token);
-                    //LinnWorks.Api.api
+                var session = GetSession(token);
+                if (session.UserId == Guid.Empty)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
 
-                _logger.LogInformation("Get Stock");
-                var res = LinnWorks.Api.Inventory.GetStockLocations();
-                
-                _logger.LogInformation("Get count of Stock");
-                _logger.LogError(res.Count.ToString());
+                _userConfigAdapter.CreateNew(session.Email, session.UserId, session.AppName);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Erorr, while using GetUsersInfo, with message {e.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        private BaseSession GetSession(string token)
+        {
+            try
+            {
+                var authController = new AuthController(new ApiContext("https://api.linnworks.net"));
                 var authorizeRequest = new AuthorizeByApplicationRequest
                 {
                     ApplicationId = new Guid(_configuration["AuthorizationKeys:applicationId"]),
                     ApplicationSecret = new Guid(_configuration["AuthorizationKeys:secretKey"]),
                     Token = new Guid(token)
                 };
-                _logger.LogInformation($"GetSession");
-                var session = LinnWorks.Api.Auth.AuthorizeByApplication(authorizeRequest);
-                
-                _logger.LogInformation($"Info from session {session.Email}");
-                
-                _logger.LogError(session?.Email);
-               
+                return authController.AuthorizeByApplication(authorizeRequest);
             }
             catch (Exception e)
             {
-                _logger.LogInformation("Was An Error!");
-                _logger.LogError(e.Message);
+                _logger.LogError($"Failed while GetSession, with message {e.Message}");
             }
+
+            return new BaseSession();
         }
     }
 }
