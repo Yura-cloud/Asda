@@ -173,7 +173,7 @@ namespace Asda.Integration.Business.Services
 
         private bool UserUnauthorized(OrderDespatchRequest request, out OrderDespatchResponse response)
         {
-            var user = _userConfigAdapter.Load(request.AuthorizationToken);
+            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
             if (user == null)
             {
                 var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";
@@ -189,7 +189,7 @@ namespace Asda.Integration.Business.Services
 
         private bool UserUnauthorized(OrdersRequest request, out OrdersResponse ordersResponse)
         {
-            var user = _userConfigAdapter.Load(request.AuthorizationToken);
+            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
             if (user == null)
             {
                 _logger.LogError($"User with AuthToken: {request.AuthorizationToken} - not found.");
@@ -204,7 +204,7 @@ namespace Asda.Integration.Business.Services
 
         private bool UserUnauthorized(OrderCancelRequest request, out OrderCancelResponse sendCanceledOrders)
         {
-            var user = _userConfigAdapter.Load(request.AuthorizationToken);
+            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
             if (user == null)
             {
                 var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";

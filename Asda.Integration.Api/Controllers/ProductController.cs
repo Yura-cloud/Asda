@@ -48,7 +48,7 @@ namespace Asda.Integration.Api.Controllers
 
             try
             {
-                var user = this._userConfigAdapter.Load(request.AuthorizationToken);
+                var user = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 var response = new ProductPriceUpdateResponse();
 

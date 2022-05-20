@@ -14,7 +14,7 @@ namespace Asda.Integration.Api.Controllers
             _authTokenService = authTokenService;
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [HttpGet]
         public HttpStatusCodeResult AuthToken(string token)
         {
            return _authTokenService.GetUsersInfo(token);

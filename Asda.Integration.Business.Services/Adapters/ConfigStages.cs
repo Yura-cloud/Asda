@@ -121,6 +121,21 @@ namespace Asda.Integration.Business.Services.Adapters
                 AccountName = "Example account name",
                 WizardStepTitle = "UserConfig",
                 WizardStepDescription = "User Config",
+                ConfigItems = new[]
+                {
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Location",
+                        Description = "Defines location of SnapShot",
+                        GroupName = "Inventory",
+                        MustBeSpecified = true,
+                        Name = "Location",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.Location,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    }
+                }
                 /*ConfigItems = new[]
                 {
                     new ConfigItem

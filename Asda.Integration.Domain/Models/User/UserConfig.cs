@@ -4,10 +4,10 @@ namespace Asda.Integration.Domain.Models.User
 {
     public class UserConfig : BaseRequest
     {
-        public UserConfig() 
+        public UserConfig()
         {
             this.IsOauth = true;
-            this.StepName = ConfigStagesEnum.OrderSetup.ToString();
+            this.StepName = ConfigStagesEnum.AddCredentials.ToString();
         }
 
         public UserConfig(string authorizationToken)
@@ -15,18 +15,19 @@ namespace Asda.Integration.Domain.Models.User
             this.AuthorizationToken = authorizationToken;
         }
 
-         public string Email { get; set; }
+        public string Email { get; set; }
 
         public Guid LinnworksUniqueIdentifier { get; set; }
 
         public bool IsComplete { get; set; }
         public string StepName { get; set; }
         public string AccountName { get; set; }
+        
         public bool IsConfigActive { get; set; }
-        // public string APIKey { get; set; }
-        // public string APISecretKey { get; set; }
+        public string Location { get; set; }
+
         public bool IsOauth { get; set; }
+
         public bool PriceIncTax { get; set; }
-       //public bool DownloadVirtualItems { get; set; }
     }
 }

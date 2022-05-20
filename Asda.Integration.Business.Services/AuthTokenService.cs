@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Web.Mvc;
+//using System.Web.Mvc;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using LinnworksAPI;
@@ -35,7 +36,7 @@ namespace Asda.Integration.Business.Services
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
 
-                _userConfigAdapter.CreateNew(session.Email, session.UserId, session.AppName);
+                _userConfigAdapter.CreateNew(session.Email, session.UserId, session.UserName, new Guid(token));
             }
             catch (Exception e)
             {

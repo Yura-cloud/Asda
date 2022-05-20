@@ -85,7 +85,7 @@ namespace Asda.Integration.Business.Services
         private bool UserUnauthorized(ProductInventoryUpdateRequest request,
             out ProductInventoryUpdateResponse response)
         {
-            var user = _userConfigAdapter.Load(request.AuthorizationToken);
+            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
             if (user == null)
             {
