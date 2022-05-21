@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Asda.Integration.Domain.Models.Business.XML.InventorySnapshot
@@ -53,7 +54,7 @@ namespace Asda.Integration.Domain.Models.Business.XML.InventorySnapshot
     public class Records
     {
         [XmlElement(ElementName = "Record")]
-        public Record Record { get; set; }
+        public List<Record> Record { get; set; }
     }
 
     [XmlRoot(ElementName = "InventorySnapshotRequest")]

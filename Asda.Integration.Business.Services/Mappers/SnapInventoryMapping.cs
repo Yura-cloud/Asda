@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
@@ -54,13 +55,15 @@ namespace Asda.Integration.Api.Mappers
                         },
                         Records = new Records
                         {
-                            Record = new Record
+                            Record = new List<Record>
                             {
-                                ProductId = productInventory.SKU,
-                                AllocationQty = productInventory.Quantity.ToString()
+                                new()
+                                {
+                                    ProductId = productInventory.SKU,
+                                    AllocationQty = productInventory.Quantity.ToString()
+                                }
                             }
                         }
-                        
                     }
                 }
             };
