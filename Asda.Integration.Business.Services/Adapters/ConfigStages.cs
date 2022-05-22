@@ -129,7 +129,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Description = "Defines location of SnapShot",
                         GroupName = "Inventory",
                         MustBeSpecified = true,
-                        Name = "Location",
+                        Name = "Sync Inventory from Location",
                         ReadOnly = false,
                         SelectedValue = userConfig.Location,
                         SortOrder = 1,

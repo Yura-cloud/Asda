@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
+using LinnworksAPI;
 
 namespace Asda.Integration.Api.Mappers
 {
     public static class SnapInventoryMapping
     {
-        public static InventorySnapshot MapToInventorySnapshot(ProductInventory productInventory)
+        public static InventorySnapshot MapToInventorySnapshot(StockItemLevel stockItemLevel)
         {
             var inventorySnapshot = new InventorySnapshot
             {
@@ -20,27 +20,15 @@ namespace Asda.Integration.Api.Mappers
                 {
                     From = new From
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA-123456-DC"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
                     },
                     To = new To
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA"}
                     },
                     Sender = new Sender
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "Linnworks",
-                            Identity = "Linnworks"
-                        }
+                        Credential = new Credential {Domain = "Linnworks", Identity = "Linnworks"}
                     }
                 },
                 Request = new Request
@@ -55,13 +43,11 @@ namespace Asda.Integration.Api.Mappers
                         },
                         Records = new Records
                         {
-                            Record = new List<Record>
+                            Record = new Record
                             {
-                                new()
-                                {
-                                    ProductId = productInventory.SKU,
-                                    AllocationQty = productInventory.Quantity.ToString()
-                                }
+                                ProductId = stockItemLevel.SKU,
+                                AllocationQty = stockItemLevel.Available.ToString(),
+                                OrderedQty = stockItemLevel.InOrders.ToString()
                             }
                         }
                     }

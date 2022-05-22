@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Asda.Integration.Api.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ConfigController : ControllerBase
     {
@@ -28,8 +28,9 @@ namespace Asda.Integration.Api.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
-        public AddNewUserResponse AddNewUser([FromBody] AddNewUserRequest request)
+        [HttpPost("AddNewUser")]
+        //[Route("api/config/addNewUser")]
+        public AddNewUserResponse UpdateUserInfo([FromBody] AddNewUserRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))
                 return new AddNewUserResponse {Error = "Invalid Email"};
@@ -55,7 +56,7 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("ConfigDeleted")]
         public BaseResponse ConfigDeleted([FromBody] BaseRequest request)
         {
             try
@@ -71,7 +72,7 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("ConfigTest")]
         public BaseResponse ConfigTest([FromBody] BaseRequest request)
         {
             try
@@ -99,7 +100,7 @@ namespace Asda.Integration.Api.Controllers
         /// </summary>
         /// <param name="request"><see cref="BaseRequest"/></param>
         /// <returns><see cref="PaymentTagResponse"/></returns>
-        [HttpPost]
+        [HttpPost("PaymentTags")]
         public PaymentTagResponse PaymentTags([FromBody] BaseRequest request)
         {
             try
@@ -130,7 +131,7 @@ namespace Asda.Integration.Api.Controllers
         /// </summary>
         /// <param name="request"><see cref="BaseRequest"/></param>
         /// <returns><see cref="ShippingTagResponse"/></returns>
-        [HttpPost]
+        [HttpPost("ShippingTags")]
         public ShippingTagResponse ShippingTags([FromBody] BaseRequest request)
         {
             try
@@ -173,7 +174,7 @@ namespace Asda.Integration.Api.Controllers
         /// </summary>
         /// <param name="request"><see cref="BaseRequest"/></param>
         /// <returns><see cref="UserConfigResponse"/></returns>
-        [HttpPost]
+        [HttpPost("UserConfig")]
         public UserConfigResponse UserConfig([FromBody] BaseRequest request)
         {
             try
@@ -201,7 +202,7 @@ namespace Asda.Integration.Api.Controllers
         /// </summary>
         /// <param name="request"><see cref="SaveUserConfigRequest"/></param>
         /// <returns><see cref="UserConfigResponse"/></returns>
-        [HttpPost]
+        [HttpPost("SaveConfigSave")]
         public UserConfigResponse SaveConfigSave([FromBody] SaveUserConfigRequest request)
         {
             try

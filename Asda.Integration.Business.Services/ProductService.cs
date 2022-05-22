@@ -5,6 +5,7 @@ using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
@@ -52,10 +53,9 @@ namespace Asda.Integration.Business.Services
                     return userUnauthorizedResponse;
                 }
 
-                var stockItemsLevel = GetStockItemsLevel(request, _configuration, _userConfigAdapter);
-
-                var inventoryItems = request.Products.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
-                //var inventoryItems = SnapInventoryMapping.MapToInventorySnapshot(stockItemsLevel);
+                LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, request.AuthorizationToken);
+                var stockItemsLevel = GetStockItemsLevel(request, _userConfigAdapter);
+                var inventoryItems = stockItemsLevel.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
                 var xmlErrors = _xmlService.CreateXmlFilesOnFtp(inventoryItems);
 
                 var response = new ProductInventoryUpdateResponse
@@ -64,33 +64,76 @@ namespace Asda.Integration.Business.Services
                 };
                 return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, response);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new ProductInventoryUpdateResponse {Error = ex.Message};
+                return new ProductInventoryUpdateResponse {Error = e.Message};
             }
         }
 
         private List<StockItemLevel> GetStockItemsLevel(ProductInventoryUpdateRequest request,
-            IConfiguration configuration,
             IUserConfigAdapter userConfigAdapter)
         {
-            LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(configuration, request.AuthorizationToken);
-            var itemsRequest = new GetStockItemsFullByIdsRequest
-            {
-                StockItemIds = request.Products.Select(p => new Guid(p.Reference)).ToList(),
-                DataRequirements = new List<StockItemFullExtendedDataRequirement>
-                {
-                    StockItemFullExtendedDataRequirement.StockLevels
-                }
-            };
-            var itemFull = LinnWorks.Api.Stock.GetStockItemsFullByIds(itemsRequest);
+            var userLocations = GetLocations();
             var user = userConfigAdapter.LoadByToken(request.AuthorizationToken);
-            var stockItemLevels = itemFull.StockItemsFullExtended
+            if (!userLocations.Select(l => l.LocationName).Contains(user.Location))
+            {
+                var message = $"There is no such location name like - {user.Location}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+
+            var itemsFullInfo = GetItemsFullInfo(request);
+            var stockItemLevels = itemsFullInfo.StockItemsFullExtended
                 .Select(i => i.StockLevels)
                 .SelectMany(x => x).ToList()
                 .Where(x => x.Location.LocationName == user.Location)
                 .ToList();
+            //change sku to channel sku
+            foreach (var stockItemLevel in stockItemLevels)
+            {
+                stockItemLevel.SKU = request.Products
+                    .FirstOrDefault(p => p.Reference == stockItemLevel.StockItemId.ToString())
+                    ?.SKU;
+            }
+
             return stockItemLevels;
+        }
+
+        private List<InventoryStockLocation> GetLocations()
+        {
+            try
+            {
+                return LinnWorks.Api.Inventory.GetStockLocations();
+            }
+            catch (Exception e)
+            {
+                var message = $"Failed while GetStockLocations, with message {e.Message}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+
+        private GetStockItemsFullByIdsResponse GetItemsFullInfo(ProductInventoryUpdateRequest request)
+        {
+            try
+            {
+                var itemsRequest = new GetStockItemsFullByIdsRequest
+                {
+                    StockItemIds = request.Products.Select(p => new Guid(p.Reference)).ToList(),
+                    DataRequirements = new List<StockItemFullExtendedDataRequirement>
+                    {
+                        StockItemFullExtendedDataRequirement.StockLevels
+                    }
+                };
+                var itemsFullInfo = LinnWorks.Api.Stock.GetStockItemsFullByIds(itemsRequest);
+                return itemsFullInfo;
+            }
+            catch (Exception e)
+            {
+                var message = $"Failed while GetStockItemsFullByIds, with message {e.Message}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
         }
 
 

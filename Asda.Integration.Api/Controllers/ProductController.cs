@@ -43,30 +43,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost]
         public ProductPriceUpdateResponse PriceUpdate([FromBody] ProductPriceUpdateRequest request)
         {
-            if (request.Products == null || request.Products.Length == 0)
-                return new ProductPriceUpdateResponse {Error = "Products not supplied"};
-
-            try
-            {
-                var user = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
-
-                var response = new ProductPriceUpdateResponse();
-
-                foreach (var product in request.Products)
-                {
-                    if (product.SKU == "MyNonExistantSKU")
-                    {
-                        response.Products.Add(
-                            new ProductPriceResponse {SKU = product.SKU, Error = "SKU does not exist"});
-                    }
-                }
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new ProductPriceUpdateResponse {Error = ex.Message};
-            }
+            return new ProductPriceUpdateResponse {Error = "At this moment PriceUpdate is not implemented"};
         }
     }
 }
