@@ -8,7 +8,7 @@ namespace Asda.Integration.Api.Mappers
     {
         public OrderDespatchRequest()
         {
-            this.Orders = new List<OrderDespatch>();
+            Orders = new List<OrderDespatch>();
         }
 
         /// <summary>

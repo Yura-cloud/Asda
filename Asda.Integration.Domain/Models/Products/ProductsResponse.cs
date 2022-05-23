@@ -13,6 +13,6 @@
         public Product[] Products { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
-        public bool HasProducts { get { return this.Products != null && this.Products.Length > 0; } }
+        public bool HasProducts { get { return Products != null && Products.Length > 0; } }
     }
 }

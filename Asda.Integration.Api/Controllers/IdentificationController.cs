@@ -17,7 +17,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpGet]
         public HttpStatusCodeResult AuthToken(string token)
         {
-           return _authTokenService.GetUsersInfo(token);
+           return _authTokenService.SaveUserProfile(token);
         }
     }
 }

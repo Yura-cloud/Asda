@@ -10,17 +10,17 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public FileRepository(string userStoreLocation)
         {
-            this._userStoreLocation = userStoreLocation;
+            _userStoreLocation = userStoreLocation;
         }
 
         public void Delete(string authorizationToken)
         {
-            File.Delete(this.Path(authorizationToken));
+            File.Delete(Path(authorizationToken));
         }
 
         public bool FileExists(string authorizationToken)
         {
-            return File.Exists(this.Path(authorizationToken));
+            return File.Exists(Path(authorizationToken));
         }
 
         public bool DirectoryExists()
@@ -30,7 +30,7 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public string LoadByToken(string authorizationToken)
         {
-            return File.ReadAllText(this.Path(authorizationToken));
+            return File.ReadAllText(Path(authorizationToken));
         }
 
         public string[] LoadAll()
@@ -41,12 +41,12 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public void Save(string authorizationToken, string contents)
         {
-            File.WriteAllText(this.Path(authorizationToken), contents);
+            File.WriteAllText(Path(authorizationToken), contents);
         }
 
         private string Path(string authorizationToken)
         {
-            return string.Concat(this._userStoreLocation, "//", authorizationToken, ".json");
+            return string.Concat(_userStoreLocation, "//", authorizationToken, ".json");
         }
     }
 }

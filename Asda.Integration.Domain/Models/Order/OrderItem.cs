@@ -6,7 +6,7 @@ namespace Asda.Integration.Domain.Models.Order
     {
         public OrderItem()
         {
-            this.Options = new List<OrderItemOption>();
+            Options = new List<OrderItemOption>();
         }
 
         #region Settings

@@ -4,7 +4,7 @@
     {
         public ProductsRequest()
         {
-            this.PageNumber = 1;
+            PageNumber = 1;
         }
 
         /// <summary>

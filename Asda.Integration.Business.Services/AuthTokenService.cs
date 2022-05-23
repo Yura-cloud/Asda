@@ -26,7 +26,7 @@ namespace Asda.Integration.Business.Services
             _userConfigAdapter = userConfigAdapter;
         }
 
-        public HttpStatusCodeResult GetUsersInfo(string token)
+        public HttpStatusCodeResult SaveUserProfile(string token)
         {
             try
             {

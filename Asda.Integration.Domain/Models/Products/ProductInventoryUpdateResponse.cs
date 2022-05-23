@@ -6,7 +6,7 @@ namespace Asda.Integration.Domain.Models.Products
     {
         public ProductInventoryUpdateResponse()
         {
-            this.Products = new List<ProductInventoryResponse>();
+            Products = new List<ProductInventoryResponse>();
         }
 
         /// <summary>

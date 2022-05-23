@@ -8,8 +8,8 @@ namespace Asda.Integration.Domain.Models.User
     {
         public ConfigItem()
         {
-            this.ValueType = ConfigValueType.STRING;
-            this.ListValues = new List<ConfigItemListItem>();
+            ValueType = ConfigValueType.STRING;
+            ListValues = new List<ConfigItemListItem>();
         }
 
         /// <summary>

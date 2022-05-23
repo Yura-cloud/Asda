@@ -4,7 +4,6 @@ using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Domain.Interfaces;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Interfaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Asda.Integration.Business.Services.Adapters
@@ -15,14 +14,10 @@ namespace Asda.Integration.Business.Services.Adapters
 
         private readonly IConfigStages _configStages;
 
-        private readonly ILogger<UserConfigAdapter> _logger;
-
-        public UserConfigAdapter(IOptions<AppSettings> config, IConfigStages configStages,
-            ILogger<UserConfigAdapter> logger)
+        public UserConfigAdapter(IOptions<AppSettings> config, IConfigStages configStages)
         {
             _fileRepository = config.Value.FileRepository;
             _configStages = configStages;
-            _logger = logger;
         }
 
         /// <inheritdoc />
@@ -86,7 +81,7 @@ namespace Asda.Integration.Business.Services.Adapters
                 LinnworksUniqueIdentifier = linnworksUniqueIdentifier,
                 AccountName = accountName
             };
-            this.Save(userConfig);
+            Save(userConfig);
             return userConfig;
         }
 
@@ -116,7 +111,7 @@ namespace Asda.Integration.Business.Services.Adapters
         {
             var output = Newtonsoft.Json.JsonConvert.SerializeObject(userConfig);
 
-            this._fileRepository.Save(userConfig.AuthorizationToken, output);
+            _fileRepository.Save(userConfig.AuthorizationToken, output);
         }
     }
 }

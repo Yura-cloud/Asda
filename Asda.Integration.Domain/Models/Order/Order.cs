@@ -7,11 +7,11 @@ namespace Asda.Integration.Domain.Models.Order
     {
         public Order()
         {
-            this.BillingAddress = new Address();
-            this.DeliveryAddress = new Address();
-            this.OrderItems = new List<OrderItem>();
-            this.Notes = new List<OrderNote>();
-            this.ExtendedProperties = new List<OrderExtendedProperty>();
+            BillingAddress = new Address();
+            DeliveryAddress = new Address();
+            OrderItems = new List<OrderItem>();
+            Notes = new List<OrderNote>();
+            ExtendedProperties = new List<OrderExtendedProperty>();
         }
 
         /// <summary>

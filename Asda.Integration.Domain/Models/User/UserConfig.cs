@@ -6,13 +6,13 @@ namespace Asda.Integration.Domain.Models.User
     {
         public UserConfig()
         {
-            this.IsOauth = true;
-            this.StepName = ConfigStagesEnum.AddCredentials.ToString();
+            IsOauth = true;
+            StepName = ConfigStagesEnum.AddCredentials.ToString();
         }
 
         public UserConfig(string authorizationToken)
         {
-            this.AuthorizationToken = authorizationToken;
+            AuthorizationToken = authorizationToken;
         }
 
         public string Email { get; set; }

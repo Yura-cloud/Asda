@@ -43,7 +43,7 @@ namespace Asda.Integration.Api.Controllers
 
             try
             {
-                var userConfig = this._userConfigAdapter.LoadByUserId(request.LinnworksUniqueIdentifier);
+                var userConfig = _userConfigAdapter.LoadByUserId(request.LinnworksUniqueIdentifier);
                 userConfig.AccountName = request.AccountName;
                 _userConfigAdapter.Save(userConfig);
 
@@ -61,7 +61,7 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                this._userConfigAdapter.Delete(request.AuthorizationToken);
+                _userConfigAdapter.Delete(request.AuthorizationToken);
 
                 return new BaseResponse();
             }
@@ -77,7 +77,7 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                var user = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 if (user == null)
                 {
@@ -105,7 +105,7 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                var user = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 return new PaymentTagResponse
                 {
@@ -136,7 +136,7 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                var user = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 return new ShippingTagResponse
                 {
@@ -179,7 +179,7 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                var userConfig = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                var userConfig = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 return _configStages.StageResponse(userConfig, "User config is at invalid stage");
             }
@@ -207,13 +207,13 @@ namespace Asda.Integration.Api.Controllers
         {
             try
             {
-                var userConfig = this._userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                var userConfig = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 if (request.StepName != userConfig.StepName)
                     return new UserConfigResponse
                         {Error = string.Format("Invalid step name expected {0}", userConfig.StepName)};
 
-                return this._userConfigAdapter.Save(userConfig, request.ConfigItems);
+                return _userConfigAdapter.Save(userConfig, request.ConfigItems);
             }
             catch (Exception ex)
             {

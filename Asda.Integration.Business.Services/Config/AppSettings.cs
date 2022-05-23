@@ -6,18 +6,18 @@ namespace Asda.Integration.Business.Services.Config
 {
     public class AppSettings
     {
-        public string UserStoreLocation { get; set; }
+        private string UserStoreLocation { get; set; }
 
         public virtual IRepository FileRepository
         {
             get
             {
-                if(!Directory.Exists(this.UserStoreLocation))
+                if(!Directory.Exists(UserStoreLocation))
                 {
-                    Directory.CreateDirectory(this.UserStoreLocation);
+                    Directory.CreateDirectory(UserStoreLocation);
                 }
 
-                return new FileRepository(this.UserStoreLocation);
+                return new FileRepository(UserStoreLocation);
             }
         }
     }
