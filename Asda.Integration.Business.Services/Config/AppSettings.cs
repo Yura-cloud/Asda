@@ -6,7 +6,7 @@ namespace Asda.Integration.Business.Services.Config
 {
     public class AppSettings
     {
-        private string UserStoreLocation { get; set; }
+        public string UserStoreLocation { get; set; }
 
         public virtual IRepository FileRepository
         {

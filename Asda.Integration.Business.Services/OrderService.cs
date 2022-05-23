@@ -133,8 +133,7 @@ namespace Asda.Integration.Business.Services
 
         private PurchaseOrder GetPurchaseOrder()
         {
-            _ftp.DownloadXmlFileFromFtp(_localFileStorage.OrderPath);
-            return _xmlService.GetPurchaseOrderFromXml(_localFileStorage.OrderPath);
+            return _ftp.GetPurchaseOrderFromFtp(_localFileStorage.OrderPath);
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
@@ -193,7 +192,6 @@ namespace Asda.Integration.Business.Services
             if (user == null)
             {
                 _logger.LogError($"User with AuthToken: {request.AuthorizationToken} - not found.");
-
                 ordersResponse = new OrdersResponse {Error = "User not found"};
                 return true;
             }

@@ -26,16 +26,15 @@ namespace Asda.Integration.Business.Services.Adapters
             if (string.IsNullOrWhiteSpace(authorizationToken))
                 throw new ArgumentNullException("authorizationToken");
 
-            if (_fileRepository.FileExists(authorizationToken))
+            if (!_fileRepository.FileExists(authorizationToken))
             {
-                string json = _fileRepository.LoadByToken(authorizationToken);
-                var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(json);
-                return userConfig;
+                return null;
             }
-            else
-            {
-                throw new Exception("User not found");
-            }
+
+            string json = _fileRepository.LoadByToken(authorizationToken);
+            var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(json);
+            return userConfig;
+
         }
 
         public UserConfig LoadByUserId(Guid userId)

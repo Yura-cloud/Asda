@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
+using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
 using Renci.SshNet;
@@ -21,17 +22,24 @@ namespace Asda.Integration.Business.Services
             FtpSettings = ftpConfig.FtpSettings;
         }
 
-        public void DownloadXmlFileFromFtp(string path)
+        public PurchaseOrder GetPurchaseOrderFromFtp(string path)
         {
             try
             {
                 using var client = new SftpClient(FtpSettings.Host, FtpSettings.Port, FtpSettings.UserName,
                     FtpSettings.Password);
                 client.Connect();
-                if (client.IsConnected)
+                if (!client.IsConnected)
                 {
-                    using var stream = File.Create(path);
-                    client.DownloadFile(FtpSettings.ServerFilePath, stream);
+                    var message = $"Failed while working with Ftp, client was not connected";
+                    _logger.LogError(message);
+                    throw new Exception(message);
+                }
+
+                var serializer = new XmlSerializer(typeof(PurchaseOrder));
+                using (var stream = File.OpenRead(path))
+                {
+                    return (PurchaseOrder) serializer.Deserialize(stream);
                 }
             }
             catch (Exception e)
