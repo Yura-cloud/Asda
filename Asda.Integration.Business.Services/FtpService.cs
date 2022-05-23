@@ -37,6 +37,7 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var serializer = new XmlSerializer(typeof(PurchaseOrder));
+                string[] files = Directory.GetFiles(path);
                 using (var stream = File.OpenRead(path))
                 {
                     return (PurchaseOrder) serializer.Deserialize(stream);
