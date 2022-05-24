@@ -12,7 +12,7 @@ namespace Asda.Integration.Business.Services
 {
     public class FtpService : IFtpService
     {
-        public FtpSettingsModel FtpSettings { get; set; }
+        private FtpSettingsModel FtpSettings { get; }
 
         private readonly ILogger<FtpService> _logger;
 
@@ -22,7 +22,7 @@ namespace Asda.Integration.Business.Services
             FtpSettings = ftpConfig.FtpSettings;
         }
 
-        public PurchaseOrder GetPurchaseOrderFromFtp(string path)
+        public List<PurchaseOrder> GetPurchaseOrderFromFtp(string path)
         {
             try
             {
@@ -36,16 +36,24 @@ namespace Asda.Integration.Business.Services
                     throw new Exception(message);
                 }
 
+                var purchaseOrders = new List<PurchaseOrder>();
                 var serializer = new XmlSerializer(typeof(PurchaseOrder));
-                string[] files = Directory.GetFiles(path);
-                using (var stream = File.OpenRead(path))
+                var files = client.ListDirectory(path);
+                foreach (var sftpFile in files)
                 {
-                    return (PurchaseOrder) serializer.Deserialize(stream);
+                    if (sftpFile.Name != "." && sftpFile.Name != "..")
+                    {
+                        using var stream = client.OpenRead(sftpFile.FullName);
+                        purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
+                    }
                 }
+
+                return purchaseOrders;
             }
+
             catch (Exception e)
             {
-                var message = $"Failed while working with DownloadXmlFileFromFtp, with message {e.Message}";
+                var message = $"Failed while working with GetPurchaseOrderFromFtp, with message {e.Message}";
                 throw new Exception(message);
             }
         }

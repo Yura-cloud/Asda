@@ -21,12 +21,13 @@ namespace Asda.Integration.Business.Services
 
         public List<XmlError> CreateXmlFilesOnFtp<T>(List<T> list)
         {
+            
             var path = list switch
             {
-                List<Acknowledgment> => _remoteConfig.AcknowledgmentPath,
-                List<Cancellation> => _remoteConfig.CancellationPath,
-                List<ShipmentConfirmation> => _remoteConfig.DispatchPath,
-                _ => _remoteConfig.SnapInventoryPath
+                List<Acknowledgment> => _remoteConfig.RemoteFileStorage.AcknowledgmentPath,
+                List<Cancellation> => _remoteConfig.RemoteFileStorage.CancellationPath,
+                List<ShipmentConfirmation> => _remoteConfig.RemoteFileStorage.DispatchPath,
+                _ => _remoteConfig.RemoteFileStorage.SnapInventoryPath
             };
 
             return _ftp.CreateFiles(list, path);

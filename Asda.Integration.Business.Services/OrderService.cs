@@ -22,17 +22,17 @@ namespace Asda.Integration.Business.Services
 
         private readonly IXmlService _xmlService;
 
-        private readonly LocalFileStorageModel _localFileStorage;
+        private readonly RemoteFileStorageModel _remoteFileStorage;
 
         private readonly IUserConfigAdapter _userConfigAdapter;
 
         private readonly ILogger<OrderService> _logger;
 
         public OrderService(IFtpService ftp, IXmlService xmlService,
-            ILocalConfigManagerService localConfig,
+            IRemoteConfigManagerService remoteConfig,
             IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
         {
-            _localFileStorage = localConfig.LocalFileStorage;
+            _remoteFileStorage = remoteConfig.RemoteFileStorage;
             _ftp = ftp;
             _xmlService = xmlService;
             _userConfigAdapter = userConfigAdapter;
@@ -53,18 +53,24 @@ namespace Asda.Integration.Business.Services
                     return userUnauthorizedResponse;
                 }
 
-                var purchaseOrder = GetPurchaseOrder();
-                var order = OrderMapper.MapToOrder(purchaseOrder);
-
-                var acknowledgment = AcknowledgmentMapper.MapToAcknowledgment(order.ReferenceNumber);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(new List<Acknowledgment> {acknowledgment});
-                if (!xmlErrors.Any())
+                var purchaseOrders = GetPurchaseOrder();
+                if (purchaseOrders == null)
                 {
-                    return new OrdersResponse {Orders = new[] {order}, HasMorePages = false,};
+                    return new OrdersResponse();
                 }
 
-                var message = $"There was en Error in this OrderReferenceNumber => {order.ReferenceNumber}";
-                return new OrdersResponse {Error = message};
+                var orders = purchaseOrders.Select(OrderMapper.MapToOrder);
+                var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
+                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(acknowledgments.ToList());
+                if (!xmlErrors.Any())
+                {
+                    return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
+                }
+
+                var errors = xmlErrors
+                    .Select(e => e.Message)
+                    .Aggregate(string.Empty, (current, next) => current + next);
+                return new OrdersResponse {Error = errors};
             }
             catch (Exception e)
             {
@@ -131,9 +137,9 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        private PurchaseOrder GetPurchaseOrder()
+        private List<PurchaseOrder> GetPurchaseOrder()
         {
-            return _ftp.GetPurchaseOrderFromFtp(_localFileStorage.OrderPath);
+            return _ftp.GetPurchaseOrderFromFtp(_remoteFileStorage.OrderPath);
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)

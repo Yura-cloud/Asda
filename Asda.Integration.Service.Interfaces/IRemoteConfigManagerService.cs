@@ -1,10 +1,9 @@
+using Asda.Integration.Domain.Models.Business;
+
 namespace Asda.Integration.Service.Interfaces
 {
     public interface IRemoteConfigManagerService
     {
-        string DispatchPath { get; }
-        string AcknowledgmentPath { get; }
-        string CancellationPath { get; }
-        string SnapInventoryPath { get; }
+        RemoteFileStorageModel RemoteFileStorage { get; set; }
     }
 }

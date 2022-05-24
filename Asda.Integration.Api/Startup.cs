@@ -48,8 +48,6 @@ namespace SampleChannel
 
             services.AddScoped<IFtpConfigManagerService, FtpConfigManagerService>();
 
-            services.AddScoped<ILocalConfigManagerService, LocalConfigManagerService>();
-
             services.AddScoped<IRemoteConfigManagerService, RemoteConfigManagerService>();
 
             services.AddSingleton<IConfigStages, ConfigStages>();

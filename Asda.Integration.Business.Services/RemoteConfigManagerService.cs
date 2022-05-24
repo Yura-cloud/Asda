@@ -1,3 +1,4 @@
+using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -7,20 +8,17 @@ namespace Asda.Integration.Business.Services
     {
         private readonly IConfiguration _configuration;
 
+        public RemoteFileStorageModel RemoteFileStorage { get; set; }
+
         public RemoteConfigManagerService(IConfiguration configuration)
         {
-            _configuration = configuration;
+            RemoteFileStorage = new RemoteFileStorageModel(
+                configuration.GetSection(("RemoteFileStorage")).GetSection("PurchaseOrdersPath").Value,
+                configuration.GetSection(("RemoteFileStorage")).GetSection("DispatchPath").Value,
+                configuration.GetSection(("RemoteFileStorage")).GetSection("AcknowledgmentPath").Value,
+                configuration.GetSection(("RemoteFileStorage")).GetSection("CancellationPath").Value,
+                configuration.GetSection(("RemoteFileStorage")).GetSection("SnapInventoryPath").Value
+            );
         }
-
-        public string DispatchPath => _configuration.GetSection(("RemoteFileStorage")).GetSection("DispatchPath").Value;
-
-        public string AcknowledgmentPath =>
-            _configuration.GetSection(("RemoteFileStorage")).GetSection("AcknowledgmentPath").Value;
-
-        public string CancellationPath =>
-            _configuration.GetSection(("RemoteFileStorage")).GetSection("CancellationPath").Value;
-
-        public string SnapInventoryPath =>
-            _configuration.GetSection(("RemoteFileStorage")).GetSection("SnapInventoryPath").Value;
     }
 }

@@ -6,7 +6,7 @@ namespace Asda.Integration.Service.Interfaces
 {
     public interface IFtpService
     {
-        PurchaseOrder GetPurchaseOrderFromFtp(string path);
+        List<PurchaseOrder> GetPurchaseOrderFromFtp(string path);
         List<XmlError> CreateFiles<T>(List<T> models, string remotePath);
     }
 }
