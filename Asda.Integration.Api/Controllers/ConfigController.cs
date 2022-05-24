@@ -29,7 +29,6 @@ namespace Asda.Integration.Api.Controllers
         }
 
         [HttpPost("AddNewUser")]
-        //[Route("api/config/addNewUser")]
         public AddNewUserResponse UpdateUserInfo([FromBody] AddNewUserRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))

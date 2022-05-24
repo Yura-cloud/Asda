@@ -16,8 +16,7 @@ namespace Asda.Integration.Business.Services
                     Convert.ToInt32(configuration.GetSection("FtpSettings").GetSection("Port").Value),
                     configuration.GetSection(("FtpSettings")).GetSection("UserName").Value,
                     configuration.GetSection(("FtpSettings")).GetSection("Password").Value,
-                    configuration.GetSection(("FtpSettings")).GetSection("Host").Value,
-                    configuration.GetSection(("FtpSettings")).GetSection("ServerFilePath").Value);
+                    configuration.GetSection(("FtpSettings")).GetSection("Host").Value);
         }
     }
 }
