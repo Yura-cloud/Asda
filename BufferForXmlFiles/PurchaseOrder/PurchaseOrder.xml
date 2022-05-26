@@ -1,0 +1,114 @@
+<cXML payloadID="1234@asda.co.uk" timestamp="2008-06-03T15:04:27" xml:lang="en">                                
+    <Header>                                
+        <From>                            
+            <Credential domain="AsdaOrganisation">                        
+                <Identity>ASDA</Identity>                    
+            </Credential>                        
+        </From>                            
+        <To>                            
+            <Credential domain="AsdaOrganisation">                        
+                <Identity>ASDA-123456-DC</Identity>                    
+            </Credential>                        
+        </To>                            
+        <Sender>                            
+            <Credential domain="AsdaOrganisation">                        
+                <Identity>ECOMMERA</Identity>                    
+            </Credential>                        
+            <UserAgent>ALSB</UserAgent>                        
+        </Sender>                            
+    </Header>                                
+    <Request deploymentMode="production">                                
+        <OrderRequest>                            
+            <OrderRequestHeader orderID="1245" requisitionID ='1231_sa' orderDate="2008-06-03T15:01:42" ReqShipDate="2008-06-03T15:01:42" PromisedDeliveryDate="2008-06-03T15:01:42" FulfilmentType="Collect" type="new">                                   
+                <ShipTo>                    
+                    <Address>                
+                        <Name xml:lang="en">default</Name>        
+                        <PostalAddress>        
+                            <DeliverTo>(04934) Gosforth Store</DeliverTo>    
+                            <Street>1 Test Rd</Street>    
+                            <City>London</City>    
+                            <State>London</State>    
+                            <PostalCode>bs37 6bt</PostalCode>    
+                            <Country isoCountryCode="GB">GB</Country>    
+                        </PostalAddress>        
+                        <Phone name="daytime">        
+                            <TelephoneNumber>    
+                                <CountryCode isoCountryCode="GB">44</CountryCode>
+                                <AreaOrCityCode />
+                                <Number>123-456-7890</Number>
+                            </TelephoneNumber>    
+                        </Phone>        
+                        <Email>test_tests@mail.com</Email>        
+                    </Address>                
+                </ShipTo>                    
+                <Comments xml:lang="en">Use goods entrance> </Comments> 
+            </OrderRequestHeader>                        
+            <ItemOut lineNumber="1" quantity="3">                    
+                <ItemID>                    
+                    <AsdaItemID>G001234569</AsdaItemID>
+                    <SupplierProductID>0000000011100</SupplierProductID>               
+                </ItemID>                    
+                <ItemDetail>                    
+                    <UnitPrice>                
+                        <Money currency="GBP">10.00</Money>            
+                    </UnitPrice>   
+                    <Extrinsic name="RetailLineTotal">27.00</Extrinsic>
+                    <Description xml:lang="en">ItemA</Description>                
+                    <UnitOfMeasure>EACH</UnitOfMeasure>                
+                    <Classification domain="default">default</Classification>                
+                    <ManufacturerPartID>MANUF001</ManufacturerPartID>                
+                </ItemDetail>                    
+                <Shipping>                    
+                    <Money currency="GBP">1.50</Money>                
+                </Shipping>                    
+                <Comments>       <![CDATA[ 
+                    Some delivery instructions                
+                ]]> </Comments> 
+            </ItemOut>                        
+            <ItemOut lineNumber="2" quantity="4">                    
+                <ItemID>                    
+                    <AsdaItemID>G001234568</AsdaItemID>
+                    <SupplierProductID>0000000011122</SupplierProductID>                 
+                </ItemID>                    
+                <ItemDetail>                    
+                    <UnitPrice>                
+                        <Money currency="GBP">12.44</Money>            
+                    </UnitPrice>                
+                    <Extrinsic name="RetailLineTotal">49.76</Extrinsic>
+                    <Description xml:lang="en">ItemB</Description>                
+                    <UnitOfMeasure>EACH</UnitOfMeasure>                
+                    <Classification domain="default">default</Classification>                
+                    <ManufacturerPartID>MANUF002</ManufacturerPartID>                
+                </ItemDetail>                    
+                <Shipping>                    
+                    <Money currency="GBP">1.50</Money>                
+                </Shipping>                    
+                <Comments>       <![CDATA[ 
+                    Some delivery instructions                
+                ]]> </Comments> 
+            </ItemOut>                        
+            <ItemOut lineNumber="3" quantity="5">                    
+                <ItemID>                    
+                    <AsdaItemID>G001234567</AsdaItemID>
+                    <SupplierProductID>0000000011133</SupplierProductID>                 
+                </ItemID>                    
+                <ItemDetail>                    
+                    <UnitPrice>                
+                        <Money currency="GBP">3.49</Money>            
+                    </UnitPrice>                
+                    <Extrinsic name="RetailLineTotal">17.45</Extrinsic>
+                    <Description xml:lang="en">ItemC</Description>                
+                    <UnitOfMeasure>EACH</UnitOfMeasure>                
+                    <Classification domain="default">default</Classification>                
+                    <ManufacturerPartID>MANUF003</ManufacturerPartID>                
+                </ItemDetail>                    
+                <Shipping>                    
+                    <Money currency="GBP">1.50</Money>                
+                </Shipping>                    
+                <Comments>       <![CDATA[ 
+                    Some delivery instructions                
+                ]]> </Comments> 
+            </ItemOut>                        
+        </OrderRequest>                            
+    </Request>                                
+</cXML>  

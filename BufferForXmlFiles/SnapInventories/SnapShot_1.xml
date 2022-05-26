@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<cXML lang="en" payloadID="6c2b5581-52c4-4e22-8ce7-4f5bf91b7da2@linnworks.domain.com" timestamp="2022-05-03T14:10:15.2094472+03:00" version="0001-01-01T00:00:00">
+  <Header>
+    <From>
+      <Credential domain="AsdaOrganisation">
+        <Identity>ASDA-123456-DC</Identity>
+      </Credential>
+    </From>
+    <To>
+      <Credential domain="AsdaOrganisation">
+        <Identity>ASDA</Identity>
+      </Credential>
+    </To>
+    <Sender>
+      <Credential domain="Linnworks">
+        <Identity>Linnworks</Identity>
+      </Credential>
+    </Sender>
+  </Header>
+  <Request>
+    <InventorySnapshotRequest>
+      <InventorySnapshotRequestHeader SnapshotDate="03.05.2022 14:10:15" Description="" ListId="" />
+      <Records>
+        <Record product-id="Sku-1">
+          <AllocationQty>10</AllocationQty>
+        </Record>
+      </Records>
+    </InventorySnapshotRequest>
+  </Request>
+</cXML>

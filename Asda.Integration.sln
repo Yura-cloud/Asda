@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asda.Integration.Api", "Asda.Integration.Api\Asda.Integration.Api.csproj", "{C9B72B9A-E6A5-4058-8D67-043EC5543C6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asda.Integration.Domain", "Asda.Integration.Domain\Asda.Integration.Domain.csproj", "{D559EC87-2765-41CB-8DA5-592A175151B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asda.Integration.Domain.Interfaces", "Asda.Integration.Domain.Interfaces\Asda.Integration.Domain.Interfaces.csproj", "{70CB1EED-6A33-4147-83A5-D0D8474B5DF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asda.Integration.Service.Interfaces", "Asda.Integration.Service.Interfaces\Asda.Integration.Service.Interfaces.csproj", "{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{7CC16A45-0AE4-489E-97A5-AE2164164F05}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{1885BD7A-9E30-477B-B7E2-A2E31B58AA92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asda.Integration.Business.Services", "Asda.Integration.Business.Services\Asda.Integration.Business.Services.csproj", "{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linnworks", "Linnworks", "{15D77C01-C469-40FB-B626-A9432A91AF64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinnMacroCustomer", "LinnMacroCustomer\LinnMacroCustomer.csproj", "{7BE0D263-1E2B-4F24-9170-8E8495E2EE54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinnworksAPI", "LinnworksAPI\LinnworksAPI.csproj", "{5530F409-CEFE-4EAD-8C5D-6F197991D3ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinnworksMacroHelpers", "LinnworksMacroHelpers\LinnworksMacroHelpers.csproj", "{A13875BC-1C6E-460A-897B-1641C8B09FE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9B72B9A-E6A5-4058-8D67-043EC5543C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B72B9A-E6A5-4058-8D67-043EC5543C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B72B9A-E6A5-4058-8D67-043EC5543C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B72B9A-E6A5-4058-8D67-043EC5543C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D559EC87-2765-41CB-8DA5-592A175151B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D559EC87-2765-41CB-8DA5-592A175151B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D559EC87-2765-41CB-8DA5-592A175151B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D559EC87-2765-41CB-8DA5-592A175151B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70CB1EED-6A33-4147-83A5-D0D8474B5DF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CB1EED-6A33-4147-83A5-D0D8474B5DF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CB1EED-6A33-4147-83A5-D0D8474B5DF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70CB1EED-6A33-4147-83A5-D0D8474B5DF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BE0D263-1E2B-4F24-9170-8E8495E2EE54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BE0D263-1E2B-4F24-9170-8E8495E2EE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BE0D263-1E2B-4F24-9170-8E8495E2EE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BE0D263-1E2B-4F24-9170-8E8495E2EE54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5530F409-CEFE-4EAD-8C5D-6F197991D3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5530F409-CEFE-4EAD-8C5D-6F197991D3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5530F409-CEFE-4EAD-8C5D-6F197991D3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5530F409-CEFE-4EAD-8C5D-6F197991D3ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A13875BC-1C6E-460A-897B-1641C8B09FE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13875BC-1C6E-460A-897B-1641C8B09FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A13875BC-1C6E-460A-897B-1641C8B09FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A13875BC-1C6E-460A-897B-1641C8B09FE7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5A75F83-068F-41BB-83A5-5336156D1DD1}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D559EC87-2765-41CB-8DA5-592A175151B2} = {7CC16A45-0AE4-489E-97A5-AE2164164F05}
+		{70CB1EED-6A33-4147-83A5-D0D8474B5DF6} = {7CC16A45-0AE4-489E-97A5-AE2164164F05}
+		{2FFC86C7-4A5C-4C92-A99B-32E2EE414A15} = {7CC16A45-0AE4-489E-97A5-AE2164164F05}
+		{7A5BDFB4-856A-4B94-B8C9-2B0B271D9B8D} = {1885BD7A-9E30-477B-B7E2-A2E31B58AA92}
+		{7BE0D263-1E2B-4F24-9170-8E8495E2EE54} = {15D77C01-C469-40FB-B626-A9432A91AF64}
+		{5530F409-CEFE-4EAD-8C5D-6F197991D3ED} = {15D77C01-C469-40FB-B626-A9432A91AF64}
+		{A13875BC-1C6E-460A-897B-1641C8B09FE7} = {15D77C01-C469-40FB-B626-A9432A91AF64}
+	EndGlobalSection
+EndGlobal

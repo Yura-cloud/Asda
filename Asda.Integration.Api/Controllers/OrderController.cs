@@ -2,7 +2,6 @@
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Asda.Integration.Api.Controllers
 {
@@ -12,12 +11,9 @@ namespace Asda.Integration.Api.Controllers
     {
         private readonly IOrderService _orderService;
 
-        private readonly ILogger<OrderController> _logger;
-
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
-            _logger = logger;
         }
 
         [HttpGet]
