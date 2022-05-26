@@ -1,7 +1,6 @@
 using System;
 using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
-using Asda.Integration.Domain.Models.Products;
 using LinnworksAPI;
 
 namespace Asda.Integration.Api.Mappers

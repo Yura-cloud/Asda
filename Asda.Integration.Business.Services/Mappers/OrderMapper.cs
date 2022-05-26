@@ -58,6 +58,22 @@ namespace Asda.Integration.Api.Mappers
                 PaidOn = purchaseOrder.Request.OrderRequest.OrderRequestHeader.OrderDate,
                 PaymentStatus = PaymentStatus.PAID,
                 ReceivedDate = purchaseOrder.Request.OrderRequest.OrderRequestHeader.OrderDate,
+                ExtendedProperties = new List<OrderExtendedProperty>
+                {
+                    new()
+                    {
+                        Name = "PromisedDeliveryDate",
+                        Type = "Info",
+                        Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.PromisedDeliveryDate
+                            .ToString(CultureInfo.InvariantCulture)
+                    },
+                    new()
+                    {
+                        Name = "FulfilmentType",
+                        Type = "Info",
+                        Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.FulfilmentType
+                    }
+                }
             };
             foreach (var item in purchaseOrder.Request.OrderRequest.ItemOut)
             {
@@ -75,25 +91,6 @@ namespace Asda.Integration.Api.Mappers
                     }
                 );
             }
-
-            var extendedProperties = new List<OrderExtendedProperty>
-            {
-                new()
-                {
-                    Name = "PromisedDeliveryDate",
-                    Type = "Info",
-                    Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.PromisedDeliveryDate.ToString(
-                        CultureInfo
-                            .InvariantCulture)
-                },
-                new()
-                {
-                    Name = "FulfilmentType",
-                    Type = "Info",
-                    Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.FulfilmentType
-                }
-            };
-            order.ExtendedProperties.AddRange(extendedProperties);
 
             return order;
         }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml.Serialization;
+using Asda.Integration.Business.Services.Helpers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Service.Interfaces;
@@ -12,22 +12,19 @@ namespace Asda.Integration.Business.Services
 {
     public class FtpService : IFtpService
     {
-        private FtpSettingsModel FtpSettings { get; }
-
         private readonly ILogger<FtpService> _logger;
 
-        public FtpService(IFtpConfigManagerService ftpConfig, ILogger<FtpService> logger)
+        public FtpService(ILogger<FtpService> logger)
         {
             _logger = logger;
-            FtpSettings = ftpConfig.FtpSettings;
         }
 
-        public List<PurchaseOrder> GetPurchaseOrderFromFtp(string path)
+        public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path)
         {
             try
             {
-                using var client = new SftpClient(FtpSettings.Host, FtpSettings.Port, FtpSettings.UserName,
-                    FtpSettings.Password);
+                using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
+                    ftpSettings.Password);
                 client.Connect();
                 if (!client.IsConnected)
                 {
@@ -58,11 +55,11 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        public List<XmlError> CreateFiles<T>(List<T> models, string remotePath)
+        public List<XmlError> CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath)
         {
             var errorsXml = new List<XmlError>();
-            using var client = new SftpClient(FtpSettings.Host, FtpSettings.Port, FtpSettings.UserName,
-                FtpSettings.Password);
+            using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
+                ftpSettings.Password);
             client.Connect();
             if (client.IsConnected)
             {
@@ -71,15 +68,15 @@ namespace Asda.Integration.Business.Services
                 {
                     try
                     {
-                        var model = models[i];
-                        var filePath = $"{remotePath}/file_{i + 1}.xml";
+                        var fileName = FileNamingHelper.GetFileName(models[i]);
+                        var filePath = $"{remotePath}/{fileName}";
                         var fileStream = client.Create(filePath);
 
                         var namespaces = new XmlSerializerNamespaces();
                         namespaces.Add("", "");
 
                         var writer = new XmlSerializer(typeof(T));
-                        writer.Serialize(fileStream, model, namespaces);
+                        writer.Serialize(fileStream, models[i], namespaces);
                         fileStream.Close();
                     }
                     catch (Exception e)
@@ -92,6 +89,7 @@ namespace Asda.Integration.Business.Services
 
             return errorsXml;
         }
+
 
         private void DeleteFiles(string remotePath, SftpClient client)
         {

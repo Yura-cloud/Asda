@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
@@ -20,27 +21,15 @@ namespace Asda.Integration.Api.Mappers
                 {
                     From = new From
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA-123456-DC"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
                     },
                     To = new To
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA"}
                     },
                     Sender = new Sender
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "Linnworks",
-                            Identity = "Linnworks"
-                        }
+                        Credential = new Credential {Domain = "Linnworks", Identity = "Linnworks"}
                     }
                 },
                 Request = new Request
@@ -52,36 +41,21 @@ namespace Asda.Integration.Api.Mappers
                             ShipmentID = "S89823-123",
                             CarrierId = orderDespatch.ShippingVendor ?? "toyou"
                         },
-                        ShipControl = new ShipControl
-                        {
-                            ShipmentIdentifier = orderDespatch.TrackingNumber
-                        },
+                        ShipControl = new ShipControl {ShipmentIdentifier = orderDespatch.TrackingNumber},
                         ShipNoticePortion = new ShipNoticePortion
                         {
-                            OrderReference = new OrderReference
-                            {
-                                DocumentReference = new DocumentReference
+                            OrderReference = new OrderReference {OrderID = orderDespatch.ReferenceNumber},
+                            ShipNoticeItem = orderDespatch.Items
+                                .Select(item => new ShipNoticeItem
                                 {
-                                    PayloadID = orderDespatch.ReferenceNumber
-                                }
-                            }
+                                    LineNumber = Convert.ToInt32(item.OrderLineNumber),
+                                    Quantity = item.DespatchedQuantity,
+                                    UnitOfMeasure = "EACH"
+                                }).ToList()
                         }
                     }
                 }
             };
-            var shipNoticeItems = new List<ShipNoticeItem>();
-            foreach (var item in orderDespatch.Items)
-            {
-                var shipNoteiceItem = new ShipNoticeItem
-                {
-                    LineNumber = Convert.ToInt32(item.OrderLineNumber),
-                    Quantity = item.DespatchedQuantity,
-                    UnitOfMeasure = "EACH"
-                };
-                shipNoticeItems.Add(shipNoteiceItem);
-            }
-
-            shipmentConfirmation.Request.ShipNoticeRequest.ShipNoticePortion.ShipNoticeItem = shipNoticeItems;
 
             return shipmentConfirmation;
         }

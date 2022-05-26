@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML.Acknowledgment;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
+using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -20,21 +20,13 @@ namespace Asda.Integration.Business.Services
     {
         private readonly IFtpService _ftp;
 
-        private readonly IXmlService _xmlService;
-
-        private readonly RemoteFileStorageModel _remoteFileStorage;
-
         private readonly IUserConfigAdapter _userConfigAdapter;
 
         private readonly ILogger<OrderService> _logger;
 
-        public OrderService(IFtpService ftp, IXmlService xmlService,
-            IRemoteConfigManagerService remoteConfig,
-            IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
+        public OrderService(IFtpService ftp, IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
         {
-            _remoteFileStorage = remoteConfig.RemoteFileStorage;
             _ftp = ftp;
-            _xmlService = xmlService;
             _userConfigAdapter = userConfigAdapter;
             _logger = logger;
         }
@@ -48,12 +40,12 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorized(request, out var userUnauthorizedResponse))
+                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
                 {
-                    return userUnauthorizedResponse;
+                    return new OrdersResponse {Error = errorMessage};
                 }
 
-                var purchaseOrders = GetPurchaseOrder();
+                var purchaseOrders = GetPurchaseOrder(user.FtpSettings, user.RemoteFileStorage.OrderPath);
                 if (purchaseOrders == null)
                 {
                     return new OrdersResponse();
@@ -61,7 +53,8 @@ namespace Asda.Integration.Business.Services
 
                 var orders = purchaseOrders.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(acknowledgments.ToList());
+                var xmlErrors = _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings,
+                    user.RemoteFileStorage.AcknowledgmentPath);
                 if (!xmlErrors.Any())
                 {
                     return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
@@ -89,13 +82,14 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorized(request, out var userUnauthorizedResponse))
+                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
                 {
-                    return userUnauthorizedResponse;
+                    return new OrderDespatchResponse {Error = errorMessage};
                 }
 
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(shipmentConfirmations);
+                var xmlErrors = _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings,
+                    user.RemoteFileStorage.DispatchPath);
                 return !xmlErrors.Any()
                     ? new OrderDespatchResponse()
                     : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
@@ -119,13 +113,14 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorized(request, out var userUnauthorizedResponse))
+                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
                 {
-                    return userUnauthorizedResponse;
+                    return new OrderCancelResponse() {Error = errorMessage, HasError = true};
                 }
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(new List<Cancellation> {cancellation});
+                var xmlErrors = _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
+                    user.RemoteFileStorage.CancellationPath);
 
                 return !xmlErrors.Any() ? new OrderCancelResponse() : ErrorCancelResponse(xmlErrors);
             }
@@ -137,9 +132,9 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        private List<PurchaseOrder> GetPurchaseOrder()
+        private List<PurchaseOrder> GetPurchaseOrder(FtpSettingsModel ftpSettings, string orderPath)
         {
-            return _ftp.GetPurchaseOrderFromFtp(_remoteFileStorage.OrderPath);
+            return _ftp.GetPurchaseOrderFromFtp(ftpSettings, orderPath);
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
@@ -176,49 +171,17 @@ namespace Asda.Integration.Business.Services
             return response;
         }
 
-        private bool UserUnauthorized(OrderDespatchRequest request, out OrderDespatchResponse response)
+        private bool UserUnauthorizedTest(string token, out string errorMessage, out UserConfig user)
         {
-            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+            user = _userConfigAdapter.LoadByToken(token);
             if (user == null)
             {
-                var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";
-                _logger.LogError(message);
-
-                response = new OrderDespatchResponse {Error = message};
+                errorMessage = $"User with AuthToken: {token} - not found.";
+                _logger.LogError(errorMessage);
                 return true;
             }
 
-            response = null;
-            return false;
-        }
-
-        private bool UserUnauthorized(OrdersRequest request, out OrdersResponse ordersResponse)
-        {
-            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
-            if (user == null)
-            {
-                _logger.LogError($"User with AuthToken: {request.AuthorizationToken} - not found.");
-                ordersResponse = new OrdersResponse {Error = "User not found"};
-                return true;
-            }
-
-            ordersResponse = null;
-            return false;
-        }
-
-        private bool UserUnauthorized(OrderCancelRequest request, out OrderCancelResponse sendCanceledOrders)
-        {
-            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
-            if (user == null)
-            {
-                var message = $"User with AuthToken: {request.AuthorizationToken} - not found.";
-                _logger.LogError(message);
-
-                sendCanceledOrders = new OrderCancelResponse() {Error = message, HasError = true};
-                return true;
-            }
-
-            sendCanceledOrders = null;
+            errorMessage = string.Empty;
             return false;
         }
 

@@ -2,9 +2,8 @@
 {
     public enum ConfigStagesEnum
     {
-        AddAuthToken,
-        AddCredentials,
-        OrderSetup,
+        AddFtpSettings,
+        AddFoldersNames,
         UserConfig
     }
 }

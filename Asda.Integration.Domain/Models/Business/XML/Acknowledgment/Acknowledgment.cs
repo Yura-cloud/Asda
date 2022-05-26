@@ -44,7 +44,7 @@ namespace Asda.Integration.Domain.Models.Business.XML.Acknowledgment
         public DocumentReference DocumentReference { get; set; }
 
         [XmlAttribute(AttributeName = "orderID")]
-        public int OrderID { get; set; }
+        public string OrderID { get; set; }
     }
 
     [XmlRoot(ElementName = "DocumentReference")]

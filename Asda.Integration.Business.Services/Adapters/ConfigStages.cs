@@ -4,111 +4,157 @@ using Asda.Integration.Service.Interfaces;
 
 namespace Asda.Integration.Business.Services.Adapters
 {
-    public class ConfigStages : IConfigStages 
+    public class ConfigStages : IConfigStages
     {
         public UserConfigResponse StageResponse(UserConfig userConfig, string errorMessage = "")
         {
             switch (Enum.Parse(typeof(ConfigStagesEnum), userConfig.StepName))
             {
-                case ConfigStagesEnum.AddCredentials:
-                    return GetAPICredentials(userConfig);
-                case ConfigStagesEnum.OrderSetup:
-                    return GetOrderStep(userConfig);
+                case ConfigStagesEnum.AddFtpSettings:
+                    return GetFtpSettings(userConfig);
+                case ConfigStagesEnum.AddFoldersNames:
+                    return GetFoldersNames(userConfig);
                 case ConfigStagesEnum.UserConfig:
                     return GetConfigStep(userConfig);
             }
 
-            return new UserConfigResponse { Error = errorMessage };
+            return new UserConfigResponse {Error = errorMessage};
         }
 
-        private static UserConfigResponse GetAPICredentials(UserConfig userConfig)
+        private static UserConfigResponse GetFtpSettings(UserConfig userConfig)
         {
             return new UserConfigResponse
             {
-                StepName = "AddCredentials",
-                AccountName = "Example account name",
-                WizardStepTitle = "Add Credentials",
-                WizardStepDescription = "This is where you add your website credentials",
-                // ConfigItems = new[]
-                // {
-                //     new ConfigItem
-                //     {
-                //         ConfigItemId = "APIKey",
-                //         Description = "Website API Key",
-                //         GroupName = "API Credentials",
-                //         MustBeSpecified = true,
-                //         Name = "API Key",
-                //         ReadOnly = false,
-                //         //SelectedValue = userConfig.APIKey ?? string.Empty,
-                //         SortOrder = 1,
-                //         ValueType = ConfigValueType.PASSWORD
-                //     },
-                //     new ConfigItem
-                //     {
-                //         ConfigItemId = "APISecretKey",
-                //         Description = "Website API Secret Key",
-                //         GroupName = "API Credentials",
-                //         MustBeSpecified = true,
-                //         Name = "API Secret Key",
-                //         ReadOnly = false,
-                //         //SelectedValue = userConfig.APISecretKey ?? string.Empty,
-                //         SortOrder = 2,
-                //         ValueType = ConfigValueType.PASSWORD
-                //     },
-                //     new ConfigItem
-                //     {
-                //         ConfigItemId = "IsOauth",
-                //         Description = "Defines if the authentication type is Oauth",
-                //         GroupName = "API Settings",
-                //         MustBeSpecified = true,
-                //         Name = "Is Oauth",
-                //         ReadOnly = false,
-                //         SelectedValue = userConfig.IsOauth.ToString(),
-                //         SortOrder = 3,
-                //         ValueType = ConfigValueType.BOOLEAN
-                //     }
-                // }
+                StepName = "AddFtpSettings",
+                AccountName = "AccountName",
+                WizardStepTitle = "Add FTP Settings",
+                WizardStepDescription = "This is where you add your FTP credentials",
+                ConfigItems = new[]
+                {
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Host",
+                        Description = "FTP Host",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Host",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Host,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Port",
+                        Description = "FTP Port",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Port",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Port.ToString(),
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.INT
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Password",
+                        Description = "FTP Password",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Password",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Password,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.PASSWORD
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "UserName",
+                        Description = "FTP User Name",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "User Name",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.UserName,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                }
             };
         }
 
-        private static UserConfigResponse GetOrderStep(UserConfig userConfig)
+        private static UserConfigResponse GetFoldersNames(UserConfig userConfig)
         {
             return new UserConfigResponse
             {
-                StepName = "OrderSetup",
-                AccountName = "Example account name",
-                //WizardStepTitle = "Order Setup",
-                WizardStepTitle = "Welcome to Asda",
-                //WizardStepDescription = "Definition of tax settings and items to return",
-                WizardStepDescription = "Click next to finish",
-                // ConfigItems = new[]
-                // {
-                //     
-                //     new ConfigItem
-                //     {
-                //         ConfigItemId = "PriceIncTax",
-                //         Description = "Defines if the price of an item includes tax",
-                //         GroupName = "Tax",
-                //         MustBeSpecified = false,
-                //         Name = "Price Includes Tax",
-                //         ReadOnly = true,
-                //         SelectedValue = userConfig.PriceIncTax.ToString(),
-                //         SortOrder = 1,
-                //         ValueType = ConfigValueType.BOOLEAN
-                //     },
-                //     // new ConfigItem
-                //     // {
-                //     //     ConfigItemId = "DownloadVirtualItems",
-                //     //     Description = "Check to allow the download of virtual items",
-                //     //     GroupName = "Items",
-                //     //     MustBeSpecified = false,
-                //     //     Name = "Download Virtual Items",
-                //     //     ReadOnly = false,
-                //     //     //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
-                //     //     SortOrder = 2,
-                //     //     ValueType = ConfigValueType.BOOLEAN
-                //     // }
-                // }
+                StepName = "AddFoldersNames",
+                AccountName = "AccountName",
+                WizardStepTitle = "Add names of the working folders",
+                WizardStepDescription = "For example: Linnworks/Orders",
+                ConfigItems = new[]
+                {
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Orders",
+                        Description = "Where this App takes purchase orders",
+                        GroupName = "FoldersName",
+                        MustBeSpecified = true,
+                        Name = "Orders",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.OrderPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Dispatches",
+                        Description = "Where the dispatch files will be uploaded",
+                        GroupName = "FoldersName",
+                        MustBeSpecified = true,
+                        Name = "Dispatches",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.DispatchPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Acknowledgments",
+                        Description = "Where the acknowledgment files will be uploaded",
+                        GroupName = "FoldersName",
+                        MustBeSpecified = true,
+                        Name = "Acknowledgments",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.AcknowledgmentPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Cancellations",
+                        Description = "Where the cancellations files will be uploaded",
+                        GroupName = "FoldersName",
+                        MustBeSpecified = true,
+                        Name = "Cancellations",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.CancellationPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "SnapInventories",
+                        Description = "Where the snapInventories files will be uploaded",
+                        GroupName = "FoldersName",
+                        MustBeSpecified = true,
+                        Name = "SnapInventories",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.SnapInventoryPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    
+                }
             };
         }
 
@@ -136,45 +182,6 @@ namespace Asda.Integration.Business.Services.Adapters
                         ValueType = ConfigValueType.STRING
                     }
                 }
-                /*ConfigItems = new[]
-                {
-                    new ConfigItem
-                    {
-                        ConfigItemId = "IsOauth",
-                        Description = "Defines if the authentication type is Oauth",
-                        GroupName = "Order",
-                        MustBeSpecified = true,
-                        Name = "Is Oauth",
-                        ReadOnly = false,
-                        SelectedValue = userConfig.IsOauth.ToString(),
-                        SortOrder = 1,
-                        ValueType = ConfigValueType.BOOLEAN
-                    },
-                    new ConfigItem
-                    {
-                        ConfigItemId = "PriceIncTax",
-                        Description = "Defines if the price of an item includes tax",
-                        GroupName = "Tax",
-                        MustBeSpecified = true,
-                        Name = "Price Includes Tax",
-                        ReadOnly = false,
-                        SelectedValue = userConfig.PriceIncTax.ToString(),
-                        SortOrder = 2,
-                        ValueType = ConfigValueType.BOOLEAN
-                    },
-                    new ConfigItem
-                    {
-                        ConfigItemId = "DownloadVirtualItems",
-                        Description = "Check to allow the download of virtual items",
-                        GroupName = "Items",
-                        MustBeSpecified = false,
-                        Name = "Download Virtual Items",
-                        ReadOnly = false,
-                        //SelectedValue = userConfig.DownloadVirtualItems.ToString(),
-                        SortOrder = 3,
-                        ValueType = ConfigValueType.BOOLEAN
-                    }
-                }*/
             };
         }
     }

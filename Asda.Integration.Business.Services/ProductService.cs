@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML;
-using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
+using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using LinnworksAPI;
@@ -25,17 +24,17 @@ namespace Asda.Integration.Business.Services
 
         private readonly IConfiguration _configuration;
 
-        private readonly IXmlService _xmlService;
+        private readonly IFtpService _ftp;
 
         private LinnworksMacroBase LinnWorks { get; }
 
         public ProductService(ILogger<ProductService> logger, IUserConfigAdapter userConfigAdapter,
-            IXmlService xmlService, IConfiguration configuration)
+            IConfiguration configuration, IFtpService ftp)
         {
             _logger = logger;
             _userConfigAdapter = userConfigAdapter;
-            _xmlService = xmlService;
             _configuration = configuration;
+            _ftp = ftp;
             LinnWorks = new LinnworksMacroBase();
         }
 
@@ -48,7 +47,7 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorized(request, out var userUnauthorizedResponse))
+                if (UserUnauthorized(request, out var userUnauthorizedResponse, out var user))
                 {
                     return userUnauthorizedResponse;
                 }
@@ -56,7 +55,8 @@ namespace Asda.Integration.Business.Services
                 LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, request.AuthorizationToken);
                 var stockItemsLevel = GetStockItemsLevel(request, _userConfigAdapter);
                 var inventoryItems = stockItemsLevel.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
-                var xmlErrors = _xmlService.CreateXmlFilesOnFtp(inventoryItems);
+                var xmlErrors = _ftp.CreateFiles(inventoryItems, user.FtpSettings,
+                    user.RemoteFileStorage.SnapInventoryPath);
 
                 var response = new ProductInventoryUpdateResponse
                 {
@@ -66,7 +66,9 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                return new ProductInventoryUpdateResponse {Error = e.Message};
+                string message = $"Failed while ProductInventoryUpdateResponse, with message {e.Message}";
+                _logger.LogError(message);
+                return new ProductInventoryUpdateResponse {Error = message};
             }
         }
 
@@ -151,9 +153,9 @@ namespace Asda.Integration.Business.Services
         }
 
         private bool UserUnauthorized(ProductInventoryUpdateRequest request,
-            out ProductInventoryUpdateResponse response)
+            out ProductInventoryUpdateResponse response, out UserConfig user)
         {
-            var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+            user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
             if (user == null)
             {

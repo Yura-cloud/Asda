@@ -19,47 +19,27 @@ namespace Asda.Integration.Api.Mappers
                 {
                     From = new From
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA-123456-DC"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
                     },
                     To = new To
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "AsdaOrganisation",
-                            Identity = "ASDA"
-                        }
+                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA"}
                     },
                     Sender = new Sender
                     {
-                        Credential = new Credential
-                        {
-                            Domain = "Linnworks",
-                            Identity = "Linnworks"
-                        }
+                        Credential = new Credential {Domain = "Linnworks", Identity = "Linnworks"}
                     }
                 },
                 Request = new Request
                 {
                     ConfirmationRequest = new ConfirmationRequest
                     {
-                        ConfirmationHeader = new ConfirmationHeader
-                        {
-                            Type = "accept"
-                        },
-                        OrderReference = new OrderReference
-                        {
-                            OrderID = Convert.ToInt32(referenceNumber)
-                        }
+                        ConfirmationHeader = new ConfirmationHeader {Type = "accept"},
+                        OrderReference = new OrderReference {OrderID = referenceNumber}
                     }
-                },
+                }
             };
             return acknowledgment;
         }
-
-       
     }
 }

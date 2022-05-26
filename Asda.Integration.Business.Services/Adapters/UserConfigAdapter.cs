@@ -2,6 +2,7 @@
 using System.Linq;
 using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Domain.Interfaces;
+using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Options;
@@ -34,7 +35,6 @@ namespace Asda.Integration.Business.Services.Adapters
             string json = _fileRepository.LoadByToken(authorizationToken);
             var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(json);
             return userConfig;
-
         }
 
         public UserConfig LoadByUserId(Guid userId)
@@ -78,7 +78,9 @@ namespace Asda.Integration.Business.Services.Adapters
                 AuthorizationToken = token.ToString("N"),
                 Email = email,
                 LinnworksUniqueIdentifier = linnworksUniqueIdentifier,
-                AccountName = accountName
+                AccountName = accountName,
+                FtpSettings = new FtpSettingsModel(),
+                RemoteFileStorage = new RemoteFileStorageModel()
             };
             Save(userConfig);
             return userConfig;
@@ -90,10 +92,17 @@ namespace Asda.Integration.Business.Services.Adapters
             var step = Enum.Parse(typeof(ConfigStagesEnum), userConfig.StepName);
             switch (step)
             {
-                case ConfigStagesEnum.AddCredentials:
-                    userConfig.StepName = ConfigStagesEnum.OrderSetup.ToString();
+                case ConfigStagesEnum.AddFtpSettings:
+                    ReadFtpSettings(userConfig, configItems);
+                    HelperAdapter.CanConnectToFtp(userConfig.FtpSettings);
+                    userConfig.StepName = ConfigStagesEnum.AddFoldersNames.ToString();
                     break;
-                case ConfigStagesEnum.OrderSetup:
+                case ConfigStagesEnum.AddFoldersNames:
+                    ReadFoldersNames(userConfig, configItems);
+                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage))
+                    {
+                        throw new Exception("Some of the paths, does not exist");
+                    }
                     userConfig.StepName = ConfigStagesEnum.UserConfig.ToString();
                     break;
                 case ConfigStagesEnum.UserConfig:
@@ -102,8 +111,27 @@ namespace Asda.Integration.Business.Services.Adapters
             }
 
             Save(userConfig);
-
             return _configStages.StageResponse(userConfig);
+        }
+
+        private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
+        {
+            userConfig.RemoteFileStorage.OrderPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
+            userConfig.RemoteFileStorage.DispatchPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
+            userConfig.RemoteFileStorage.AcknowledgmentPath =
+                configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
+            userConfig.RemoteFileStorage.CancellationPath =
+                configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations");
+            userConfig.RemoteFileStorage.SnapInventoryPath =
+                configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories");
+        }
+
+        private void ReadFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
+        {
+            userConfig.FtpSettings.Host = configItems.FirstOrDefault(i => i.ConfigItemId == "Host");
+            userConfig.FtpSettings.Port = configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
+            userConfig.FtpSettings.Password = configItems.FirstOrDefault(i => i.ConfigItemId == "Password");
+            userConfig.FtpSettings.UserName = configItems.FirstOrDefault(i => i.ConfigItemId == "UserName");
         }
 
         public void Save(UserConfig userConfig)

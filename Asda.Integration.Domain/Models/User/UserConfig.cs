@@ -8,7 +8,7 @@ namespace Asda.Integration.Domain.Models.User
         public UserConfig()
         {
             IsOauth = true;
-            StepName = ConfigStagesEnum.AddCredentials.ToString();
+            StepName = ConfigStagesEnum.AddFtpSettings.ToString();
         }
 
         public UserConfig(string authorizationToken)
@@ -26,7 +26,7 @@ namespace Asda.Integration.Domain.Models.User
         public bool IsConfigActive { get; set; }
         public string Location { get; set; }
         public bool IsOauth { get; set; }
-        
-        public FtpSettingsModel FtpSettingsModel { get; set; }
+        public FtpSettingsModel FtpSettings { get; set; }
+        public RemoteFileStorageModel RemoteFileStorage { get; set; }
     }
 }
