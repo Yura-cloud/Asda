@@ -92,13 +92,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-
-        /// <summary>
-        /// This call is expected to return an array of shipping methods friendly names and their tags
-        /// to generate a pre-populated list in the config shipping mapping screen.
-        /// </summary>
-        /// <param name="request"><see cref="BaseRequest"/></param>
-        /// <returns><see cref="PaymentTagResponse"/></returns>
         [HttpPost("PaymentTags")]
         public PaymentTagResponse PaymentTags([FromBody] BaseRequest request)
         {
@@ -124,12 +117,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// This call is expected to return an array of shipping methods friendly names and their tags
-        /// to generate a pre-populated list in the config shipping mapping screen.
-        /// </summary>
-        /// <param name="request"><see cref="BaseRequest"/></param>
-        /// <returns><see cref="ShippingTagResponse"/></returns>
         [HttpPost("ShippingTags")]
         public ShippingTagResponse ShippingTags([FromBody] BaseRequest request)
         {
@@ -156,23 +143,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// This request is made in two situations:
-        /// 
-        /// Firstly when a customer is going through the integration wizard to integrate the channel.
-        /// To complete the wizard returns "UserConfig" as the step name and this will indicate the
-        /// wizard is complete.
-        /// 
-        /// The second instance is when the config is loaded the call is made to load any dynamic
-        /// ConfigItems that may be required to show on the Linnworks config UI.SaveConfigEndpoint
-        /// will be called on each wizard step and when the config is saved.
-        /// 
-        /// If the config is loaded and the StepName is not "UserConfig" it will load the config
-        /// wizard and take them through the stages until "UserConfig" is returned.This can be
-        /// especially useful if the user is required to go through additional steps down the line.
-        /// </summary>
-        /// <param name="request"><see cref="BaseRequest"/></param>
-        /// <returns><see cref="UserConfigResponse"/></returns>
         [HttpPost("UserConfig")]
         public UserConfigResponse UserConfig([FromBody] BaseRequest request)
         {
@@ -189,18 +159,6 @@ namespace Asda.Integration.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// This request is made in two situations:
-        /// 
-        /// At the end of every config wizard step as a customer enters / edits the fields and on the
-        /// config screen if custom config items are supplied back when the step name is "UserConfig".
-        /// 
-        /// Linnworks will provide the entire object that was provided back with the only field ever
-        /// changing being the SelectedValue.This is passed back cast as string as fields may be of
-        /// many different types.
-        /// </summary>
-        /// <param name="request"><see cref="SaveUserConfigRequest"/></param>
-        /// <returns><see cref="UserConfigResponse"/></returns>
         [HttpPost("SaveConfigSave")]
         public UserConfigResponse SaveConfigSave([FromBody] SaveUserConfigRequest request)
         {
