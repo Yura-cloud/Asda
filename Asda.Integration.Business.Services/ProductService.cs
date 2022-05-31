@@ -59,9 +59,12 @@ namespace Asda.Integration.Business.Services
                     user.RemoteFileStorage.SnapInventoriesPath);
                 var response = new ProductInventoryUpdateResponse
                 {
-                    Products = request.Products.Select(p => new ProductInventoryResponse {SKU = p.SKU}).ToList()
+                    Products = request.Products.Select(p => new ProductInventoryResponse
+                    {
+                        SKU = p.SKU
+                    }).ToList()
                 };
-                return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, response);
+                return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, request.Products);
             }
             catch (Exception e)
             {
@@ -137,17 +140,17 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-
-        private static ProductInventoryUpdateResponse ErrorResponse(List<XmlError> xmlErrors,
-            ProductInventoryUpdateResponse response)
+        private static ProductInventoryUpdateResponse ErrorResponse(IEnumerable<XmlError> xmlErrors,
+            ProductInventory[] products)
         {
-            var messages = new StringBuilder();
-            foreach (var xmlError in xmlErrors)
+            var response = new ProductInventoryUpdateResponse
             {
-                messages.Append(xmlError.Message).AppendLine();
-            }
-
-            response.Error = messages.ToString();
+                Products = xmlErrors.Select(e => new ProductInventoryResponse
+                {
+                    SKU = products[e.Index].SKU,
+                    Error = e.Message
+                }).ToList()
+            };
             return response;
         }
 

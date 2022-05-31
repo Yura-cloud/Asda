@@ -90,17 +90,21 @@ namespace Asda.Integration.Business.Services
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
                 var xmlErrors = _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings,
                     user.RemoteFileStorage.DispatchesPath);
-                return !xmlErrors.Any()
-                    ? new OrderDespatchResponse()
-                    : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
+                var response = new OrderDespatchResponse
+                {
+                    Orders = request.Orders.Select(o => new OrderDespatchError
+                    {
+                        ReferenceNumber = o.ReferenceNumber
+                    }).ToList()
+                };
+                return !xmlErrors.Any() ? response : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                var message = $"Failed while working with Dispatch Action, with message {ex.Message}";
+                var message = $"Failed while working with Dispatch Action, with message {e.Message}";
                 _logger.LogError(message);
 
-                return new OrderDespatchResponse
-                    {Error = message, Orders = OrderControllerHelper.AddReferenceNumbersFromRequest(request.Orders)};
+                return new OrderDespatchResponse {Error = message};
             }
         }
 
@@ -122,7 +126,7 @@ namespace Asda.Integration.Business.Services
                 var xmlErrors = _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
                     user.RemoteFileStorage.CancellationsPath);
 
-                return !xmlErrors.Any() ? new OrderCancelResponse() : ErrorCancelResponse(xmlErrors);
+                return !xmlErrors.Any() ? new OrderCancelResponse{HasError = false} : ErrorCancelResponse(xmlErrors);
             }
             catch (Exception e)
             {
@@ -140,7 +144,6 @@ namespace Asda.Integration.Business.Services
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
         {
             var response = new OrderCancelResponse {HasError = true};
-
             var messages = new StringBuilder();
             foreach (var xmlError in xmlErrors)
             {
@@ -154,20 +157,15 @@ namespace Asda.Integration.Business.Services
         private OrderDespatchResponse ErrorDispatchResponse(List<XmlError> xmlErrors,
             List<ShipmentConfirmation> shipmentConfirmations)
         {
-            var response = new OrderDespatchResponse {Orders = new List<OrderDespatchError>()};
-
-            foreach (var xmlError in xmlErrors)
+            var response = new OrderDespatchResponse
             {
-                var error = new OrderDespatchError
+                Orders = xmlErrors.Select(e => new OrderDespatchError
                 {
-                    ReferenceNumber = shipmentConfirmations[xmlError.Index].Request.ShipNoticeRequest
-                        .ShipNoticePortion
-                        .OrderReference.OrderID.ToString(),
-                    Error = xmlError.Message
-                };
-                response.Orders.Add(error);
-            }
-
+                    ReferenceNumber = shipmentConfirmations[e.Index].Request.ShipNoticeRequest
+                        .ShipNoticePortion.OrderReference.OrderID.ToString(),
+                    Error = e.Message
+                }).ToList()
+            };
             return response;
         }
 

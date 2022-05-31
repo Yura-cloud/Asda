@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Asda.Integration.Domain.Models.Order;
 
 namespace SampleChannel.Helpers
@@ -7,17 +8,10 @@ namespace SampleChannel.Helpers
     {
         public static List<OrderDespatchError> AddReferenceNumbersFromRequest(List<OrderDespatch> despatchOrders)
         {
-            var orders = new List<OrderDespatchError>();
-            foreach (var orderDespatch in despatchOrders)
+            return despatchOrders.Select(o => new OrderDespatchError
             {
-                var order = new OrderDespatchError
-                {
-                    ReferenceNumber = orderDespatch.ReferenceNumber
-                };
-                orders.Add(order);
-            }
-
-            return orders;
+                ReferenceNumber = o.ReferenceNumber
+            }).ToList();
         }
     }
 }

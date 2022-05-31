@@ -36,12 +36,20 @@ namespace Asda.Integration.Business.Services
                 var purchaseOrders = new List<PurchaseOrder>();
                 var serializer = new XmlSerializer(typeof(PurchaseOrder));
                 var files = client.ListDirectory(path);
+                
                 foreach (var sftpFile in files)
                 {
                     if (sftpFile.Name != "." && sftpFile.Name != "..")
                     {
-                        using var stream = client.OpenRead(sftpFile.FullName);
-                        purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
+                        try
+                        {
+                            using var stream = client.OpenRead(sftpFile.FullName);
+                            purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
+                        }
+                        catch (Exception e)
+                        {
+                            
+                        }
                     }
                 }
 
@@ -64,12 +72,13 @@ namespace Asda.Integration.Business.Services
             if (client.IsConnected)
             {
                 DeleteFiles(remotePath, client);
+                var filePath = string.Empty;
                 for (var i = 0; i < models.Count; i++)
                 {
                     try
                     {
                         var fileName = FileNamingHelper.GetFileName(models[i]);
-                        var filePath = $"{remotePath}/{fileName}";
+                        filePath = $"{remotePath}/{fileName}";
                         var fileStream = client.Create(filePath);
 
                         var namespaces = new XmlSerializerNamespaces();
@@ -81,15 +90,15 @@ namespace Asda.Integration.Business.Services
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError($"Failed while creating file in {remotePath}, with message {e.Message}");
-                        errorsXml.Add(new XmlError {Index = i, Message = e.Message});
+                        var message = $"Failed while creating file => {filePath}, with message {e.Message}";
+                        _logger.LogError(message);
+                        errorsXml.Add(new XmlError {Index = i, Message = message});
                     }
                 }
             }
 
             return errorsXml;
         }
-
 
         private void DeleteFiles(string remotePath, SftpClient client)
         {
