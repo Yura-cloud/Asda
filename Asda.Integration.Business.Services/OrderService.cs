@@ -45,7 +45,7 @@ namespace Asda.Integration.Business.Services
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var purchaseOrders = GetPurchaseOrder(user.FtpSettings, user.RemoteFileStorage.OrderPath);
+                var purchaseOrders = GetPurchaseOrder(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
                 if (purchaseOrders == null)
                 {
                     return new OrdersResponse();
@@ -54,7 +54,7 @@ namespace Asda.Integration.Business.Services
                 var orders = purchaseOrders.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
                 var xmlErrors = _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings,
-                    user.RemoteFileStorage.AcknowledgmentPath);
+                    user.RemoteFileStorage.AcknowledgmentsPath);
                 if (!xmlErrors.Any())
                 {
                     return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
@@ -89,7 +89,7 @@ namespace Asda.Integration.Business.Services
 
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
                 var xmlErrors = _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings,
-                    user.RemoteFileStorage.DispatchPath);
+                    user.RemoteFileStorage.DispatchesPath);
                 return !xmlErrors.Any()
                     ? new OrderDespatchResponse()
                     : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
@@ -120,7 +120,7 @@ namespace Asda.Integration.Business.Services
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
                 var xmlErrors = _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
-                    user.RemoteFileStorage.CancellationPath);
+                    user.RemoteFileStorage.CancellationsPath);
 
                 return !xmlErrors.Any() ? new OrderCancelResponse() : ErrorCancelResponse(xmlErrors);
             }

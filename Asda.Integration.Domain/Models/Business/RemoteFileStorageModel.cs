@@ -2,24 +2,24 @@ namespace Asda.Integration.Domain.Models.Business
 {
     public class RemoteFileStorageModel
     {
-        public string OrderPath { get; set; }
-        public string DispatchPath { get; set; }
-        public string AcknowledgmentPath { get; set; }
-        public string CancellationPath { get; set; }
-        public string SnapInventoryPath { get; set; }
+        public string OrdersPath { get; set; }
+        public string DispatchesPath { get; set; }
+        public string AcknowledgmentsPath { get; set; }
+        public string CancellationsPath { get; set; }
+        public string SnapInventoriesPath { get; set; }
 
         public RemoteFileStorageModel()
         {
             
         }
-        public RemoteFileStorageModel(string orderPath, string dispatchPath, string acknowledgmentPath,
-            string cancellationPath, string snapInventoryPath)
+        public RemoteFileStorageModel(string ordersPath, string dispatchesPath, string acknowledgmentsPath,
+            string cancellationsPath, string snapInventoriesPath)
         {
-            OrderPath = orderPath;
-            DispatchPath = dispatchPath;
-            AcknowledgmentPath = acknowledgmentPath;
-            CancellationPath = cancellationPath;
-            SnapInventoryPath = snapInventoryPath;
+            OrdersPath = ordersPath;
+            DispatchesPath = dispatchesPath;
+            AcknowledgmentsPath = acknowledgmentsPath;
+            CancellationsPath = cancellationsPath;
+            SnapInventoriesPath = snapInventoriesPath;
         }
     }
 }

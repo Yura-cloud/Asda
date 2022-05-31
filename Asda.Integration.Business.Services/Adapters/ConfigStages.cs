@@ -101,7 +101,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = true,
                         Name = "Orders",
                         ReadOnly = false,
-                        SelectedValue = userConfig.RemoteFileStorage.OrderPath,
+                        SelectedValue = userConfig.RemoteFileStorage.OrdersPath,
                         SortOrder = 1,
                         ValueType = ConfigValueType.STRING
                     },
@@ -113,7 +113,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = true,
                         Name = "Dispatches",
                         ReadOnly = false,
-                        SelectedValue = userConfig.RemoteFileStorage.DispatchPath,
+                        SelectedValue = userConfig.RemoteFileStorage.DispatchesPath,
                         SortOrder = 1,
                         ValueType = ConfigValueType.STRING
                     },
@@ -125,7 +125,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = true,
                         Name = "Acknowledgments",
                         ReadOnly = false,
-                        SelectedValue = userConfig.RemoteFileStorage.AcknowledgmentPath,
+                        SelectedValue = userConfig.RemoteFileStorage.AcknowledgmentsPath,
                         SortOrder = 1,
                         ValueType = ConfigValueType.STRING
                     },
@@ -137,7 +137,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = true,
                         Name = "Cancellations",
                         ReadOnly = false,
-                        SelectedValue = userConfig.RemoteFileStorage.CancellationPath,
+                        SelectedValue = userConfig.RemoteFileStorage.CancellationsPath,
                         SortOrder = 1,
                         ValueType = ConfigValueType.STRING
                     },
@@ -149,7 +149,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         MustBeSpecified = true,
                         Name = "SnapInventories",
                         ReadOnly = false,
-                        SelectedValue = userConfig.RemoteFileStorage.SnapInventoryPath,
+                        SelectedValue = userConfig.RemoteFileStorage.SnapInventoriesPath,
                         SortOrder = 1,
                         ValueType = ConfigValueType.STRING
                     },

@@ -99,10 +99,12 @@ namespace Asda.Integration.Business.Services.Adapters
                     break;
                 case ConfigStagesEnum.AddFoldersNames:
                     ReadFoldersNames(userConfig, configItems);
-                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage))
+                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage, 
+                            out var errorMessage))
                     {
-                        throw new Exception("Some of the paths, does not exist");
+                        throw new Exception(errorMessage);
                     }
+
                     userConfig.StepName = ConfigStagesEnum.UserConfig.ToString();
                     break;
                 case ConfigStagesEnum.UserConfig:
@@ -116,13 +118,13 @@ namespace Asda.Integration.Business.Services.Adapters
 
         private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
         {
-            userConfig.RemoteFileStorage.OrderPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
-            userConfig.RemoteFileStorage.DispatchPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
-            userConfig.RemoteFileStorage.AcknowledgmentPath =
+            userConfig.RemoteFileStorage.OrdersPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
+            userConfig.RemoteFileStorage.DispatchesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
+            userConfig.RemoteFileStorage.AcknowledgmentsPath =
                 configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
-            userConfig.RemoteFileStorage.CancellationPath =
+            userConfig.RemoteFileStorage.CancellationsPath =
                 configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations");
-            userConfig.RemoteFileStorage.SnapInventoryPath =
+            userConfig.RemoteFileStorage.SnapInventoriesPath =
                 configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories");
         }
 

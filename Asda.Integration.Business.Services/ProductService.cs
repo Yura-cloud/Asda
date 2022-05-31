@@ -56,8 +56,7 @@ namespace Asda.Integration.Business.Services
                 var stockItemsLevel = GetStockItemsLevel(request, _userConfigAdapter);
                 var inventoryItems = stockItemsLevel.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
                 var xmlErrors = _ftp.CreateFiles(inventoryItems, user.FtpSettings,
-                    user.RemoteFileStorage.SnapInventoryPath);
-
+                    user.RemoteFileStorage.SnapInventoriesPath);
                 var response = new ProductInventoryUpdateResponse
                 {
                     Products = request.Products.Select(p => new ProductInventoryResponse {SKU = p.SKU}).ToList()
