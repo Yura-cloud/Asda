@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Products;
@@ -52,11 +51,30 @@ namespace Asda.Integration.Business.Services
                     return userUnauthorizedResponse;
                 }
 
+                if (AllItemsWithoutId(request, out var xmlErrors, out var wrongIdResponse))
+                {
+                    return wrongIdResponse;
+                }
+
+                if (xmlErrors.Count != 0)
+                {
+                    request.Products = request.Products
+                        .Where(p => !xmlErrors.Select(e => e.SKU).Contains(p.SKU))
+                        .ToArray();
+                }
+
                 LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, request.AuthorizationToken);
                 var stockItemsLevel = GetStockItemsLevel(request, _userConfigAdapter);
+                if (stockItemsLevel.Count != request.Products.Length)
+                {
+                    AddToErrorsItemsWithWrongItemId(request, stockItemsLevel, xmlErrors);
+                }
+
+                //further we are working with List<StockItemLevel> not List<request.Products>
                 var inventoryItems = stockItemsLevel.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
-                var xmlErrors = _ftp.CreateFiles(inventoryItems, user.FtpSettings,
-                    user.RemoteFileStorage.SnapInventoriesPath);
+
+                _ftp.CreateFiles(inventoryItems, user.FtpSettings, user.RemoteFileStorage.SnapInventoriesPath,
+                    user.AuthorizationToken, xmlErrors);
                 var response = new ProductInventoryUpdateResponse
                 {
                     Products = request.Products.Select(p => new ProductInventoryResponse
@@ -68,21 +86,79 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                string message = $"Failed while ProductInventoryUpdateResponse, with message {e.Message}";
+                var message = $"Failed while ProductInventoryUpdateResponse, with message {e.Message}";
                 _logger.LogError(message);
                 return new ProductInventoryUpdateResponse {Error = message};
             }
         }
 
+        private void AddToErrorsItemsWithWrongItemId(ProductInventoryUpdateRequest request,
+            List<StockItemLevel> stockItemsLevel, List<XmlError> xmlErrors)
+        {
+            var productsWithFailedItemId = request.Products
+                .Where(p => !stockItemsLevel.Select(o => o.SKU).Contains(p.SKU));
+            foreach (var productInventory in productsWithFailedItemId)
+            {
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken}; WrongIdNumber, SKU: {productInventory.SKU}");
+                xmlErrors.Add(new XmlError
+                {
+                    SKU = productInventory.SKU,
+                    Message = "WrongIdNumber"
+                });
+            }
+        }
+
+        private bool AllItemsWithoutId(ProductInventoryUpdateRequest request, out List<XmlError> xmlErrors,
+            out ProductInventoryUpdateResponse wrongIdResponse)
+        {
+            xmlErrors = GetXmlErrorsIfItemIdIsNotGuid(request);
+            if (xmlErrors.Count == request.Products.Length)
+            {
+                var message = $"All items do not have their id";
+                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
+                {
+                    wrongIdResponse = new ProductInventoryUpdateResponse()
+                    {
+                        Error = message
+                    };
+                    return true;
+                }
+            }
+
+            wrongIdResponse = null;
+            return false;
+        }
+
+        private List<XmlError> GetXmlErrorsIfItemIdIsNotGuid(ProductInventoryUpdateRequest request)
+        {
+            var itemsWithNonCorrectId = request.Products
+                .Where(p => !Guid.TryParse(p.Reference, out var guidOut));
+            foreach (var productInventory in itemsWithNonCorrectId)
+            {
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken};Item id is not correct or empty, SKU: {productInventory.SKU}");
+            }
+
+            var xmlErrors = itemsWithNonCorrectId
+                .Select(p => new XmlError
+                {
+                    Message = "Item id is not correct or empty",
+                    SKU = p.SKU
+                }).ToList();
+
+            return xmlErrors;
+        }
+
         private List<StockItemLevel> GetStockItemsLevel(ProductInventoryUpdateRequest request,
             IUserConfigAdapter userConfigAdapter)
         {
-            var userLocations = GetLocations();
+            var userLocations = GetLocations(request.AuthorizationToken);
             var user = userConfigAdapter.LoadByToken(request.AuthorizationToken);
             if (!userLocations.Select(l => l.LocationName).Contains(user.Location))
             {
                 var message = $"There is no such location name like - {user.Location}";
-                _logger.LogError(message);
+                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
                 throw new Exception(message);
             }
 
@@ -96,14 +172,13 @@ namespace Asda.Integration.Business.Services
             foreach (var stockItemLevel in stockItemLevels)
             {
                 stockItemLevel.SKU = request.Products
-                    .FirstOrDefault(p => p.Reference == stockItemLevel.StockItemId.ToString())
-                    ?.SKU;
+                    .FirstOrDefault(p => p.Reference == stockItemLevel.StockItemId.ToString())?.SKU;
             }
 
             return stockItemLevels;
         }
 
-        private List<InventoryStockLocation> GetLocations()
+        private List<InventoryStockLocation> GetLocations(string userToken)
         {
             try
             {
@@ -112,7 +187,7 @@ namespace Asda.Integration.Business.Services
             catch (Exception e)
             {
                 var message = $"Failed while GetStockLocations, with message {e.Message}";
-                _logger.LogError(message);
+                _logger.LogError($"UserToken: {userToken}; {message}");
                 throw new Exception(message);
             }
         }
@@ -135,7 +210,7 @@ namespace Asda.Integration.Business.Services
             catch (Exception e)
             {
                 var message = $"Failed while GetStockItemsFullByIds, with message {e.Message}";
-                _logger.LogError(message);
+                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
                 throw new Exception(message);
             }
         }
@@ -147,7 +222,9 @@ namespace Asda.Integration.Business.Services
             {
                 Products = xmlErrors.Select(e => new ProductInventoryResponse
                 {
-                    SKU = products[e.Index].SKU,
+                    //we get SKU in xmlError if ItemId is not correct,otherwise we have index of product
+                    //from CreateFiles() if something went wrong 
+                    SKU = e.SKU ?? products[e.Index].SKU,
                     Error = e.Message
                 }).ToList()
             };
@@ -177,7 +254,8 @@ namespace Asda.Integration.Business.Services
         {
             if (request.Products == null || request.Products.Length == 0)
             {
-                _logger.LogError($"Error while updating inventory. There aren't any products");
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken}; Error while updating inventory. There aren't any products");
                 {
                     response = new ProductInventoryUpdateResponse {Error = "Products not supplied"};
                     return true;

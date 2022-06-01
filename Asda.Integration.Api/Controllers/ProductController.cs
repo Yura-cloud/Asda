@@ -1,7 +1,6 @@
 ﻿using System;
 using Asda.Integration.Domain.Models.Products;
 using Asda.Integration.Service.Intefaces;
-using Asda.Integration.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Asda.Integration.Api.Controllers
@@ -10,13 +9,10 @@ namespace Asda.Integration.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class ProductController : ControllerBase
     {
-        private readonly IUserConfigAdapter _userConfigAdapter;
-
         private readonly IProductService _productService;
 
-        public ProductController(IUserConfigAdapter userConfigAdapter, IProductService productService)
+        public ProductController(IProductService productService)
         {
-            _userConfigAdapter = userConfigAdapter;
             _productService = productService;
         }
 

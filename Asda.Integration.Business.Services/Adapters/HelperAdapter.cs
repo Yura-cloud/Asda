@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Asda.Integration.Domain.Models.Business;
 using Renci.SshNet;
 

@@ -19,85 +19,84 @@ namespace Asda.Integration.Business.Services
             _logger = logger;
         }
 
-        public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path)
+        public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path, string userToken,
+            out List<XmlError> xmlErrors)
         {
-            try
-            {
-                using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
-                    ftpSettings.Password);
-                client.Connect();
-                if (!client.IsConnected)
-                {
-                    var message = $"Failed while working with Ftp, client was not connected";
-                    _logger.LogError(message);
-                    throw new Exception(message);
-                }
-
-                var purchaseOrders = new List<PurchaseOrder>();
-                var serializer = new XmlSerializer(typeof(PurchaseOrder));
-                var files = client.ListDirectory(path);
-                
-                foreach (var sftpFile in files)
-                {
-                    if (sftpFile.Name != "." && sftpFile.Name != "..")
-                    {
-                        try
-                        {
-                            using var stream = client.OpenRead(sftpFile.FullName);
-                            purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
-                        }
-                        catch (Exception e)
-                        {
-                            
-                        }
-                    }
-                }
-
-                return purchaseOrders;
-            }
-
-            catch (Exception e)
-            {
-                var message = $"Failed while working with GetPurchaseOrderFromFtp, with message {e.Message}";
-                throw new Exception(message);
-            }
-        }
-
-        public List<XmlError> CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath)
-        {
-            var errorsXml = new List<XmlError>();
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
             client.Connect();
-            if (client.IsConnected)
+            if (!client.IsConnected)
             {
-                DeleteFiles(remotePath, client);
-                var filePath = string.Empty;
-                for (var i = 0; i < models.Count; i++)
+                var message = $"Failed while working with GetPurchaseOrderFromFtp, client was not connected";
+                _logger.LogError($"UserToken: {userToken}; {message}");
+                throw new Exception(message);
+            }
+
+            var purchaseOrders = new List<PurchaseOrder>();
+            var serializer = new XmlSerializer(typeof(PurchaseOrder));
+            var files = client.ListDirectory(path);
+            xmlErrors = new List<XmlError>();
+            foreach (var sftpFile in files)
+            {
+                if (sftpFile.Name != "." && sftpFile.Name != "..")
                 {
                     try
                     {
-                        var fileName = FileNamingHelper.GetFileName(models[i]);
-                        filePath = $"{remotePath}/{fileName}";
-                        var fileStream = client.Create(filePath);
-
-                        var namespaces = new XmlSerializerNamespaces();
-                        namespaces.Add("", "");
-
-                        var writer = new XmlSerializer(typeof(T));
-                        writer.Serialize(fileStream, models[i], namespaces);
-                        fileStream.Close();
+                        using var stream = client.OpenRead(sftpFile.FullName);
+                        purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
                     }
                     catch (Exception e)
                     {
-                        var message = $"Failed while creating file => {filePath}, with message {e.Message}";
-                        _logger.LogError(message);
-                        errorsXml.Add(new XmlError {Index = i, Message = message});
+                        var message = $"Failed while deserialize, order =>{sftpFile.FullName}";
+                        _logger.LogError($"UserToken: {userToken}; {message}");
+                        xmlErrors.Add(new XmlError()
+                        {
+                            Message = message
+                        });
                     }
                 }
             }
 
-            return errorsXml;
+            return purchaseOrders;
+        }
+
+        public void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
+            List<XmlError> xmlErrors)
+        {
+            using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
+                ftpSettings.Password);
+            client.Connect();
+            if (!client.IsConnected)
+            {
+                var message = $"Failed while working with CreateFiles, client was not connected";
+                _logger.LogError($"UserToken: {userToken}; {message}");
+                throw new Exception(message);
+            }
+
+            DeleteFiles(remotePath, client);
+            var filePath = string.Empty;
+            for (var i = 0; i < models.Count; i++)
+            {
+                try
+                {
+                    var fileName = FileNamingHelper.GetFileName(models[i]);
+                    filePath = $"{remotePath}/{fileName}";
+                    var fileStream = client.Create(filePath);
+                    
+                    var namespaces = new XmlSerializerNamespaces();
+                    namespaces.Add("", "");
+
+                    var writer = new XmlSerializer(typeof(T));
+                    writer.Serialize(fileStream, models[i], namespaces);
+                    fileStream.Close();
+                }
+                catch (Exception e)
+                {
+                    var message = $"Failed while creating file => {filePath}, with message {e.Message}";
+                    _logger.LogError($"UserToken: {userToken}; {message}");
+                    xmlErrors.Add(new XmlError {Index = i, Message = message});
+                }
+            }
         }
 
         private void DeleteFiles(string remotePath, SftpClient client)

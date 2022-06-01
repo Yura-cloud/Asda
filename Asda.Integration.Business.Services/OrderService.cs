@@ -5,14 +5,12 @@ using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
-using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
-using SampleChannel.Helpers;
 
 namespace Asda.Integration.Business.Services
 {
@@ -35,17 +33,19 @@ namespace Asda.Integration.Business.Services
         {
             if (request.PageNumber <= 0)
             {
+                _logger.LogError($"UserToken: {request.AuthorizationToken}, Invalid page number");
                 return new OrdersResponse {Error = "Invalid page number"};
             }
 
             try
             {
-                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
+                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var purchaseOrders = GetPurchaseOrder(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
+                var purchaseOrders = _ftp.GetPurchaseOrderFromFtp(user.FtpSettings, user.RemoteFileStorage.OrdersPath,
+                    user.AuthorizationToken, out var xmlErrors);
                 if (purchaseOrders == null)
                 {
                     return new OrdersResponse();
@@ -53,17 +53,10 @@ namespace Asda.Integration.Business.Services
 
                 var orders = purchaseOrders.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
-                var xmlErrors = _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings,
-                    user.RemoteFileStorage.AcknowledgmentsPath);
-                if (!xmlErrors.Any())
-                {
-                    return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
-                }
+                _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings, user.RemoteFileStorage.AcknowledgmentsPath,
+                    user.AuthorizationToken, xmlErrors);
 
-                var errors = xmlErrors
-                    .Select(e => e.Message)
-                    .Aggregate(string.Empty, (current, next) => current + next);
-                return new OrdersResponse {Error = errors};
+                return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
             }
             catch (Exception e)
             {
@@ -82,14 +75,15 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
+                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
                     return new OrderDespatchResponse {Error = errorMessage};
                 }
 
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
-                var xmlErrors = _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings,
-                    user.RemoteFileStorage.DispatchesPath);
+                var xmlErrors = new List<XmlError>();
+                _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings, user.RemoteFileStorage.DispatchesPath,
+                    user.AuthorizationToken, xmlErrors);
                 var response = new OrderDespatchResponse
                 {
                     Orders = request.Orders.Select(o => new OrderDespatchError
@@ -102,7 +96,7 @@ namespace Asda.Integration.Business.Services
             catch (Exception e)
             {
                 var message = $"Failed while working with Dispatch Action, with message {e.Message}";
-                _logger.LogError(message);
+                _logger.LogError($"UserToken: {request.AuthorizationToken}; {message}");
 
                 return new OrderDespatchResponse {Error = message};
             }
@@ -117,16 +111,17 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                if (UserUnauthorizedTest(request.AuthorizationToken, out var errorMessage, out var user))
+                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
                     return new OrderCancelResponse() {Error = errorMessage, HasError = true};
                 }
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
-                var xmlErrors = _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
-                    user.RemoteFileStorage.CancellationsPath);
+                var xmlErrors = new List<XmlError>();
+                _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
+                    user.RemoteFileStorage.CancellationsPath, user.AuthorizationToken, xmlErrors);
 
-                return !xmlErrors.Any() ? new OrderCancelResponse{HasError = false} : ErrorCancelResponse(xmlErrors);
+                return !xmlErrors.Any() ? new OrderCancelResponse {HasError = false} : ErrorCancelResponse(xmlErrors);
             }
             catch (Exception e)
             {
@@ -134,11 +129,6 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError(message);
                 return new OrderCancelResponse {Error = message, HasError = true};
             }
-        }
-
-        private List<PurchaseOrder> GetPurchaseOrder(FtpSettingsModel ftpSettings, string orderPath)
-        {
-            return _ftp.GetPurchaseOrderFromFtp(ftpSettings, orderPath);
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
@@ -169,7 +159,7 @@ namespace Asda.Integration.Business.Services
             return response;
         }
 
-        private bool UserUnauthorizedTest(string token, out string errorMessage, out UserConfig user)
+        private bool UserUnauthorized(string token, out string errorMessage, out UserConfig user)
         {
             user = _userConfigAdapter.LoadByToken(token);
             if (user == null)
@@ -188,7 +178,7 @@ namespace Asda.Integration.Business.Services
             if (request?.Orders == null || request.Orders?.Count == 0)
             {
                 var message = $"Failed while working with Dispatch Action, with message: Orders are Null or empty";
-                _logger.LogError(message);
+                _logger.LogError($"UserToken: {request.AuthorizationToken}; {message}");
 
                 response = new OrderDespatchResponse {Error = message};
                 return true;
@@ -203,7 +193,7 @@ namespace Asda.Integration.Business.Services
             if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
             {
                 var message = $"Failed while working with CancelOrders Action, with message: Items are Null or empty";
-                _logger.LogError(message);
+                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
 
                 sendCanceledOrders = new OrderCancelResponse {Error = message, HasError = true};
                 return true;

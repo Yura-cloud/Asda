@@ -35,11 +35,17 @@ namespace Asda.Integration.Business.Services
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
 
+                var user = _userConfigAdapter.LoadByToken(token);
+                if (user!=null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+                }
+
                 _userConfigAdapter.CreateNew(session.Email, session.UserId, session.UserName, new Guid(token));
             }
             catch (Exception e)
             {
-                _logger.LogError($"Erorr, while using GetUsersInfo, with message {e.Message}");
+                _logger.LogError($"userToken:{token}; Erorr, while using GetUsersInfo, with message {e.Message}");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
@@ -61,7 +67,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                _logger.LogError($"Failed while GetSession, with message {e.Message}");
+                _logger.LogError($"userToken:{token}; Failed while GetSession, with message {e.Message}");
             }
 
             return new BaseSession();
