@@ -86,12 +86,11 @@ namespace Asda.Integration.Business.Services
                     user.AuthorizationToken, xmlErrors);
                 var response = new OrderDespatchResponse
                 {
-                    Orders = request.Orders.Select(o => new OrderDespatchError
-                    {
-                        ReferenceNumber = o.ReferenceNumber
-                    }).ToList()
+                    Orders = request.Orders.Select(o => new OrderDespatchError {ReferenceNumber = o.ReferenceNumber})
+                        .ToList()
                 };
-                return !xmlErrors.Any() ? response : ErrorDispatchResponse(xmlErrors, shipmentConfirmations);
+
+                return !xmlErrors.Any() ? response : ErrorDispatchResponse(xmlErrors, request);
             }
             catch (Exception e)
             {
@@ -144,15 +143,13 @@ namespace Asda.Integration.Business.Services
             return response;
         }
 
-        private OrderDespatchResponse ErrorDispatchResponse(List<XmlError> xmlErrors,
-            List<ShipmentConfirmation> shipmentConfirmations)
+        private OrderDespatchResponse ErrorDispatchResponse(List<XmlError> xmlErrors, OrderDespatchRequest request)
         {
             var response = new OrderDespatchResponse
             {
                 Orders = xmlErrors.Select(e => new OrderDespatchError
                 {
-                    ReferenceNumber = shipmentConfirmations[e.Index].Request.ShipNoticeRequest
-                        .ShipNoticePortion.OrderReference.OrderID.ToString(),
+                    ReferenceNumber = request.Orders[e.Index].ReferenceNumber,
                     Error = e.Message
                 }).ToList()
             };

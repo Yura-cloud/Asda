@@ -82,7 +82,7 @@ namespace Asda.Integration.Business.Services
                     var fileName = FileNamingHelper.GetFileName(models[i]);
                     filePath = $"{remotePath}/{fileName}";
                     var fileStream = client.Create(filePath);
-                    
+
                     var namespaces = new XmlSerializerNamespaces();
                     namespaces.Add("", "");
 
