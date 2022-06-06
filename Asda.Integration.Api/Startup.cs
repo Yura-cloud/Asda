@@ -43,6 +43,8 @@ namespace SampleChannel
             services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<IFtpService, FtpService>();
+            
+            services.AddScoped<IConfigService, ConfigService>();
 
             services.AddSingleton<IConfigStages, ConfigStages>();
 

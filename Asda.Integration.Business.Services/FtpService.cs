@@ -47,7 +47,7 @@ namespace Asda.Integration.Business.Services
                     }
                     catch (Exception e)
                     {
-                        var message = $"Failed while deserialize, order =>{sftpFile.FullName}";
+                        var message = $"Failed while deserialize, order =>{sftpFile.FullName}, with message: {e.Message}";
                         _logger.LogError($"UserToken: {userToken}; {message}");
                         xmlErrors.Add(new XmlError()
                         {

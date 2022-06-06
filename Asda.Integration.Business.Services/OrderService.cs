@@ -5,7 +5,6 @@ using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
-using Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
