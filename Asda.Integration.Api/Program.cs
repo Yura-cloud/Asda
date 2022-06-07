@@ -9,7 +9,7 @@ namespace Asda.Integration.Api.Controllers
 {
     public class Program
     {
-        private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        private static IConfiguration SerilogConfiguration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("serilogSettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables()
@@ -18,7 +18,7 @@ namespace Asda.Integration.Api.Controllers
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
+                .ReadFrom.Configuration(SerilogConfiguration)
                 .WriteTo.File(Path.Combine("Logs", "log.txt"))
                 .CreateLogger();
             try

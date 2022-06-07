@@ -147,9 +147,12 @@ namespace Asda.Integration.Business.Services
         {
             try
             {
-                var userConfig = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
-
-                return _configStages.StageResponse(userConfig, "User config is at invalid stage");
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                if (user == null)
+                {
+                    return new UserConfigResponse {Error = "User config is at invalid stage"};
+                }
+                return _configStages.StageResponse(user);
             }
             catch (Exception ex)
             {
@@ -165,8 +168,10 @@ namespace Asda.Integration.Business.Services
                 var userConfig = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
 
                 if (request.StepName != userConfig.StepName)
+                {
                     return new UserConfigResponse
                         {Error = string.Format("Invalid step name expected {0}", userConfig.StepName)};
+                }
 
                 return _userConfigAdapter.Save(userConfig, request.ConfigItems);
             }

@@ -19,8 +19,8 @@ namespace Asda.Integration.Api.Controllers
         [HttpGet]
         public IActionResult GetPicture()
         {
-            var b = System.IO.File.ReadAllBytes(@"wwwroot\images\Asda_60.png");
-            return File(b, "image/jpeg");
+            var bytes = System.IO.File.ReadAllBytes(@"wwwroot\images\Asda_60.png");
+            return File(bytes, "image/jpeg");
         }
 
         [HttpPost]

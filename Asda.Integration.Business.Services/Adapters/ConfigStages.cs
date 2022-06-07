@@ -25,7 +25,7 @@ namespace Asda.Integration.Business.Services.Adapters
         {
             return new UserConfigResponse
             {
-                StepName = "AddFtpSettings",
+                StepName = ConfigStagesEnum.AddFtpSettings.ToString(),
                 AccountName = "AccountName",
                 WizardStepTitle = "Add FTP Settings",
                 WizardStepDescription = "This is where you add your FTP credentials",
@@ -87,7 +87,7 @@ namespace Asda.Integration.Business.Services.Adapters
         {
             return new UserConfigResponse
             {
-                StepName = "AddFoldersNames",
+                StepName = ConfigStagesEnum.AddFoldersNames.ToString(),
                 AccountName = "AccountName",
                 WizardStepTitle = "Add names of the working folders",
                 WizardStepDescription = "For example: Linnworks/Orders",
@@ -163,7 +163,7 @@ namespace Asda.Integration.Business.Services.Adapters
             // We don't return API Credentials, if they're wrong or invalid we go back to starting stage.
             return new UserConfigResponse
             {
-                StepName = "UserConfig",
+                StepName =ConfigStagesEnum.UserConfig.ToString(),
                 AccountName = "Example account name",
                 WizardStepTitle = "UserConfig",
                 WizardStepDescription = "User Config",
