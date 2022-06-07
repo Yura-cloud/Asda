@@ -13,12 +13,9 @@ namespace Asda.Integration.Business.Services.Adapters
     {
         private readonly IRepository _fileRepository;
 
-        private readonly IConfigStages _configStages;
-
         public UserConfigAdapter(IOptions<AppSettings> config, IConfigStages configStages)
         {
             _fileRepository = config.Value.FileRepository;
-            _configStages = configStages;
         }
 
         /// <inheritdoc />
@@ -87,7 +84,7 @@ namespace Asda.Integration.Business.Services.Adapters
         }
 
         /// <inheritdoc />
-        public UserConfigResponse Save(UserConfig userConfig, ConfigItem[] configItems)
+        public void FillUserConfig(UserConfig userConfig, ConfigItem[] configItems)
         {
             var step = Enum.Parse(typeof(ConfigStagesEnum), userConfig.StepName);
             switch (step)
@@ -99,7 +96,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     break;
                 case ConfigStagesEnum.AddFoldersNames:
                     ReadFoldersNames(userConfig, configItems);
-                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage, 
+                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage,
                             out var errorMessage))
                     {
                         throw new Exception(errorMessage);
@@ -111,15 +108,13 @@ namespace Asda.Integration.Business.Services.Adapters
                     userConfig.Location = configItems.FirstOrDefault(i => i.ConfigItemId == "Location");
                     break;
             }
-
-            Save(userConfig);
-            return _configStages.StageResponse(userConfig);
         }
 
         private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
         {
             userConfig.RemoteFileStorage.OrdersPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
-            userConfig.RemoteFileStorage.DispatchesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
+            userConfig.RemoteFileStorage.DispatchesPath =
+                configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
             userConfig.RemoteFileStorage.AcknowledgmentsPath =
                 configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
             userConfig.RemoteFileStorage.CancellationsPath =
@@ -138,9 +133,9 @@ namespace Asda.Integration.Business.Services.Adapters
 
         public void Save(UserConfig userConfig)
         {
-            var output = Newtonsoft.Json.JsonConvert.SerializeObject(userConfig);
+            var userConfigJson = Newtonsoft.Json.JsonConvert.SerializeObject(userConfig);
 
-            _fileRepository.Save(userConfig.AuthorizationToken, output);
+            _fileRepository.Save(userConfig.AuthorizationToken, userConfigJson);
         }
     }
 }

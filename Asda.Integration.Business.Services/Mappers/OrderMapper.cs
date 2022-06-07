@@ -12,66 +12,55 @@ namespace Asda.Integration.Api.Mappers
     {
         public static Order MapToOrder(PurchaseOrder purchaseOrder)
         {
+            var address = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address;
+            var header = purchaseOrder.Request.OrderRequest.OrderRequestHeader;
             var order = new Order
             {
                 DeliveryAddress = new Address
                 {
-                    Address1 =
-                        purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.Street,
-                    Company = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .DeliverTo,
-                    Country = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.Country
-                        .Text,
-                    CountryCode = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .Country.IsoCountryCode,
-                    EmailAddress = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Email,
-                    FullName = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Name.Text,
-                    PhoneNumber = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Phone
-                        .TelephoneNumber.Number,
-                    PostCode = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .PostalCode,
-                    Town = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.City
+                    Address1 = address.PostalAddress.Street,
+                    Company = address.PostalAddress.DeliverTo,
+                    Country = address.PostalAddress.Country.Text,
+                    CountryCode = address.PostalAddress.Country.IsoCountryCode,
+                    EmailAddress = address.Email,
+                    FullName = address.Name.Text,
+                    PhoneNumber = address.Phone.TelephoneNumber.Number,
+                    PostCode = address.PostalAddress.PostalCode,
+                    Town = address.PostalAddress.City
                 },
                 BillingAddress = new Address
                 {
-                    Address1 =
-                        purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.Street,
-                    Company = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .DeliverTo,
-                    Country = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.Country
-                        .Text,
-                    CountryCode = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .Country.IsoCountryCode,
-                    EmailAddress = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Email,
-                    FullName = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Name.Text,
-                    PhoneNumber = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.Phone
-                        .TelephoneNumber.Number,
-                    PostCode = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress
-                        .PostalCode,
-                    Town = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ShipTo.Address.PostalAddress.City,
+                    Address1 = address.PostalAddress.Street,
+                    Company = address.PostalAddress.DeliverTo,
+                    Country = address.PostalAddress.Country.Text,
+                    CountryCode = address.PostalAddress.Country.IsoCountryCode,
+                    EmailAddress = address.Email,
+                    FullName = address.Name.Text,
+                    PhoneNumber = address.Phone.TelephoneNumber.Number,
+                    PostCode = address.PostalAddress.PostalCode,
+                    Town = address.PostalAddress.City
                 },
                 ChannelBuyerName = "Asda",
                 Currency = "GBP",
-                DispatchBy = purchaseOrder.Request.OrderRequest.OrderRequestHeader.ReqShipDate,
-                ReferenceNumber = purchaseOrder.Request.OrderRequest.OrderRequestHeader.OrderID.ToString(),
-                SecondaryReferenceNumber = purchaseOrder.Request.OrderRequest.OrderRequestHeader.RequisitionID,
-                PaidOn = purchaseOrder.Request.OrderRequest.OrderRequestHeader.OrderDate,
+                DispatchBy = header.ReqShipDate,
+                ReferenceNumber = header.OrderID.ToString(),
+                SecondaryReferenceNumber = header.RequisitionID,
+                PaidOn = header.OrderDate,
                 PaymentStatus = PaymentStatus.PAID,
-                ReceivedDate = purchaseOrder.Request.OrderRequest.OrderRequestHeader.OrderDate,
+                ReceivedDate = header.OrderDate,
                 ExtendedProperties = new List<OrderExtendedProperty>
                 {
                     new()
                     {
                         Name = "PromisedDeliveryDate",
                         Type = "Info",
-                        Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.PromisedDeliveryDate
-                            .ToString(CultureInfo.InvariantCulture)
+                        Value = header.PromisedDeliveryDate.ToString(CultureInfo.InvariantCulture)
                     },
                     new()
                     {
                         Name = "FulfilmentType",
                         Type = "Info",
-                        Value = purchaseOrder.Request.OrderRequest.OrderRequestHeader.FulfilmentType
+                        Value = header.FulfilmentType
                     }
                 }
             };

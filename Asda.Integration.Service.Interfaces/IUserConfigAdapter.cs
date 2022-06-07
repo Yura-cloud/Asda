@@ -33,9 +33,9 @@ namespace Asda.Integration.Service.Interfaces
         /// Save configuration items in the user config.
         /// </summary>
         /// <param name="userConfig">The user config.</param>
-        /// <param name="configItems">The configuration items.</param>
+        /// <param name="configItems"></param>
         /// <returns>The result of the action.</returns>
-        public UserConfigResponse Save(UserConfig userConfig, ConfigItem[] configItems);
+        public void FillUserConfig(UserConfig userConfig, ConfigItem[] configItems);
 
         UserConfig LoadByUserId(Guid userId);
         void Save(UserConfig userConfig);

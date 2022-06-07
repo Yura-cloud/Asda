@@ -152,6 +152,7 @@ namespace Asda.Integration.Business.Services
                 {
                     return new UserConfigResponse {Error = "User config is at invalid stage"};
                 }
+
                 return _configStages.StageResponse(user);
             }
             catch (Exception ex)
@@ -173,7 +174,9 @@ namespace Asda.Integration.Business.Services
                         {Error = string.Format("Invalid step name expected {0}", userConfig.StepName)};
                 }
 
-                return _userConfigAdapter.Save(userConfig, request.ConfigItems);
+                _userConfigAdapter.FillUserConfig(userConfig, request.ConfigItems);
+                _userConfigAdapter.Save(userConfig);
+                return _configStages.StageResponse(userConfig);
             }
             catch (Exception ex)
             {

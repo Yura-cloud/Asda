@@ -39,7 +39,7 @@ namespace Asda.Integration.Business.Services
             xmlErrors = new List<XmlError>();
             foreach (var sftpFile in files)
             {
-                if (sftpFile.Name != "." && sftpFile.Name != "..")
+                if (sftpFile.IsRegularFile)
                 {
                     try
                     {
@@ -74,7 +74,7 @@ namespace Asda.Integration.Business.Services
                 throw new Exception(message);
             }
 
-            DeleteFiles(remotePath, client);
+            UpdateFiles(remotePath, client);
             var filePath = string.Empty;
             for (var i = 0; i < models.Count; i++)
             {
@@ -100,7 +100,7 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        private void DeleteFiles(string remotePath, SftpClient client)
+        private void UpdateFiles(string remotePath, SftpClient client)
         {
             var files = client.ListDirectory(remotePath);
             foreach (var sftpFile in files)
