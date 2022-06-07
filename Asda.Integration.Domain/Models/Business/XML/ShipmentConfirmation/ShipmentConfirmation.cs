@@ -1,14 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Domain.Models.Business.XML.ShipmentConfirmation
 {
     [XmlRoot(ElementName = "cXML")]
-    public class ShipmentConfirmation : HeaderBase
+    public class ShipmentConfirmation : HeaderBase, IGetFileName
     {
+        private const string OrderConfirmation = "cXML_OrderShipmentConfirmation";
+
         [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
+
+        public string GetFileName()
+        {
+            var timeStamp = Timestamp.ToString("yyyy.MM.dd");
+            var id = Request.ShipNoticeRequest.ShipNoticePortion.OrderReference.OrderID;
+            return $"{OrderConfirmation}_{id}_{timeStamp}.xml";
+        }
     }
 
     [XmlRoot(ElementName = "Request")]

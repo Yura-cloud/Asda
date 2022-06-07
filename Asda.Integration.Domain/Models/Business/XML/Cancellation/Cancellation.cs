@@ -1,14 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Domain.Models.Business.XML.Cancellation
 {
     [XmlRoot(ElementName = "cXML")]
-    public class Cancellation : HeaderBase
+    public class Cancellation : HeaderBase, IGetFileName
     {
+        private const string OrderCancellation = "cXML_OrderCancellation";
+
         [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
+
+        public string GetFileName()
+        {
+            var timeStamp = Timestamp.ToString("yyyy.MM.dd");
+            var id = Request.ConfirmationRequest.OrderReference.OrderID;
+            return $"{OrderCancellation}_{id}_{timeStamp}.xml";
+        }
     }
 
     [XmlRoot(ElementName = "Request")]

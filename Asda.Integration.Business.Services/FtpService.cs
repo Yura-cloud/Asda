@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using Asda.Integration.Business.Services.Helpers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
+using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
 using Renci.SshNet;
@@ -79,7 +80,7 @@ namespace Asda.Integration.Business.Services
             {
                 try
                 {
-                    var fileName = FileNamingHelper.GetFileName(models[i]);
+                    var fileName = ((IGetFileName)models[i]).GetFileName();
                     filePath = $"{remotePath}/{fileName}";
                     var fileStream = client.Create(filePath);
 

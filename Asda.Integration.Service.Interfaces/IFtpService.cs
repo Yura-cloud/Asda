@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
+using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Service.Interfaces
 {

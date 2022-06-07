@@ -1,13 +1,23 @@
 using System;
 using System.Xml.Serialization;
+using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Domain.Models.Business.XML.Acknowledgment
 {
     [XmlRoot(ElementName = "cXML")]
-    public class Acknowledgment : HeaderBase
+    public class Acknowledgment : HeaderBase, IGetFileName
     {
+        private const string OrderUpdate = "cXML_OrderUpdate";
+
         [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
+
+        public string GetFileName()
+        {
+            var timeStamp = Timestamp.ToString("yyyy.MM.dd");
+            var id = Request.ConfirmationRequest.OrderReference.OrderID;
+            return $"{OrderUpdate}_{id}_{timeStamp}.xml";
+        }
     }
 
     [XmlRoot(ElementName = "Request")]

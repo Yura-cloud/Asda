@@ -121,7 +121,7 @@ namespace Asda.Integration.Business.Services
 
                 return !xmlErrors.Any() ? new OrderCancelResponse {HasError = false} : ErrorCancelResponse(xmlErrors);
             }
-            catch (Exception e)
+            catch (Exception e)     
             {
                 var message = $"Failed while working with CancelOrders Action, with message {e.Message}";
                 _logger.LogError(message);

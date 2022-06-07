@@ -1,16 +1,26 @@
 using System;
 using System.Xml.Serialization;
+using Asda.Integration.Service.Intefaces;
 
 namespace Asda.Integration.Domain.Models.Business.XML.InventorySnapshot
 {
     [XmlRoot(ElementName = "cXML")]
-    public class InventorySnapshot : HeaderBase
+    public class InventorySnapshot : HeaderBase, IGetFileName
     {
+        private const string ItemUpdate = "cXML_ItemUpdate";
+
         [XmlElement(ElementName = "Request")]
         public Request Request { get; set; }
 
         [XmlAttribute(AttributeName = "version")]
         public DateTime Version { get; set; }
+
+        public string GetFileName()
+        {
+            var timeStamp = Timestamp.ToString("yyyy.MM.dd");
+            var id = Request.InventorySnapshotRequest.Records.Record.ProductId;
+            return $"{ItemUpdate}_{id}_{timeStamp}.xml";
+        }
     }
 
     [XmlRoot(ElementName = "Request")]
