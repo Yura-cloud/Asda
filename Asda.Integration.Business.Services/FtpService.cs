@@ -35,6 +35,10 @@ namespace Asda.Integration.Business.Services
 
             var purchaseOrders = new List<PurchaseOrder>();
             var serializer = new XmlSerializer(typeof(PurchaseOrder));
+            if (!client.Exists(path))
+            {
+                throw new Exception($"No such folder: {path}");
+            }
             var files = client.ListDirectory(path);
             xmlErrors = new List<XmlError>();
             foreach (var sftpFile in files)
@@ -73,7 +77,10 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError($"UserToken: {userToken}; {message}");
                 throw new Exception(message);
             }
-
+            if (!client.Exists(remotePath))
+            {
+                throw new Exception($"No such folder: {remotePath}");
+            }
             UpdateFiles(remotePath, client);
             var filePath = string.Empty;
             for (var i = 0; i < models.Count; i++)

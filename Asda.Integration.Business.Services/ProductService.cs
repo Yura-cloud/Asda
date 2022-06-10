@@ -88,7 +88,7 @@ namespace Asda.Integration.Business.Services
             {
                 var message = $"Failed while ProductInventoryUpdateResponse, with message {e.Message}";
                 _logger.LogError(message);
-                return new ProductInventoryUpdateResponse {Error = message};
+                return new ProductInventoryUpdateResponse {Error = e.Message};
             }
         }
 

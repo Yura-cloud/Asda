@@ -59,9 +59,9 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with Orders Action, with message: \\n {e.Message}";
+                var message = $"Failed while working with Orders Action, with message: {e.Message}";
                 _logger.LogError(message);
-                return new OrdersResponse {Error = message};
+                return new OrdersResponse {Error = e.Message};
             }
         }
 
@@ -96,7 +96,7 @@ namespace Asda.Integration.Business.Services
                 var message = $"Failed while working with Dispatch Action, with message {e.Message}";
                 _logger.LogError($"UserToken: {request.AuthorizationToken}; {message}");
 
-                return new OrderDespatchResponse {Error = message};
+                return new OrderDespatchResponse {Error = e.Message};
             }
         }
 
@@ -125,7 +125,7 @@ namespace Asda.Integration.Business.Services
             {
                 var message = $"Failed while working with CancelOrders Action, with message {e.Message}";
                 _logger.LogError(message);
-                return new OrderCancelResponse {Error = message, HasError = true};
+                return new OrderCancelResponse {Error = e.Message, HasError = true};
             }
         }
 

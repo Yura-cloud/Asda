@@ -52,7 +52,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "Port",
                         ReadOnly = false,
                         SelectedValue = userConfig.FtpSettings.Port.ToString(),
-                        SortOrder = 1,
+                        SortOrder = 2,
                         ValueType = ConfigValueType.INT
                     },
                     new ConfigItem
@@ -64,7 +64,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "Password",
                         ReadOnly = false,
                         SelectedValue = userConfig.FtpSettings.Password,
-                        SortOrder = 1,
+                        SortOrder = 3,
                         ValueType = ConfigValueType.PASSWORD
                     },
                     new ConfigItem
@@ -76,7 +76,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "User Name",
                         ReadOnly = false,
                         SelectedValue = userConfig.FtpSettings.UserName,
-                        SortOrder = 1,
+                        SortOrder = 4,
                         ValueType = ConfigValueType.STRING
                     },
                 }
@@ -114,7 +114,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "Dispatches",
                         ReadOnly = false,
                         SelectedValue = userConfig.RemoteFileStorage.DispatchesPath,
-                        SortOrder = 1,
+                        SortOrder = 2,
                         ValueType = ConfigValueType.STRING
                     },
                     new ConfigItem
@@ -126,7 +126,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "Acknowledgments",
                         ReadOnly = false,
                         SelectedValue = userConfig.RemoteFileStorage.AcknowledgmentsPath,
-                        SortOrder = 1,
+                        SortOrder = 3,
                         ValueType = ConfigValueType.STRING
                     },
                     new ConfigItem
@@ -138,7 +138,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "Cancellations",
                         ReadOnly = false,
                         SelectedValue = userConfig.RemoteFileStorage.CancellationsPath,
-                        SortOrder = 1,
+                        SortOrder = 4,
                         ValueType = ConfigValueType.STRING
                     },
                     new ConfigItem
@@ -150,7 +150,7 @@ namespace Asda.Integration.Business.Services.Adapters
                         Name = "SnapInventories",
                         ReadOnly = false,
                         SelectedValue = userConfig.RemoteFileStorage.SnapInventoriesPath,
-                        SortOrder = 1,
+                        SortOrder = 5,
                         ValueType = ConfigValueType.STRING
                     },
                     
@@ -163,7 +163,7 @@ namespace Asda.Integration.Business.Services.Adapters
             // We don't return API Credentials, if they're wrong or invalid we go back to starting stage.
             return new UserConfigResponse
             {
-                StepName =ConfigStagesEnum.UserConfig.ToString(),
+                StepName = ConfigStagesEnum.UserConfig.ToString(),
                 AccountName = "Example account name",
                 WizardStepTitle = "UserConfig",
                 WizardStepDescription = "User Config",
@@ -179,6 +179,114 @@ namespace Asda.Integration.Business.Services.Adapters
                         ReadOnly = false,
                         SelectedValue = userConfig.Location,
                         SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Orders",
+                        Description = "Where this App takes purchase orders",
+                        GroupName = "Folders Name",
+                        MustBeSpecified = true,
+                        Name = "Orders",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.OrdersPath,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Dispatches",
+                        Description = "Where the dispatch files will be uploaded",
+                        GroupName = "Folders Name",
+                        MustBeSpecified = true,
+                        Name = "Dispatches",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.DispatchesPath,
+                        SortOrder = 2,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Acknowledgments",
+                        Description = "Where the acknowledgment files will be uploaded",
+                        GroupName = "Folders Name",
+                        MustBeSpecified = true,
+                        Name = "Acknowledgments",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.AcknowledgmentsPath,
+                        SortOrder = 3,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Cancellations",
+                        Description = "Where the cancellations files will be uploaded",
+                        GroupName = "Folders Name",
+                        MustBeSpecified = true,
+                        Name = "Cancellations",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.CancellationsPath,
+                        SortOrder = 4,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "SnapInventories",
+                        Description = "Where the snapInventories files will be uploaded",
+                        GroupName = "Folders Name",
+                        MustBeSpecified = true,
+                        Name = "SnapInventories",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.RemoteFileStorage.SnapInventoriesPath,
+                        SortOrder = 5,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Host",
+                        Description = "FTP Host",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Host",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Host,
+                        SortOrder = 1,
+                        ValueType = ConfigValueType.STRING
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Port",
+                        Description = "FTP Port",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Port",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Port.ToString(),
+                        SortOrder = 2,
+                        ValueType = ConfigValueType.INT
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "Password",
+                        Description = "FTP Password",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "Password",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.Password,
+                        SortOrder = 3,
+                        ValueType = ConfigValueType.PASSWORD
+                    },
+                    new ConfigItem
+                    {
+                        ConfigItemId = "UserName",
+                        Description = "FTP User Name",
+                        GroupName = "Ftp Settings",
+                        MustBeSpecified = true,
+                        Name = "User Name",
+                        ReadOnly = false,
+                        SelectedValue = userConfig.FtpSettings.UserName,
+                        SortOrder = 4,
                         ValueType = ConfigValueType.STRING
                     }
                 }

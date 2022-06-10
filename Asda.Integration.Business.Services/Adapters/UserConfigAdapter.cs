@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using Asda.Integration.Business.Services.Config;
 using Asda.Integration.Domain.Interfaces;
@@ -29,8 +30,8 @@ namespace Asda.Integration.Business.Services.Adapters
                 return null;
             }
 
-            string json = _fileRepository.LoadByToken(authorizationToken);
-            var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(json);
+            var userConfigJson = _fileRepository.LoadByToken(authorizationToken);
+            var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(userConfigJson);
             return userConfig;
         }
 
@@ -106,8 +107,43 @@ namespace Asda.Integration.Business.Services.Adapters
                     break;
                 case ConfigStagesEnum.UserConfig:
                     userConfig.Location = configItems.FirstOrDefault(i => i.ConfigItemId == "Location");
+                    FillInRemoteFilesStorage(userConfig, configItems);
+                    FillInFtpSettings(userConfig, configItems);
                     break;
             }
+        }
+
+        private void FillInFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
+        {
+            string host = configItems.FirstOrDefault(i => i.ConfigItemId == "Host");
+            userConfig.FtpSettings.Host = host.Trim();
+
+            int port = configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
+            userConfig.FtpSettings.Port = port;
+
+            string password = configItems.FirstOrDefault(i => i.ConfigItemId == "Password");
+            userConfig.FtpSettings.Password = password.Trim();
+
+            string userName = configItems.FirstOrDefault(i => i.ConfigItemId == "UserName");
+            userConfig.FtpSettings.UserName = userName.Trim();
+        }
+
+        private static void FillInRemoteFilesStorage(UserConfig userConfig, ConfigItem[] configItems)
+        {
+            string orders = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
+            userConfig.RemoteFileStorage.OrdersPath = orders.Trim();
+
+            string dispatchesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
+            userConfig.RemoteFileStorage.DispatchesPath = dispatchesPath.Trim();
+
+            string acknowledgmentsPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
+            userConfig.RemoteFileStorage.AcknowledgmentsPath = acknowledgmentsPath.Trim();
+
+            string cancellationsPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations");
+            userConfig.RemoteFileStorage.CancellationsPath = cancellationsPath.Trim();
+
+            string snapInventoriesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories");
+            userConfig.RemoteFileStorage.SnapInventoriesPath = snapInventoriesPath.Trim();
         }
 
         private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
