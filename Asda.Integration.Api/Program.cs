@@ -19,7 +19,6 @@ namespace Asda.Integration.Api.Controllers
         {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(SerilogConfiguration)
-                .WriteTo.File(Path.Combine("Logs", "log.txt"))
                 .CreateLogger();
             try
             {

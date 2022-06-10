@@ -7,6 +7,14 @@
         "System": "Warning",
         "IdentityServer4": "Warning"
       }
-    }
+    },
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/log.txt"
+        }
+      }
+    ]
   }
-}
+} 
