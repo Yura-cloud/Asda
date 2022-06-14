@@ -1,4 +1,5 @@
 using System;
+using Asda.Integration.Business.Services.Adapters;
 using Asda.Integration.Domain.Models;
 using Asda.Integration.Domain.Models.Payment;
 using Asda.Integration.Domain.Models.Shipping;
@@ -75,6 +76,13 @@ namespace Asda.Integration.Business.Services
                 if (user == null)
                 {
                     return new BaseResponse {Error = "User not found"};
+                }
+
+                HelperAdapter.CanConnectToFtp(user.FtpSettings);
+                if (!HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage, out var errorMessage))
+                {
+                    _logger.LogError($"Failed while using ConfigTest action, with message {errorMessage}");
+                    return new BaseResponse {Error = errorMessage};
                 }
 
                 return new BaseResponse() {Error = null};
