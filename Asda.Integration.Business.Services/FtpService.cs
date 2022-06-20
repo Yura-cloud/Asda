@@ -33,12 +33,13 @@ namespace Asda.Integration.Business.Services
                 throw new Exception(message);
             }
 
-            var purchaseOrders = new List<PurchaseOrder>();
-            var serializer = new XmlSerializer(typeof(PurchaseOrder));
             if (!client.Exists(path))
             {
                 throw new Exception($"No such folder: {path}");
             }
+
+            var purchaseOrders = new List<PurchaseOrder>();
+            var serializer = new XmlSerializer(typeof(PurchaseOrder));
             var files = client.ListDirectory(path);
             xmlErrors = new List<XmlError>();
             foreach (var sftpFile in files)
@@ -52,7 +53,8 @@ namespace Asda.Integration.Business.Services
                     }
                     catch (Exception e)
                     {
-                        var message = $"Failed while deserialize, order =>{sftpFile.FullName}, with message: {e.Message}";
+                        var message =
+                            $"Failed while deserialize, order =>{sftpFile.FullName}, with message: {e.Message}";
                         _logger.LogError($"UserToken: {userToken}; {message}");
                         xmlErrors.Add(new XmlError()
                         {
@@ -77,17 +79,19 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError($"UserToken: {userToken}; {message}");
                 throw new Exception(message);
             }
+
             if (!client.Exists(remotePath))
             {
                 throw new Exception($"No such folder: {remotePath}");
             }
+
             UpdateFiles(remotePath, client);
             var filePath = string.Empty;
             for (var i = 0; i < models.Count; i++)
             {
                 try
                 {
-                    var fileName = ((IGetFileName)models[i]).GetFileName();
+                    var fileName = ((IGetFileName) models[i]).GetFileName();
                     filePath = $"{remotePath}/{fileName}";
                     var fileStream = client.Create(filePath);
 

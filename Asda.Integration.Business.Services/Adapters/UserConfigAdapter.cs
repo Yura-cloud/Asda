@@ -14,7 +14,7 @@ namespace Asda.Integration.Business.Services.Adapters
     {
         private readonly IRepository _fileRepository;
 
-        public UserConfigAdapter(IOptions<AppSettings> config, IConfigStages configStages)
+        public UserConfigAdapter(IOptions<AppSettings> config)
         {
             _fileRepository = config.Value.FileRepository;
         }
