@@ -1,8 +1,11 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Web.Mvc;
+using Asda.Integration.Business.Services.Helpers;
+using Asda.Integration.Domain.Interfaces;
+using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
-using Asda.Integration.Service.Interfaces;
 using LinnworksAPI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -13,16 +16,15 @@ namespace Asda.Integration.Business.Services
     {
         private readonly IConfiguration _configuration;
 
-        private readonly IUserConfigAdapter _userConfigAdapter;
-
         private readonly ILogger<AuthTokenService> _logger;
 
-        public AuthTokenService(IConfiguration configuration, ILogger<AuthTokenService> logger,
-            IUserConfigAdapter userConfigAdapter)
+        private readonly IRepository _tokenRepository;
+
+        public AuthTokenService(IConfiguration configuration, ILogger<AuthTokenService> logger)
         {
             _configuration = configuration;
             _logger = logger;
-            _userConfigAdapter = userConfigAdapter;
+            _tokenRepository = new FileRepository(configuration["AppSettings:UserTokenLocation"]);
         }
 
         public HttpStatusCodeResult SaveUserProfile(string token)
@@ -35,13 +37,19 @@ namespace Asda.Integration.Business.Services
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
 
-                var user = _userConfigAdapter.LoadByToken(token);
-                if (user!=null)
+                var tokenModel = new TokenModel
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+                    Token = new Guid(token),
+                    Email = session.Email,
+                    UserId = session.UserId
+                };
+                var tokenConfigJson = Newtonsoft.Json.JsonConvert.SerializeObject(tokenModel);
+                if (!Directory.Exists(_configuration["AppSettings:UserTokenLocation"]))
+                {
+                    Directory.CreateDirectory(_configuration["AppSettings:UserTokenLocation"]);
                 }
 
-                _userConfigAdapter.CreateNew(session.Email, session.UserId, session.UserName, new Guid(token));
+                _tokenRepository.Save(tokenModel.UserId.ToString("N"), tokenConfigJson);
             }
             catch (Exception e)
             {

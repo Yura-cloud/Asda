@@ -15,7 +15,7 @@ namespace Asda.Integration.Domain.Models.User
         {
             AuthorizationToken = authorizationToken;
         }
-
+        public Guid AppToken { get; set; }
         public string Email { get; set; }
         public Guid LinnworksUniqueIdentifier { get; set; }
 

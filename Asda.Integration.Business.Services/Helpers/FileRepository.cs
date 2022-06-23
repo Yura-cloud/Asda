@@ -6,11 +6,11 @@ namespace Asda.Integration.Business.Services.Helpers
 {
     public class FileRepository : IRepository
     {
-        private readonly string _userStoreLocation;
+        private readonly string _storeLocation;
 
-        public FileRepository(string userStoreLocation)
+        public FileRepository(string storeLocation)
         {
-            _userStoreLocation = userStoreLocation;
+            _storeLocation = storeLocation;
         }
 
         public void Delete(string authorizationToken)
@@ -25,17 +25,17 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public bool DirectoryExists()
         {
-            return Directory.Exists(_userStoreLocation);
+            return Directory.Exists(_storeLocation);
         }
 
-        public string LoadByToken(string authorizationToken)
+        public string Load(string authorizationToken)
         {
             return File.ReadAllText(Path(authorizationToken));
         }
 
         public string[] LoadAll()
         {
-            var filesNames = Directory.GetFiles(_userStoreLocation, "*.json");
+            var filesNames = Directory.GetFiles(_storeLocation, "*.json");
             return filesNames.Select(File.ReadAllText).ToArray();
         }
 
@@ -46,7 +46,7 @@ namespace Asda.Integration.Business.Services.Helpers
 
         private string Path(string authorizationToken)
         {
-            return string.Concat(_userStoreLocation, "//", authorizationToken, ".json");
+            return string.Concat(_storeLocation, "//", authorizationToken, ".json");
         }
     }
 }

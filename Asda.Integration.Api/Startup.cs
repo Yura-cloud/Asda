@@ -46,11 +46,11 @@ namespace SampleChannel
             
             services.AddScoped<IConfigService, ConfigService>();
 
-            services.AddSingleton<IConfigStages, ConfigStages>();
+            services.AddScoped<IConfigStages, ConfigStages>();
 
-            services.AddSingleton<IUserConfigAdapter, UserConfigAdapter>();
+            services.AddScoped<IUserConfigAdapter, UserConfigAdapter>();
             
-            services.AddSingleton<IAuthTokenService, AuthTokenService>();
+            services.AddScoped<IAuthTokenService, AuthTokenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

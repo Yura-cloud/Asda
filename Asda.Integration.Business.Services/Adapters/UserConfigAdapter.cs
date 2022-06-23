@@ -30,29 +30,9 @@ namespace Asda.Integration.Business.Services.Adapters
                 return null;
             }
 
-            var userConfigJson = _fileRepository.LoadByToken(authorizationToken);
+            var userConfigJson = _fileRepository.Load(authorizationToken);
             var userConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(userConfigJson);
             return userConfig;
-        }
-
-        public UserConfig LoadByUserId(Guid userId)
-        {
-            if (!_fileRepository.DirectoryExists())
-            {
-                throw new Exception("Directory with users not found");
-            }
-
-            var files = _fileRepository.LoadAll();
-            foreach (var file in files)
-            {
-                var fileConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<UserConfig>(file);
-                if (fileConfig?.LinnworksUniqueIdentifier == userId)
-                {
-                    return fileConfig;
-                }
-            }
-
-            throw new Exception("Please reinstall App by link!");
         }
 
         /// <inheritdoc />
@@ -69,14 +49,15 @@ namespace Asda.Integration.Business.Services.Adapters
         }
 
         /// <inheritdoc />
-        public UserConfig CreateNew(string email, Guid linnworksUniqueIdentifier, string accountName, Guid token)
+        public UserConfig CreateNew(string email, Guid linnworksUniqueIdentifier, string accountName, Guid appToken)
         {
             var userConfig = new UserConfig
             {
-                AuthorizationToken = token.ToString("N"),
+                AuthorizationToken = Guid.NewGuid().ToString("N"),
                 Email = email,
                 LinnworksUniqueIdentifier = linnworksUniqueIdentifier,
                 AccountName = accountName,
+                AppToken = appToken,
                 FtpSettings = new FtpSettingsModel(),
                 RemoteFileStorage = new RemoteFileStorageModel()
             };

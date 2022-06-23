@@ -1,11 +1,14 @@
 using System;
 using Asda.Integration.Business.Services.Adapters;
+using Asda.Integration.Business.Services.Helpers;
+using Asda.Integration.Domain.Interfaces;
 using Asda.Integration.Domain.Models;
 using Asda.Integration.Domain.Models.Payment;
 using Asda.Integration.Domain.Models.Shipping;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Asda.Integration.Business.Services
@@ -18,12 +21,15 @@ namespace Asda.Integration.Business.Services
 
         private readonly IConfigStages _configStages;
 
+        private readonly IRepository _fileRepository;
+
         public ConfigService(IUserConfigAdapter userConfigAdapter, ILogger<ConfigService> logger,
-            IConfigStages configStages)
+            IConfigStages configStages, IConfiguration configuration)
         {
             _userConfigAdapter = userConfigAdapter;
             _logger = logger;
             _configStages = configStages;
+            _fileRepository = new FileRepository(configuration["AppSettings:UserTokenLocation"]);
         }
 
         public AddNewUserResponse UpdateUserInfo(AddNewUserRequest request)
@@ -39,9 +45,11 @@ namespace Asda.Integration.Business.Services
 
             try
             {
-                var userConfig = _userConfigAdapter.LoadByUserId(request.LinnworksUniqueIdentifier);
-                userConfig.AccountName = request.AccountName;
-                _userConfigAdapter.Save(userConfig);
+                var file = _fileRepository.Load(request.LinnworksUniqueIdentifier.ToString("N"));
+                var tokenModel = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenModel>(file);
+                var userConfig = _userConfigAdapter.CreateNew(request.Email, request.LinnworksUniqueIdentifier,
+                    request.AccountName,
+                    tokenModel.Token);
 
                 return new AddNewUserResponse {AuthorizationToken = userConfig.AuthorizationToken};
             }
