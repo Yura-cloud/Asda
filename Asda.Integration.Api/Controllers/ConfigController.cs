@@ -20,7 +20,7 @@ namespace Asda.Integration.Api.Controllers
         }
 
         [HttpPost("AddNewUser")]
-        public AddNewUserResponse UpdateUserInfo([FromBody] AddNewUserRequest request)
+        public AddNewUserResponse AddNewUser([FromBody] AddNewUserRequest request)
         {
             return _configService.UpdateUserInfo(request);
         }
@@ -55,8 +55,8 @@ namespace Asda.Integration.Api.Controllers
             return _configService.UserConfig(request);
         }
 
-        [HttpPost("SaveConfigSave")]
-        public UserConfigResponse SaveConfigSave([FromBody] SaveUserConfigRequest request)
+        [HttpPost("SaveConfig")]
+        public UserConfigResponse SaveConfig([FromBody] SaveUserConfigRequest request)
         {
             return _configService.SaveConfigSave(request);
         }

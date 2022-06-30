@@ -21,6 +21,8 @@ namespace Asda.Integration.Business.Services
 
         private readonly ILogger<OrderService> _logger;
 
+        private const int MaxOrdersPerPage = 50;
+
         public OrderService(IFtpService ftp, IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
         {
             _ftp = ftp;
@@ -32,34 +34,45 @@ namespace Asda.Integration.Business.Services
         {
             if (request.PageNumber <= 0)
             {
-                _logger.LogError($"UserToken: {request.AuthorizationToken}, Invalid page number");
-                return new OrdersResponse {Error = "Invalid page number"};
+                var message = "Invalid page number";
+                _logger.LogError(
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with  GetOrdersAndSendManifest with message: {message}");
+                return new OrdersResponse {Error = message};
             }
 
             try
             {
                 if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
+                    _logger.LogError(
+                        $"UserToken: {request.AuthorizationToken}; Failed while working with GetOrdersAndSendManifest with message: {errorMessage}");
+
                     return new OrdersResponse {Error = errorMessage};
                 }
 
                 var purchaseOrders = _ftp.GetPurchaseOrderFromFtp(user.FtpSettings, user.RemoteFileStorage.OrdersPath,
-                    user.AuthorizationToken, out var xmlErrors);
-                if (purchaseOrders == null)
+                    user.AuthorizationToken, request.PageNumber, out var xmlErrors, out bool lastPage);
+                var purchaseOrdersNew = purchaseOrders.Where(p =>
+                    p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
+                if (!purchaseOrdersNew.Any())
                 {
-                    return new OrdersResponse();
+                    return new OrdersResponse() {Orders = Array.Empty<Order>(), HasMorePages = false};
                 }
 
-                var orders = purchaseOrders.Select(OrderMapper.MapToOrder);
+                var orders = purchaseOrdersNew.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
                 _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings, user.RemoteFileStorage.AcknowledgmentsPath,
                     user.AuthorizationToken, xmlErrors);
 
-                return new OrdersResponse {Orders = orders.ToArray(), HasMorePages = false,};
+                return new OrdersResponse
+                {
+                    Orders = orders.ToArray(), HasMorePages = purchaseOrders.Count == MaxOrdersPerPage && !lastPage
+                };
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with Orders Action, with message: {e.Message}";
+                var message =
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with GetOrdersAndSendManifest with message: {e.Message}";
                 _logger.LogError(message);
                 return new OrdersResponse {Error = e.Message};
             }
@@ -76,6 +89,8 @@ namespace Asda.Integration.Business.Services
             {
                 if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
+                    _logger.LogError(
+                        $"UserToken: {request.AuthorizationToken}; Failed while working with  SendDispatch with message: {errorMessage}");
                     return new OrderDespatchResponse {Error = errorMessage};
                 }
 
@@ -93,7 +108,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while working with Dispatch Action, with message {e.Message}";
+                var message = $"Failed while working with SendDispatch with message {e.Message}";
                 _logger.LogError($"UserToken: {request.AuthorizationToken}; {message}");
 
                 return new OrderDespatchResponse {Error = e.Message};
@@ -111,7 +126,9 @@ namespace Asda.Integration.Business.Services
             {
                 if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
                 {
-                    return new OrderCancelResponse() {Error = errorMessage, HasError = true};
+                    _logger.LogError(
+                        $"UserToken: {request.AuthorizationToken}; Failed while working with SendCanceledOrders with message: {errorMessage}");
+                    return new OrderCancelResponse {Error = errorMessage, HasError = true};
                 }
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
@@ -121,9 +138,10 @@ namespace Asda.Integration.Business.Services
 
                 return !xmlErrors.Any() ? new OrderCancelResponse {HasError = false} : ErrorCancelResponse(xmlErrors);
             }
-            catch (Exception e)     
+            catch (Exception e)
             {
-                var message = $"Failed while working with CancelOrders Action, with message {e.Message}";
+                var message =
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with SendCanceledOrders with message {e.Message}";
                 _logger.LogError(message);
                 return new OrderCancelResponse {Error = e.Message, HasError = true};
             }
@@ -173,9 +191,9 @@ namespace Asda.Integration.Business.Services
         {
             if (request?.Orders == null || request.Orders?.Count == 0)
             {
-                var message = $"Failed while working with Dispatch Action, with message: Orders are Null or empty";
-                _logger.LogError($"UserToken: {request.AuthorizationToken}; {message}");
-
+                var message = $" Orders are Null or empty";
+                _logger.LogError(
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with Dispatch Action, with message:{message}");
                 response = new OrderDespatchResponse {Error = message};
                 return true;
             }
@@ -188,8 +206,9 @@ namespace Asda.Integration.Business.Services
         {
             if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
             {
-                var message = $"Failed while working with CancelOrders Action, with message: Items are Null or empty";
-                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
+                var message = $"Items are Null or empty";
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken};Failed while working with CancelOrders Action, with message: {message}");
 
                 sendCanceledOrders = new OrderCancelResponse {Error = message, HasError = true};
                 return true;

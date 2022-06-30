@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using Asda.Integration.Domain.Interfaces;
 
 namespace Asda.Integration.Business.Services.Helpers
@@ -23,7 +22,7 @@ namespace Asda.Integration.Business.Services.Helpers
             return File.Exists(Path(authorizationToken));
         }
 
-        public bool DirectoryExists()
+        private bool DirectoryExists()
         {
             return Directory.Exists(_storeLocation);
         }
@@ -33,12 +32,6 @@ namespace Asda.Integration.Business.Services.Helpers
             return File.ReadAllText(Path(authorizationToken));
         }
 
-        public string[] LoadAll()
-        {
-            var filesNames = Directory.GetFiles(_storeLocation, "*.json");
-            return filesNames.Select(File.ReadAllText).ToArray();
-        }
-
         public void Save(string authorizationToken, string contents)
         {
             File.WriteAllText(Path(authorizationToken), contents);
@@ -46,6 +39,11 @@ namespace Asda.Integration.Business.Services.Helpers
 
         private string Path(string authorizationToken)
         {
+            if (!DirectoryExists())
+            {
+                Directory.CreateDirectory(_storeLocation);
+            }
+
             return string.Concat(_storeLocation, "//", authorizationToken, ".json");
         }
     }

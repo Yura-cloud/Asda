@@ -48,14 +48,14 @@ namespace Asda.Integration.Business.Services
                 var file = _fileRepository.Load(request.LinnworksUniqueIdentifier.ToString("N"));
                 var tokenModel = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenModel>(file);
                 var userConfig = _userConfigAdapter.CreateNew(request.Email, request.LinnworksUniqueIdentifier,
-                    request.AccountName,
-                    tokenModel.Token);
+                    request.AccountName, tokenModel.Token);
 
                 return new AddNewUserResponse {AuthorizationToken = userConfig.AuthorizationToken};
             }
             catch (Exception e)
             {
-                _logger.LogError($"Failed while AddNewUserResponse, with message {e.Message}");
+                _logger.LogError(
+                    $"LinnworksUniqueIdentifier:{request.LinnworksUniqueIdentifier}; Failed while UpdateUserInfo with message {e.Message}");
                 return new AddNewUserResponse {Error = e.Message};
             }
         }
@@ -68,10 +68,11 @@ namespace Asda.Integration.Business.Services
 
                 return new BaseResponse();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Failed while using ConfigDeleted action, with message {ex.Message}");
-                return new BaseResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken:{request.AuthorizationToken}; Failed while using ConfigDeleted with message {e.Message}");
+                return new BaseResponse {Error = e.Message};
             }
         }
 
@@ -83,22 +84,27 @@ namespace Asda.Integration.Business.Services
 
                 if (user == null)
                 {
-                    return new BaseResponse {Error = "User not found"};
+                    var message = "User not found";
+                    _logger.LogError(
+                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ConfigTest with message: {message}");
+                    return new BaseResponse {Error = message};
                 }
 
-                HelperAdapter.CanConnectToFtp(user.FtpSettings);
+                HelperAdapter.TestFtpConnection(user.FtpSettings);
                 if (!HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage, out var errorMessage))
                 {
-                    _logger.LogError($"Failed while using ConfigTest action, with message {errorMessage}");
+                    _logger.LogError(
+                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ConfigTest with message: {errorMessage}");
                     return new BaseResponse {Error = errorMessage};
                 }
 
-                return new BaseResponse() {Error = null};
+                return new BaseResponse {Error = null};
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Failed while using ConfigTest action, with message {ex.Message}");
-                return new BaseResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ConfigTest with message {e.Message}");
+                return new BaseResponse {Error = e.Message};
             }
         }
 
@@ -109,7 +115,10 @@ namespace Asda.Integration.Business.Services
                 var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
                 if (user == null)
                 {
-                    return new PaymentTagResponse {Error = "User not found"};
+                    var message = "User not found";
+                    _logger.LogError(
+                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using PaymentTags with message: {message}");
+                    return new PaymentTagResponse {Error = message};
                 }
 
                 return new PaymentTagResponse
@@ -124,9 +133,11 @@ namespace Asda.Integration.Business.Services
                     }
                 };
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new PaymentTagResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken: {request.AuthorizationToken}; Failed while using PaymentTags with message {e.Message}");
+                return new PaymentTagResponse {Error = e.Message};
             }
         }
 
@@ -137,7 +148,10 @@ namespace Asda.Integration.Business.Services
                 var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
                 if (user == null)
                 {
-                    return new ShippingTagResponse {Error = "User not found"};
+                    var message = "User not found";
+                    _logger.LogError(
+                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ShippingTags with message: {message}");
+                    return new ShippingTagResponse {Error = message};
                 }
 
                 return new ShippingTagResponse
@@ -153,9 +167,11 @@ namespace Asda.Integration.Business.Services
                     }
                 };
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new ShippingTagResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ShippingTags with message: {e.Message}");
+                return new ShippingTagResponse {Error = e.Message};
             }
         }
 
@@ -166,15 +182,19 @@ namespace Asda.Integration.Business.Services
                 var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
                 if (user == null)
                 {
-                    return new UserConfigResponse {Error = "User config is at invalid stage"};
+                    var message = "User config is at invalid stage";
+                    _logger.LogError(
+                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using UserConfig with message: {message}");
+                    return new UserConfigResponse {Error = message};
                 }
 
                 return _configStages.StageResponse(user);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Failed while using UserConfig action, with message {ex.Message}");
-                return new UserConfigResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken: {request.AuthorizationToken}; Failed while using UserConfig with message: {e.Message}");
+                return new UserConfigResponse {Error = e.Message};
             }
         }
 
@@ -186,18 +206,20 @@ namespace Asda.Integration.Business.Services
 
                 if (request.StepName != userConfig.StepName)
                 {
-                    return new UserConfigResponse
-                        {Error = string.Format("Invalid step name expected {0}", userConfig.StepName)};
+                    var message = $"Invalid step name expected {userConfig.StepName}";
+                    _logger.LogError($"AuthorizationToken: {request.AuthorizationToken}; Error: {message}");
+                    return new UserConfigResponse {Error = message};
                 }
 
                 _userConfigAdapter.FillUserConfig(userConfig, request.ConfigItems);
                 _userConfigAdapter.Save(userConfig);
                 return _configStages.StageResponse(userConfig);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Failed while using SaveConfigSave action, with message {ex.Message}");
-                return new UserConfigResponse {Error = ex.Message};
+                _logger.LogError(
+                    $"AuthorizationToken: {request.AuthorizationToken}; Failed while using SaveConfigSave with message: {e.Message}");
+                return new UserConfigResponse {Error = e.Message};
             }
         }
     }

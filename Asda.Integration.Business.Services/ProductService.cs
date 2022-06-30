@@ -86,7 +86,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"Failed while ProductInventoryUpdateResponse, with message {e.Message}";
+                var message = $"UserToken: {request.AuthorizationToken}; Failed while ProductInventoryUpdateResponse, with message {e.Message}";
                 _logger.LogError(message);
                 return new ProductInventoryUpdateResponse {Error = e.Message};
             }
@@ -118,10 +118,7 @@ namespace Asda.Integration.Business.Services
                 var message = $"All items do not have their id";
                 _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
                 {
-                    wrongIdResponse = new ProductInventoryUpdateResponse()
-                    {
-                        Error = message
-                    };
+                    wrongIdResponse = new ProductInventoryUpdateResponse {Error = message};
                     return true;
                 }
             }

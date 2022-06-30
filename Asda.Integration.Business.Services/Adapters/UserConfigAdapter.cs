@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
-using Asda.Integration.Business.Services.Config;
+using Asda.Integration.Business.Services.Helpers;
 using Asda.Integration.Domain.Interfaces;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Interfaces;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace Asda.Integration.Business.Services.Adapters
 {
@@ -14,9 +13,10 @@ namespace Asda.Integration.Business.Services.Adapters
     {
         private readonly IRepository _fileRepository;
 
-        public UserConfigAdapter(IOptions<AppSettings> config)
+        public UserConfigAdapter(IConfiguration configuration)
         {
-            _fileRepository = config.Value.FileRepository;
+            _fileRepository = new FileRepository(configuration["AppSettings:UserStoreLocation"]);
+
         }
 
         /// <inheritdoc />
@@ -73,7 +73,8 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 case ConfigStagesEnum.AddFtpSettings:
                     ReadFtpSettings(userConfig, configItems);
-                    HelperAdapter.CanConnectToFtp(userConfig.FtpSettings);
+                    //This method throws an exception if something goes wrong, and then the user can see it in his UI
+                    HelperAdapter.TestFtpConnection(userConfig.FtpSettings);
                     userConfig.StepName = ConfigStagesEnum.AddFoldersNames.ToString();
                     break;
                 case ConfigStagesEnum.AddFoldersNames:
@@ -96,35 +97,26 @@ namespace Asda.Integration.Business.Services.Adapters
 
         private void FillInFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
         {
-            string host = configItems.FirstOrDefault(i => i.ConfigItemId == "Host");
-            userConfig.FtpSettings.Host = host.Trim();
-
-            int port = configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
-            userConfig.FtpSettings.Port = port;
-
-            string password = configItems.FirstOrDefault(i => i.ConfigItemId == "Password");
-            userConfig.FtpSettings.Password = password.Trim();
-
-            string userName = configItems.FirstOrDefault(i => i.ConfigItemId == "UserName");
-            userConfig.FtpSettings.UserName = userName.Trim();
+            userConfig.FtpSettings.Host = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Host")).Trim();
+            userConfig.FtpSettings.Port = (int) configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
+            userConfig.FtpSettings.Password =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Password")).Trim();
+            userConfig.FtpSettings.UserName =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "UserName")).Trim();
         }
 
         private static void FillInRemoteFilesStorage(UserConfig userConfig, ConfigItem[] configItems)
         {
-            string orders = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
-            userConfig.RemoteFileStorage.OrdersPath = orders.Trim();
-
-            string dispatchesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
-            userConfig.RemoteFileStorage.DispatchesPath = dispatchesPath.Trim();
-
-            string acknowledgmentsPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
-            userConfig.RemoteFileStorage.AcknowledgmentsPath = acknowledgmentsPath.Trim();
-
-            string cancellationsPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations");
-            userConfig.RemoteFileStorage.CancellationsPath = cancellationsPath.Trim();
-
-            string snapInventoriesPath = configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories");
-            userConfig.RemoteFileStorage.SnapInventoriesPath = snapInventoriesPath.Trim();
+            userConfig.RemoteFileStorage.OrdersPath =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Orders")).Trim();
+            userConfig.RemoteFileStorage.DispatchesPath =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches")).Trim();
+            userConfig.RemoteFileStorage.AcknowledgmentsPath =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments")).Trim();
+            userConfig.RemoteFileStorage.CancellationsPath =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations")).Trim();
+            userConfig.RemoteFileStorage.SnapInventoriesPath =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories")).Trim();
         }
 
         private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)

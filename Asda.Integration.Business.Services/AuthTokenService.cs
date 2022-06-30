@@ -27,7 +27,7 @@ namespace Asda.Integration.Business.Services
             _tokenRepository = new FileRepository(configuration["AppSettings:UserTokenLocation"]);
         }
 
-        public HttpStatusCodeResult SaveUserProfile(string token)
+        public HttpStatusCodeResult SaveUserTokenInfo(string token)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                _logger.LogError($"userToken:{token}; Erorr, while using GetUsersInfo, with message {e.Message}");
+                _logger.LogError($"userToken:{token}; Error, while using GetUsersInfo, with message {e.Message}");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 

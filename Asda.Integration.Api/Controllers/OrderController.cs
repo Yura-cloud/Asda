@@ -16,13 +16,6 @@ namespace Asda.Integration.Api.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet]
-        public IActionResult GetPicture()
-        {
-            var bytes = System.IO.File.ReadAllBytes(@"wwwroot\images\Asda_60.png");
-            return File(bytes, "image/jpeg");
-        }
-
         [HttpPost]
         public OrdersResponse Orders([FromBody] OrdersRequest request)
         {

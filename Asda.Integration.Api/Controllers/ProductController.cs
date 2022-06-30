@@ -39,7 +39,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost]
         public ProductPriceUpdateResponse PriceUpdate([FromBody] ProductPriceUpdateRequest request)
         {
-            return new ProductPriceUpdateResponse {Error = "At this moment PriceUpdate is not implemented"};
+            return new ProductPriceUpdateResponse {Error = "At this moment PriceUpdate is not supported"};
         }
     }
 }

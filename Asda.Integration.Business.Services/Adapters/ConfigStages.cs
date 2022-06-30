@@ -8,17 +8,14 @@ namespace Asda.Integration.Business.Services.Adapters
     {
         public UserConfigResponse StageResponse(UserConfig userConfig, string errorMessage = "")
         {
-            switch (Enum.Parse(typeof(ConfigStagesEnum), userConfig.StepName))
+            var configStage = Enum.Parse(typeof(ConfigStagesEnum), userConfig.StepName);
+            return configStage switch
             {
-                case ConfigStagesEnum.AddFtpSettings:
-                    return GetFtpSettings(userConfig);
-                case ConfigStagesEnum.AddFoldersNames:
-                    return GetFoldersNames(userConfig);
-                case ConfigStagesEnum.UserConfig:
-                    return GetConfigStep(userConfig);
-            }
-
-            return new UserConfigResponse {Error = errorMessage};
+                ConfigStagesEnum.AddFtpSettings => GetFtpSettings(userConfig),
+                ConfigStagesEnum.AddFoldersNames => GetFoldersNames(userConfig),
+                ConfigStagesEnum.UserConfig => GetConfigStep(userConfig),
+                _ => new UserConfigResponse {Error = errorMessage}
+            };
         }
 
         private static UserConfigResponse GetFtpSettings(UserConfig userConfig)
@@ -185,7 +182,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Orders",
                         Description = "Where this App takes purchase orders",
-                        GroupName = "Folders Name",
+                        GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Orders",
                         ReadOnly = false,
@@ -197,7 +194,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Dispatches",
                         Description = "Where the dispatch files will be uploaded",
-                        GroupName = "Folders Name",
+                        GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Dispatches",
                         ReadOnly = false,
@@ -209,7 +206,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Acknowledgments",
                         Description = "Where the acknowledgment files will be uploaded",
-                        GroupName = "Folders Name",
+                        GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Acknowledgments",
                         ReadOnly = false,
@@ -221,7 +218,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Cancellations",
                         Description = "Where the cancellations files will be uploaded",
-                        GroupName = "Folders Name",
+                        GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Cancellations",
                         ReadOnly = false,
@@ -233,7 +230,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "SnapInventories",
                         Description = "Where the snapInventories files will be uploaded",
-                        GroupName = "Folders Name",
+                        GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "SnapInventories",
                         ReadOnly = false,
