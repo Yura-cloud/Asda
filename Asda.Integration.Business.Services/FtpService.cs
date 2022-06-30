@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
@@ -73,7 +74,8 @@ namespace Asda.Integration.Business.Services
         }
 
         public void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
-            List<XmlError> xmlErrors)
+            List<XmlError> xmlErrors) where T : IGetFileName
+
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -87,7 +89,8 @@ namespace Asda.Integration.Business.Services
 
             if (!client.Exists(remotePath))
             {
-                throw new Exception($"Failed while working with CreateFiles with message: No such folder: {remotePath}");
+                throw new Exception(
+                    $"Failed while working with CreateFiles with message: No such folder: {remotePath}");
             }
 
             var filePath = string.Empty;
@@ -95,8 +98,8 @@ namespace Asda.Integration.Business.Services
             {
                 try
                 {
-                    var fileName = ((IGetFileName) models[i]).GetFileName();
-                    filePath = $"{remotePath}/{fileName}";
+                    var fileName = models[i].GetFileName();
+                    filePath = $"{remotePath}/{fileName}"; //Path.Combine(remotePath, fileName);// ;
                     var fileStream = client.Create(filePath);
 
                     var namespaces = new XmlSerializerNamespaces();

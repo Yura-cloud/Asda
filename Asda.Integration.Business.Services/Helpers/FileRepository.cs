@@ -37,14 +37,14 @@ namespace Asda.Integration.Business.Services.Helpers
             File.WriteAllText(Path(authorizationToken), contents);
         }
 
-        private string Path(string authorizationToken)
+        private string Path(string name)
         {
             if (!DirectoryExists())
             {
                 Directory.CreateDirectory(_storeLocation);
             }
 
-            return string.Concat(_storeLocation, "//", authorizationToken, ".json");
+            return string.Concat(_storeLocation, "//", name, ".json");
         }
     }
 }
