@@ -91,9 +91,10 @@ namespace Asda.Integration.Business.Services
                 }
 
                 HelperAdapter.TestFtpConnection(user.FtpSettings);
-                if (!HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage, out var errorMessage))
+                var errorMessage = HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage);
+                if (string.IsNullOrEmpty(errorMessage))
                 {
-                     return new BaseResponse {Error = errorMessage};
+                    return new BaseResponse {Error = errorMessage};
                 }
 
                 return new BaseResponse {Error = null};

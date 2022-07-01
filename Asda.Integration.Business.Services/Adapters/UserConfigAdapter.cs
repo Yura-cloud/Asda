@@ -16,7 +16,6 @@ namespace Asda.Integration.Business.Services.Adapters
         public UserConfigAdapter(IConfiguration configuration)
         {
             _fileRepository = new FileRepository(configuration["AppSettings:UserStoreLocation"]);
-
         }
 
         /// <inheritdoc />
@@ -79,8 +78,9 @@ namespace Asda.Integration.Business.Services.Adapters
                     break;
                 case ConfigStagesEnum.AddFoldersNames:
                     ReadFoldersNames(userConfig, configItems);
-                    if (!HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage,
-                            out var errorMessage))
+                    var errorMessage =
+                        HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage);
+                    if (string.IsNullOrEmpty(errorMessage))
                     {
                         throw new Exception(errorMessage);
                     }

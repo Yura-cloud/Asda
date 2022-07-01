@@ -20,57 +20,41 @@ namespace Asda.Integration.Business.Services.Adapters
             }
         }
 
-        public static bool CheckExistingFolders(FtpSettingsModel settings, RemoteFileStorageModel remoteFiles,
-            out string errorMessage)
+        public static string CheckExistingFolders(FtpSettingsModel settings, RemoteFileStorageModel remoteFiles)
         {
             using var client = new SftpClient(settings.Host, settings.Port, settings.UserName, settings.Password);
             client.Connect();
-            errorMessage = string.Empty;
-            string propertyName;
-
             if (!client.Exists(remoteFiles.OrdersPath))
             {
-                propertyName = nameof(remoteFiles.OrdersPath);
-                errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
-                return false;
+                var propertyName = nameof(remoteFiles.OrdersPath).Replace("Path", "");
+                return $"Path to the {propertyName} does not exist on your FTP server!";
             }
 
             if (!client.Exists(remoteFiles.DispatchesPath))
             {
-                propertyName = nameof(remoteFiles.DispatchesPath);
-                errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
-                return false;
+                var propertyName = nameof(remoteFiles.DispatchesPath).Replace("Path", "");
+                return $"Path to the {propertyName} does not exist on your FTP server!";
             }
 
             if (!client.Exists(remoteFiles.AcknowledgmentsPath))
             {
-                propertyName = nameof(remoteFiles.AcknowledgmentsPath);
-                errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
-                return false;
+                var propertyName = nameof(remoteFiles.AcknowledgmentsPath).Replace("Path", "");
+                return $"Path to the {propertyName} does not exist on your FTP server!";
             }
 
             if (!client.Exists(remoteFiles.CancellationsPath))
             {
-                propertyName = nameof(remoteFiles.CancellationsPath);
-                errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
-                return false;
+                var propertyName = nameof(remoteFiles.CancellationsPath).Replace("Path", "");
+                return $"Path to the {propertyName} does not exist on your FTP server!";
             }
-
 
             if (!client.Exists(remoteFiles.SnapInventoriesPath))
             {
-                propertyName = nameof(remoteFiles.SnapInventoriesPath);
-                errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
-                return false;
+                var propertyName = nameof(remoteFiles.SnapInventoriesPath).Replace("Path", "");
+                return $"Path to the {propertyName} does not exist on your FTP server!";
             }
 
-
-            return errorMessage == string.Empty;
+            return string.Empty;
         }
     }
 }

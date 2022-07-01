@@ -62,7 +62,7 @@ namespace Asda.Integration.Business.Services
                 catch (Exception e)
                 {
                     var message = $"Failed while deserialize, order =>{files[i].FullName}, with message: {e.Message}";
-                    _logger.LogError($"UserToken: {userToken}; {message}");
+                    _logger.LogError($"UserToken: {userToken}; Error: {message}");
                     xmlErrors.Add(new XmlError {Message = message});
                 }
             }
