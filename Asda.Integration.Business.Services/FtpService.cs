@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Web.Mvc;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
@@ -17,15 +15,13 @@ namespace Asda.Integration.Business.Services
     {
         private readonly ILogger<FtpService> _logger;
 
-        private const int MaxOrders = 50;
-
         public FtpService(ILogger<FtpService> logger)
         {
             _logger = logger;
         }
 
         public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path, string userToken,
-            int pageNumber, out List<XmlError> xmlErrors, out bool lastPage)
+            int pageNumber, int maxOrdersPerPage, out List<XmlError> xmlErrors, out bool lastPage)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -49,14 +45,14 @@ namespace Asda.Integration.Business.Services
             var files = client.ListDirectory(path).Where(f => f.IsRegularFile).ToList();
             xmlErrors = new List<XmlError>();
             //load certain amount of Orders
-            var count = pageNumber * MaxOrders;
-            if ((pageNumber - 1) * MaxOrders + MaxOrders > files.Count)
+            var count = pageNumber * maxOrdersPerPage;
+            if ((pageNumber - 1) * maxOrdersPerPage + maxOrdersPerPage > files.Count)
             {
                 count = files.Count;
             }
 
             lastPage = count == files.Count;
-            for (int i = (pageNumber - 1) * MaxOrders; i < count; i++)
+            for (int i = (pageNumber - 1) * maxOrdersPerPage; i < count; i++)
             {
                 try
                 {

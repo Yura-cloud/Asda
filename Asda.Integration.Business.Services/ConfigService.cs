@@ -93,9 +93,7 @@ namespace Asda.Integration.Business.Services
                 HelperAdapter.TestFtpConnection(user.FtpSettings);
                 if (!HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage, out var errorMessage))
                 {
-                    _logger.LogError(
-                        $"AuthorizationToken: {request.AuthorizationToken}; Failed while using ConfigTest with message: {errorMessage}");
-                    return new BaseResponse {Error = errorMessage};
+                     return new BaseResponse {Error = errorMessage};
                 }
 
                 return new BaseResponse {Error = null};

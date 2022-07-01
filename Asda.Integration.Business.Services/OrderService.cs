@@ -52,7 +52,7 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var purchaseOrders = _ftp.GetPurchaseOrderFromFtp(user.FtpSettings, user.RemoteFileStorage.OrdersPath,
-                    user.AuthorizationToken, request.PageNumber, out var xmlErrors, out bool lastPage);
+                    user.AuthorizationToken, request.PageNumber, MaxOrdersPerPage, out var xmlErrors, out bool lastPage);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
                     p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
                 if (!purchaseOrdersNew.Any())
@@ -128,7 +128,7 @@ namespace Asda.Integration.Business.Services
             {
                 var message = $"Items are Null or empty";
                 _logger.LogError(
-                    $"userToken: {request.AuthorizationToken};Failed while working with CancelOrders Action, with message: {message}");
+                    $"userToken: {request.AuthorizationToken}; Failed while working with CancelOrders Action, with message: {message}");
 
                 return new OrderCancelResponse {Error = message, HasError = true};
             }
