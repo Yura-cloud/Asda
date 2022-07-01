@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.Mvc;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
@@ -99,7 +100,7 @@ namespace Asda.Integration.Business.Services
                 try
                 {
                     var fileName = models[i].GetFileName();
-                    filePath = $"{remotePath}/{fileName}"; //Path.Combine(remotePath, fileName);// ;
+                    filePath = $"{remotePath}/{fileName}";
                     var fileStream = client.Create(filePath);
 
                     var namespaces = new XmlSerializerNamespaces();

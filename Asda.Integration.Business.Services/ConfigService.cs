@@ -198,7 +198,7 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        public UserConfigResponse SaveConfigSave(SaveUserConfigRequest request)
+        public UserConfigResponse SaveConfig(SaveUserConfigRequest request)
         {
             try
             {

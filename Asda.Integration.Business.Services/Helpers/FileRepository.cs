@@ -9,42 +9,37 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public FileRepository(string storeLocation)
         {
+            if (!Directory.Exists(storeLocation))
+            {
+                Directory.CreateDirectory(storeLocation);
+            }
+
             _storeLocation = storeLocation;
         }
 
         public void Delete(string authorizationToken)
         {
-            File.Delete(Path(authorizationToken));
+            File.Delete(PathTest(authorizationToken));
         }
 
         public bool FileExists(string authorizationToken)
         {
-            return File.Exists(Path(authorizationToken));
-        }
-
-        private bool DirectoryExists()
-        {
-            return Directory.Exists(_storeLocation);
+            return File.Exists(PathTest(authorizationToken));
         }
 
         public string Load(string authorizationToken)
         {
-            return File.ReadAllText(Path(authorizationToken));
+            return File.ReadAllText(PathTest(authorizationToken));
         }
 
         public void Save(string authorizationToken, string contents)
         {
-            File.WriteAllText(Path(authorizationToken), contents);
+            File.WriteAllText(PathTest(authorizationToken), contents);
         }
 
-        private string Path(string name)
+        private string PathTest(string name)
         {
-            if (!DirectoryExists())
-            {
-                Directory.CreateDirectory(_storeLocation);
-            }
-
-            return string.Concat(_storeLocation, "//", name, ".json");
+            return Path.Combine(_storeLocation, string.Concat(name, ".json"));
         }
     }
 }

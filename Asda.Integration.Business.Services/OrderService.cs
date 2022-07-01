@@ -6,7 +6,6 @@ using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
 using Asda.Integration.Domain.Models.Order;
-using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -36,14 +35,16 @@ namespace Asda.Integration.Business.Services
             {
                 var message = "Invalid page number";
                 _logger.LogError(
-                    $"UserToken: {request.AuthorizationToken}; Failed while working with  GetOrdersAndSendManifest with message: {message}");
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with GetOrdersAndSendManifest with message: {message}");
                 return new OrdersResponse {Error = message};
             }
 
             try
             {
-                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                if (user == null)
                 {
+                    var errorMessage = $"User with AuthToken: {request.AuthorizationToken} - not found.";
                     _logger.LogError(
                         $"UserToken: {request.AuthorizationToken}; Failed while working with GetOrdersAndSendManifest with message: {errorMessage}");
 
@@ -80,17 +81,23 @@ namespace Asda.Integration.Business.Services
 
         public OrderDespatchResponse SendDispatch(OrderDespatchRequest request)
         {
-            if (OrdersEmpty(request, out var ordersEmptyResponse))
+            if (request?.Orders == null || request.Orders?.Count == 0)
             {
-                return ordersEmptyResponse;
+                var message = $" Orders are Null or empty";
+                _logger.LogError(
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with Dispatch Action, with message:{message}");
+                return new OrderDespatchResponse {Error = message};
             }
 
             try
             {
-                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                if (user == null)
                 {
+                    var errorMessage = $"User with AuthToken: {request.AuthorizationToken} - not found.";
                     _logger.LogError(
-                        $"UserToken: {request.AuthorizationToken}; Failed while working with  SendDispatch with message: {errorMessage}");
+                        $"UserToken: {request.AuthorizationToken}; Failed while working with SendDispatch with message: {errorMessage}");
+
                     return new OrderDespatchResponse {Error = errorMessage};
                 }
 
@@ -117,18 +124,25 @@ namespace Asda.Integration.Business.Services
 
         public OrderCancelResponse SendCanceledOrders(OrderCancelRequest request)
         {
-            if (ItemsEmpty(request, out var itemsEmptyResponse))
+            if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
             {
-                return itemsEmptyResponse;
+                var message = $"Items are Null or empty";
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken};Failed while working with CancelOrders Action, with message: {message}");
+
+                return new OrderCancelResponse {Error = message, HasError = true};
             }
 
             try
             {
-                if (UserUnauthorized(request.AuthorizationToken, out var errorMessage, out var user))
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                if (user == null)
                 {
+                    var errorMessage = $"User with AuthToken: {request.AuthorizationToken} - not found.";
                     _logger.LogError(
                         $"UserToken: {request.AuthorizationToken}; Failed while working with SendCanceledOrders with message: {errorMessage}");
-                    return new OrderCancelResponse {Error = errorMessage, HasError = true};
+
+                    return new OrderCancelResponse {Error = errorMessage};
                 }
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
@@ -171,51 +185,6 @@ namespace Asda.Integration.Business.Services
                 }).ToList()
             };
             return response;
-        }
-
-        private bool UserUnauthorized(string token, out string errorMessage, out UserConfig user)
-        {
-            user = _userConfigAdapter.LoadByToken(token);
-            if (user == null)
-            {
-                errorMessage = $"User with AuthToken: {token} - not found.";
-                _logger.LogError(errorMessage);
-                return true;
-            }
-
-            errorMessage = string.Empty;
-            return false;
-        }
-
-        private bool OrdersEmpty(OrderDespatchRequest request, out OrderDespatchResponse response)
-        {
-            if (request?.Orders == null || request.Orders?.Count == 0)
-            {
-                var message = $" Orders are Null or empty";
-                _logger.LogError(
-                    $"UserToken: {request.AuthorizationToken}; Failed while working with Dispatch Action, with message:{message}");
-                response = new OrderDespatchResponse {Error = message};
-                return true;
-            }
-
-            response = null;
-            return false;
-        }
-
-        private bool ItemsEmpty(OrderCancelRequest request, out OrderCancelResponse sendCanceledOrders)
-        {
-            if (request?.Cancellation == null || request.Cancellation?.Items?.Count == 0)
-            {
-                var message = $"Items are Null or empty";
-                _logger.LogError(
-                    $"userToken: {request.AuthorizationToken};Failed while working with CancelOrders Action, with message: {message}");
-
-                sendCanceledOrders = new OrderCancelResponse {Error = message, HasError = true};
-                return true;
-            }
-
-            sendCanceledOrders = null;
-            return false;
         }
     }
 }

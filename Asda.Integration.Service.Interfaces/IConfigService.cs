@@ -13,6 +13,6 @@ namespace Asda.Integration.Service.Intefaces
         PaymentTagResponse PaymentTags(BaseRequest request);
         ShippingTagResponse ShippingTags(BaseRequest request);
         UserConfigResponse UserConfig(BaseRequest request);
-        UserConfigResponse SaveConfigSave(SaveUserConfigRequest request);
+        UserConfigResponse SaveConfig(SaveUserConfigRequest request);
     }
 }

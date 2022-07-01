@@ -24,8 +24,8 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 StepName = ConfigStagesEnum.AddFtpSettings.ToString(),
                 AccountName = "AccountName",
-                WizardStepTitle = "Add FTP Settings",
-                WizardStepDescription = "This is where you add your FTP credentials",
+                WizardStepTitle = "Adding FTP Settings",
+                WizardStepDescription = "Here you should input your FTP details",
                 ConfigItems = new[]
                 {
                     new ConfigItem
@@ -86,14 +86,14 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 StepName = ConfigStagesEnum.AddFoldersNames.ToString(),
                 AccountName = "AccountName",
-                WizardStepTitle = "Add names of the working folders",
+                WizardStepTitle = "Adding names of the working folders",
                 WizardStepDescription = "For example: Linnworks/Orders",
                 ConfigItems = new[]
                 {
                     new ConfigItem
                     {
                         ConfigItemId = "Orders",
-                        Description = "Where this App takes purchase orders",
+                        Description = "Where the App will take purchase orders from",
                         GroupName = "FoldersName",
                         MustBeSpecified = true,
                         Name = "Orders",
@@ -105,7 +105,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Dispatches",
-                        Description = "Where the dispatch files will be uploaded",
+                        Description = "Where dispatch files will be uploaded",
                         GroupName = "FoldersName",
                         MustBeSpecified = true,
                         Name = "Dispatches",
@@ -117,7 +117,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Acknowledgments",
-                        Description = "Where the acknowledgment files will be uploaded",
+                        Description = "Where acknowledgment files will be uploaded",
                         GroupName = "FoldersName",
                         MustBeSpecified = true,
                         Name = "Acknowledgments",
@@ -129,7 +129,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Cancellations",
-                        Description = "Where the cancellations files will be uploaded",
+                        Description = "Where cancellations files will be uploaded",
                         GroupName = "FoldersName",
                         MustBeSpecified = true,
                         Name = "Cancellations",
@@ -141,7 +141,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "SnapInventories",
-                        Description = "Where the snapInventories files will be uploaded",
+                        Description = "Where snapInventories files will be uploaded",
                         GroupName = "FoldersName",
                         MustBeSpecified = true,
                         Name = "SnapInventories",
@@ -162,7 +162,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 StepName = ConfigStagesEnum.UserConfig.ToString(),
                 AccountName = "Example account name",
-                WizardStepTitle = "UserConfig",
+                WizardStepTitle = "User Configuration",
                 WizardStepDescription = "User Config",
                 ConfigItems = new[]
                 {
@@ -181,7 +181,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Orders",
-                        Description = "Where this App takes purchase orders",
+                        Description = "Where the App will take purchase orders from",
                         GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Orders",
@@ -193,7 +193,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Dispatches",
-                        Description = "Where the dispatch files will be uploaded",
+                        Description = "Where dispatch files will be uploaded",
                         GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Dispatches",
@@ -205,7 +205,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Acknowledgments",
-                        Description = "Where the acknowledgment files will be uploaded",
+                        Description = "Where acknowledgment files will be uploaded",
                         GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Acknowledgments",
@@ -217,7 +217,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "Cancellations",
-                        Description = "Where the cancellations files will be uploaded",
+                        Description = "Where cancellations files will be uploaded",
                         GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "Cancellations",
@@ -229,7 +229,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     new ConfigItem
                     {
                         ConfigItemId = "SnapInventories",
-                        Description = "Where the snapInventories files will be uploaded",
+                        Description = "Where snapInventories files will be uploaded",
                         GroupName = "Folder Names",
                         MustBeSpecified = true,
                         Name = "SnapInventories",

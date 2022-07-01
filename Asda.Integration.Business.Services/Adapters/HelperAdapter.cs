@@ -32,7 +32,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 propertyName = nameof(remoteFiles.OrdersPath);
                 errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")}, does not exist on your FTP server!";
+                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
                 return false;
             }
 
@@ -40,7 +40,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 propertyName = nameof(remoteFiles.DispatchesPath);
                 errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")}, does not exist on your FTP server!";
+                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
                 return false;
             }
 
@@ -48,7 +48,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 propertyName = nameof(remoteFiles.AcknowledgmentsPath);
                 errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")}, does not exist on your FTP server!";
+                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
                 return false;
             }
 
@@ -56,7 +56,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 propertyName = nameof(remoteFiles.CancellationsPath);
                 errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")}, does not exist on your FTP server!";
+                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
                 return false;
             }
 
@@ -65,7 +65,7 @@ namespace Asda.Integration.Business.Services.Adapters
             {
                 propertyName = nameof(remoteFiles.SnapInventoriesPath);
                 errorMessage =
-                    $"Path to the {propertyName.Replace("Path", "")}, does not exist on your FTP server!";
+                    $"Path to the {propertyName.Replace("Path", "")} does not exist on your FTP server!";
                 return false;
             }
 

@@ -58,7 +58,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost("SaveConfig")]
         public UserConfigResponse SaveConfig([FromBody] SaveUserConfigRequest request)
         {
-            return _configService.SaveConfigSave(request);
+            return _configService.SaveConfig(request);
         }
     }
 }

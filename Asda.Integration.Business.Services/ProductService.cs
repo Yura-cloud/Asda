@@ -4,7 +4,6 @@ using System.Linq;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Products;
-using Asda.Integration.Domain.Models.User;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using LinnworksAPI;
@@ -39,21 +38,34 @@ namespace Asda.Integration.Business.Services
 
         public ProductInventoryUpdateResponse SendInventoryUpdate(ProductInventoryUpdateRequest request)
         {
-            if (ProductsEmpty(request, out var productEmptyResponse))
+            if (request.Products == null || request.Products.Length == 0)
             {
-                return productEmptyResponse;
+                _logger.LogError(
+                    $"userToken: {request.AuthorizationToken}; Error while updating inventory. There aren't any products");
+                {
+                    return new ProductInventoryUpdateResponse {Error = "Products not supplied"};
+                }
             }
 
             try
             {
-                if (UserUnauthorized(request, out var userUnauthorizedResponse, out var user))
+                var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
+                if (user == null)
                 {
-                    return userUnauthorizedResponse;
+                    _logger.LogError($"User with ID: {request.AuthorizationToken} - not found.");
+                    {
+                        return new ProductInventoryUpdateResponse {Error = "User not found"};
+                    }
                 }
 
-                if (AllItemsWithoutId(request, out var xmlErrors, out var wrongIdResponse))
+                var xmlErrors = GetXmlErrorsIfItemIdIsNotGuid(request);
+                if (xmlErrors.Count == request.Products.Length)
                 {
-                    return wrongIdResponse;
+                    var message = "All items do not have their id";
+                    _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
+                    {
+                        return new ProductInventoryUpdateResponse {Error = message};
+                    }
                 }
 
                 if (xmlErrors.Count != 0)
@@ -86,7 +98,8 @@ namespace Asda.Integration.Business.Services
             }
             catch (Exception e)
             {
-                var message = $"UserToken: {request.AuthorizationToken}; Failed while ProductInventoryUpdateResponse, with message {e.Message}";
+                var message =
+                    $"UserToken: {request.AuthorizationToken}; Failed while ProductInventoryUpdateResponse, with message {e.Message}";
                 _logger.LogError(message);
                 return new ProductInventoryUpdateResponse {Error = e.Message};
             }
@@ -107,24 +120,6 @@ namespace Asda.Integration.Business.Services
                     Message = "WrongIdNumber"
                 });
             }
-        }
-
-        private bool AllItemsWithoutId(ProductInventoryUpdateRequest request, out List<XmlError> xmlErrors,
-            out ProductInventoryUpdateResponse wrongIdResponse)
-        {
-            xmlErrors = GetXmlErrorsIfItemIdIsNotGuid(request);
-            if (xmlErrors.Count == request.Products.Length)
-            {
-                var message = $"All items do not have their id";
-                _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
-                {
-                    wrongIdResponse = new ProductInventoryUpdateResponse {Error = message};
-                    return true;
-                }
-            }
-
-            wrongIdResponse = null;
-            return false;
         }
 
         private List<XmlError> GetXmlErrorsIfItemIdIsNotGuid(ProductInventoryUpdateRequest request)
@@ -226,41 +221,6 @@ namespace Asda.Integration.Business.Services
                 }).ToList()
             };
             return response;
-        }
-
-        private bool UserUnauthorized(ProductInventoryUpdateRequest request,
-            out ProductInventoryUpdateResponse response, out UserConfig user)
-        {
-            user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
-
-            if (user == null)
-            {
-                _logger.LogError($"User with ID: {request.AuthorizationToken} - not found.");
-                {
-                    response = new ProductInventoryUpdateResponse {Error = "User not found"};
-                    return true;
-                }
-            }
-
-            response = null;
-            return false;
-        }
-
-        private bool ProductsEmpty(ProductInventoryUpdateRequest request,
-            out ProductInventoryUpdateResponse response)
-        {
-            if (request.Products == null || request.Products.Length == 0)
-            {
-                _logger.LogError(
-                    $"userToken: {request.AuthorizationToken}; Error while updating inventory. There aren't any products");
-                {
-                    response = new ProductInventoryUpdateResponse {Error = "Products not supplied"};
-                    return true;
-                }
-            }
-
-            response = null;
-            return false;
         }
     }
 }
