@@ -52,7 +52,7 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var purchaseOrders = _ftp.GetPurchaseOrderFromFtp(user.FtpSettings, user.RemoteFileStorage.OrdersPath,
-                    user.AuthorizationToken, request.PageNumber, MaxOrdersPerPage, out var xmlErrors, out bool lastPage);
+                    user.AuthorizationToken, request.PageNumber, MaxOrdersPerPage, out bool lastPage, out var xmlErrors);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
                     p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
                 if (!purchaseOrdersNew.Any())

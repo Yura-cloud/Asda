@@ -9,8 +9,8 @@ namespace Asda.Integration.Domain.Models.Business
 
         public FtpSettingsModel()
         {
-            
         }
+
         public FtpSettingsModel(int port, string userName, string password, string host)
         {
             Port = port;

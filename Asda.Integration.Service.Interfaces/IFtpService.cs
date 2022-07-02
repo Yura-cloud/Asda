@@ -8,7 +8,7 @@ namespace Asda.Integration.Service.Interfaces
     public interface IFtpService
     {
         List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path,
-            string userToken, int pageNumber, int maxOrdersPerPage, out List<XmlError> xmlErrors, out bool lastPage);
+            string userToken, int pageNumber, int maxOrdersPerPage, out bool lastPage, out List<XmlError> xmlErrors);
 
         void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
             List<XmlError> xmlErrors) where T : IGetFileName;

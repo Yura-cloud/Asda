@@ -10,8 +10,8 @@ namespace Asda.Integration.Domain.Models.Business
 
         public RemoteFileStorageModel()
         {
-            
         }
+
         public RemoteFileStorageModel(string ordersPath, string dispatchesPath, string acknowledgmentsPath,
             string cancellationsPath, string snapInventoriesPath)
         {

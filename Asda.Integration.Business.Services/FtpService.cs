@@ -21,7 +21,7 @@ namespace Asda.Integration.Business.Services
         }
 
         public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path, string userToken,
-            int pageNumber, int maxOrdersPerPage, out List<XmlError> xmlErrors, out bool lastPage)
+            int pageNumber, int maxOrdersPerPage, out bool lastPage, out List<XmlError> xmlErrors)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
