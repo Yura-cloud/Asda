@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
-using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -21,7 +20,7 @@ namespace Asda.Integration.Business.Services
             _logger = logger;
         }
 
-        public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings,
+        public List<T> GetFilesFromFtp<T>(FtpSettingsModel ftpSettings,
             List<SftpFile> files, string userToken, out List<XmlError> xmlErrors)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
@@ -34,15 +33,15 @@ namespace Asda.Integration.Business.Services
                 throw new Exception(message);
             }
 
-            var purchaseOrders = new List<PurchaseOrder>();
-            var serializer = new XmlSerializer(typeof(PurchaseOrder));
+            var purchaseOrders = new List<T>();
+            var serializer = new XmlSerializer(typeof(T));
             xmlErrors = new List<XmlError>();
             foreach (var sftpFile in files)
             {
                 try
                 {
                     using var stream = client.OpenRead(sftpFile.FullName);
-                    purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
+                    purchaseOrders.Add((T) serializer.Deserialize(stream));
                 }
                 catch (Exception e)
                 {

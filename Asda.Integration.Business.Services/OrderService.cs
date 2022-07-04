@@ -5,6 +5,7 @@ using System.Text;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
 using Asda.Integration.Domain.Models.Business.XML.Cancellation;
+using Asda.Integration.Domain.Models.Business.XML.PurchaseOrder;
 using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
@@ -54,12 +55,10 @@ namespace Asda.Integration.Business.Services
 
                 var allSftpFiles = _ftp.GetAllSftpFiles(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
                 var sftpFiles = GetSftpFilesPerPage(allSftpFiles, request.PageNumber);
-                var purchaseOrders = _ftp.GetPurchaseOrderFromFtp(user.FtpSettings, sftpFiles,
-                    request.AuthorizationToken,
-                    out var xmlErrors);
-                var purchaseOrdersNew = purchaseOrders
-                    .Where(p =>
-                        p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
+                var purchaseOrders = _ftp.GetFilesFromFtp<PurchaseOrder>(user.FtpSettings, sftpFiles,
+                    request.AuthorizationToken, out var xmlErrors);
+                var purchaseOrdersNew = purchaseOrders.Where(p =>
+                    p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
                 if (!purchaseOrdersNew.Any())
                 {
                     return new OrdersResponse() {Orders = Array.Empty<Order>(), HasMorePages = false};
