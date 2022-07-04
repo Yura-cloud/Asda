@@ -82,56 +82,6 @@ namespace Asda.Integration.Business.Services
             return files;
         }
 
-        // public List<PurchaseOrder> GetPurchaseOrderFromFtp(FtpSettingsModel ftpSettings, string path, string userToken,
-        //     int pageNumber, int maxOrdersPerPage, out bool lastPage, out List<XmlError> xmlErrors)
-        // {
-        //     using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
-        //         ftpSettings.Password);
-        //     client.Connect();
-        //     if (!client.IsConnected)
-        //     {
-        //         var message = "Client was not connected";
-        //         _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
-        //         throw new Exception(message);
-        //     }
-        //
-        //     if (!client.Exists(path))
-        //     {
-        //         var message = $"No such folder: {path}";
-        //         _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
-        //         throw new Exception($"{message}");
-        //     }
-        //
-        //     var purchaseOrders = new List<PurchaseOrder>();
-        //     var serializer = new XmlSerializer(typeof(PurchaseOrder));
-        //     var files = client.ListDirectory(path).Where(f => f.IsRegularFile).ToList();
-        //     xmlErrors = new List<XmlError>();
-        //     //load certain amount of Orders
-        //     var count = pageNumber * maxOrdersPerPage;
-        //     if ((pageNumber - 1) * maxOrdersPerPage + maxOrdersPerPage > files.Count)
-        //     {
-        //         count = files.Count;
-        //     }
-        //
-        //     lastPage = count == files.Count;
-        //     for (int i = (pageNumber - 1) * maxOrdersPerPage; i < count; i++)
-        //     {
-        //         try
-        //         {
-        //             using var stream = client.OpenRead(files[i].FullName);
-        //             purchaseOrders.Add((PurchaseOrder) serializer.Deserialize(stream));
-        //         }
-        //         catch (Exception e)
-        //         {
-        //             var message = $"Failed while deserialize, order =>{files[i].FullName}, with message: {e.Message}";
-        //             _logger.LogError($"UserToken: {userToken}; Error: {message}");
-        //             xmlErrors.Add(new XmlError {Message = message});
-        //         }
-        //     }
-        //
-        //     return purchaseOrders;
-        // }
-
         public void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
             List<XmlError> xmlErrors) where T : IGetFileName
         {
