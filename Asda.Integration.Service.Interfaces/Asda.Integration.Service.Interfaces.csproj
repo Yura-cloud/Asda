@@ -24,4 +24,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SSH.NET" Version="2020.0.1" />
+    </ItemGroup>
+
 </Project>

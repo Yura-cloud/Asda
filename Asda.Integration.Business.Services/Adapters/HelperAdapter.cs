@@ -26,35 +26,36 @@ namespace Asda.Integration.Business.Services.Adapters
             client.Connect();
             if (!client.Exists(remoteFiles.OrdersPath))
             {
-                var propertyName = nameof(remoteFiles.OrdersPath).Replace("Path", "");
-                return $"Path to the {propertyName} does not exist on your FTP server!";
+                return GetErrorMessage(nameof(remoteFiles.OrdersPath));
             }
 
             if (!client.Exists(remoteFiles.DispatchesPath))
             {
-                var propertyName = nameof(remoteFiles.DispatchesPath).Replace("Path", "");
-                return $"Path to the {propertyName} does not exist on your FTP server!";
+                return GetErrorMessage(nameof(remoteFiles.DispatchesPath));
             }
 
             if (!client.Exists(remoteFiles.AcknowledgmentsPath))
             {
-                var propertyName = nameof(remoteFiles.AcknowledgmentsPath).Replace("Path", "");
-                return $"Path to the {propertyName} does not exist on your FTP server!";
+                return GetErrorMessage(nameof(remoteFiles.AcknowledgmentsPath));
             }
 
             if (!client.Exists(remoteFiles.CancellationsPath))
             {
-                var propertyName = nameof(remoteFiles.CancellationsPath).Replace("Path", "");
-                return $"Path to the {propertyName} does not exist on your FTP server!";
+                return GetErrorMessage(nameof(remoteFiles.CancellationsPath));
             }
 
             if (!client.Exists(remoteFiles.SnapInventoriesPath))
             {
-                var propertyName = nameof(remoteFiles.SnapInventoriesPath).Replace("Path", "");
-                return $"Path to the {propertyName} does not exist on your FTP server!";
+                return GetErrorMessage(nameof(remoteFiles.SnapInventoriesPath));
             }
 
             return string.Empty;
+        }
+
+        private static string GetErrorMessage(string folderPath)
+        {
+            var propertyName = folderPath.Replace("Path", "");
+            return $"Path to the {propertyName} does not exist on your FTP server!";
         }
     }
 }
