@@ -21,7 +21,7 @@ namespace Asda.Integration.Business.Services
         }
 
         public List<T> GetFilesFromFtp<T>(FtpSettingsModel ftpSettings,
-            List<SftpFile> files, string userToken, out List<XmlError> xmlErrors)
+            List<SftpFile> files, string userToken)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -35,7 +35,6 @@ namespace Asda.Integration.Business.Services
 
             var purchaseOrders = new List<T>();
             var serializer = new XmlSerializer(typeof(T));
-            xmlErrors = new List<XmlError>();
             foreach (var sftpFile in files)
             {
                 try
@@ -47,7 +46,6 @@ namespace Asda.Integration.Business.Services
                 {
                     var message = $"Failed while deserialize, order =>{sftpFile.FullName}, with message: {e.Message}";
                     _logger.LogError($"UserToken: {userToken}; Error: {message}");
-                    xmlErrors.Add(new XmlError {Message = message});
                 }
             }
 

@@ -6,10 +6,10 @@ namespace LinnworksMacroHelpers.Helpers
 {
     public static class InitializeHelper
     {
-        public static ApiObjectManager GetApiManagerForPullOrders(IConfiguration configuration, string token)
+        public static ApiObjectManager GetApiManagerForPullOrders(IConfiguration configuration, Guid token)
         {
             var auth = Authorize(new Guid(configuration["AuthorizationKeys:applicationId"]),
-                new Guid(configuration["AuthorizationKeys:secretKey"]), new Guid(token));
+                new Guid(configuration["AuthorizationKeys:secretKey"]), token);
             var context = new ApiContext(auth.Token, auth.Server);
 
             return new ApiObjectManager(context);

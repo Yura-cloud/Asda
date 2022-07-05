@@ -13,6 +13,6 @@ namespace Asda.Integration.Service.Interfaces
         List<SftpFile> GetAllSftpFiles(FtpSettingsModel ftpSettings,string path);
 
         List<T> GetFilesFromFtp<T>(FtpSettingsModel ftpSettings,
-            List<SftpFile> files, string userToken, out List<XmlError> xmlErrors);
+            List<SftpFile> files, string userToken);
     }
 }

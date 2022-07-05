@@ -22,7 +22,7 @@ namespace Asda.Integration.Business.Services
 
         private readonly ILogger<OrderService> _logger;
 
-        private const int MaxOrdersPerPage = 3;
+        private const int MaxOrdersPerPage = 50;
 
         public OrderService(IFtpService ftp, IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
         {
@@ -56,7 +56,7 @@ namespace Asda.Integration.Business.Services
                 var allSftpFiles = _ftp.GetAllSftpFiles(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
                 var sftpFiles = GetSftpFilesPerPage(allSftpFiles, request.PageNumber);
                 var purchaseOrders = _ftp.GetFilesFromFtp<PurchaseOrder>(user.FtpSettings, sftpFiles,
-                    request.AuthorizationToken, out var xmlErrors);
+                    request.AuthorizationToken);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
                     p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
                 if (!purchaseOrdersNew.Any())
@@ -67,7 +67,7 @@ namespace Asda.Integration.Business.Services
                 var orders = purchaseOrdersNew.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
                 _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings, user.RemoteFileStorage.AcknowledgmentsPath,
-                    user.AuthorizationToken, xmlErrors);
+                    user.AuthorizationToken, new List<XmlError>());
 
                 return new OrdersResponse
                 {
@@ -81,26 +81,6 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError(message);
                 return new OrdersResponse {Error = e.Message};
             }
-        }
-
-        private List<SftpFile> GetSftpFilesPerPage(List<SftpFile> files, int pageNumber)
-        {
-            var skip = (pageNumber - 1) * MaxOrdersPerPage;
-            var take = skip + MaxOrdersPerPage > files.Count ? files.Count - skip : MaxOrdersPerPage;
-            var portion = files
-                .Skip(skip)
-                .Take(take);
-            return portion.ToList();
-        }
-
-        private bool HasMorePage(int pageNumber, int filesCount)
-        {
-            if ((pageNumber - 1) * MaxOrdersPerPage + MaxOrdersPerPage >= filesCount)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public OrderDespatchResponse SendDispatch(OrderDespatchRequest request)
@@ -183,6 +163,26 @@ namespace Asda.Integration.Business.Services
                 _logger.LogError(message);
                 return new OrderCancelResponse {Error = e.Message, HasError = true};
             }
+        }
+
+        private List<SftpFile> GetSftpFilesPerPage(List<SftpFile> files, int pageNumber)
+        {
+            var skip = (pageNumber - 1) * MaxOrdersPerPage;
+            var take = skip + MaxOrdersPerPage > files.Count ? files.Count - skip : MaxOrdersPerPage;
+            var portion = files
+                .Skip(skip)
+                .Take(take);
+            return portion.ToList();
+        }
+
+        private bool HasMorePage(int pageNumber, int filesCount)
+        {
+            if ((pageNumber - 1) * MaxOrdersPerPage + MaxOrdersPerPage >= filesCount)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Asda.Integration.Api.Mappers;
 using Asda.Integration.Domain.Models.Business;
+using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using Asda.Integration.Domain.Models.Products;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
@@ -62,7 +63,7 @@ namespace Asda.Integration.Business.Services
                 if (xmlErrors.Count == request.Products.Length)
                 {
                     var message = "All items do not have their id";
-                    _logger.LogError($"userToken: {request.AuthorizationToken}; {message}");
+                    _logger.LogError($"userToken: {request.AuthorizationToken}; Error: {message}");
                     {
                         return new ProductInventoryUpdateResponse {Error = message};
                     }
@@ -75,26 +76,25 @@ namespace Asda.Integration.Business.Services
                         .ToArray();
                 }
 
-                LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, request.AuthorizationToken);
+                LinnWorks.Api = InitializeHelper.GetApiManagerForPullOrders(_configuration, user.AppToken);
+
+                // we need StockItemsLevel because client needs Available and InOrders values
                 var stockItemsLevel = GetStockItemsLevel(request, _userConfigAdapter);
                 if (stockItemsLevel.Count != request.Products.Length)
                 {
                     AddToErrorsItemsWithWrongItemId(request, stockItemsLevel, xmlErrors);
                 }
 
-                //further we are working with List<StockItemLevel> not List<request.Products>
                 var inventoryItems = stockItemsLevel.Select(SnapInventoryMapping.MapToInventorySnapshot).ToList();
-
                 _ftp.CreateFiles(inventoryItems, user.FtpSettings, user.RemoteFileStorage.SnapInventoriesPath,
                     user.AuthorizationToken, xmlErrors);
                 var response = new ProductInventoryUpdateResponse
                 {
-                    Products = request.Products.Select(p => new ProductInventoryResponse
-                    {
-                        SKU = p.SKU
-                    }).ToList()
+                    Products = request.Products.Select(p =>
+                            new ProductInventoryResponse {SKU = p.SKU})
+                        .ToList()
                 };
-                return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, request.Products);
+                return !xmlErrors.Any() ? response : ErrorResponse(xmlErrors, inventoryItems);
             }
             catch (Exception e)
             {
@@ -129,13 +129,13 @@ namespace Asda.Integration.Business.Services
             foreach (var productInventory in itemsWithNonCorrectId)
             {
                 _logger.LogError(
-                    $"userToken: {request.AuthorizationToken};Item id is not correct or empty, SKU: {productInventory.SKU}");
+                    $"userToken: {request.AuthorizationToken};Item id is not Guid or empty, SKU: {productInventory.SKU}");
             }
 
             var xmlErrors = itemsWithNonCorrectId
                 .Select(p => new XmlError
                 {
-                    Message = "Item id is not correct or empty",
+                    Message = "Item id is not Guid or empty",
                     SKU = p.SKU
                 }).ToList();
 
@@ -160,7 +160,7 @@ namespace Asda.Integration.Business.Services
                 .SelectMany(x => x).ToList()
                 .Where(x => x.Location.LocationName == user.Location)
                 .ToList();
-            //change sku to channel sku
+            //change sku to channel sku for clients ItemUpdate file
             foreach (var stockItemLevel in stockItemLevels)
             {
                 stockItemLevel.SKU = request.Products
@@ -208,15 +208,15 @@ namespace Asda.Integration.Business.Services
         }
 
         private static ProductInventoryUpdateResponse ErrorResponse(IEnumerable<XmlError> xmlErrors,
-            ProductInventory[] products)
+            List<InventorySnapshot> products)
         {
             var response = new ProductInventoryUpdateResponse
             {
                 Products = xmlErrors.Select(e => new ProductInventoryResponse
                 {
-                    //we get SKU in xmlError if ItemId is not correct,otherwise we have index of product
+                    //we get a SKU in xmlError if ItemId is not correct,or we have index of a product
                     //from CreateFiles() if something went wrong 
-                    SKU = e.SKU ?? products[e.Index].SKU,
+                    SKU = e.SKU ?? products[e.Index].Request.InventorySnapshotRequest.Records.Record.ProductId,
                     Error = e.Message
                 }).ToList()
             };
