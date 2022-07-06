@@ -22,7 +22,7 @@ namespace Asda.Integration.Api.Controllers
         [HttpPost("AddNewUser")]
         public AddNewUserResponse AddNewUser([FromBody] AddNewUserRequest request)
         {
-            return _configService.UpdateUserInfo(request);
+            return _configService.AddNewUser(request);
         }
 
         [HttpPost("ConfigDeleted")]

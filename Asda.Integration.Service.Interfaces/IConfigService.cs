@@ -7,7 +7,7 @@ namespace Asda.Integration.Service.Intefaces
 {
     public interface IConfigService
     {
-        AddNewUserResponse UpdateUserInfo(AddNewUserRequest request);
+        AddNewUserResponse AddNewUser(AddNewUserRequest request);
         BaseResponse ConfigDeleted(BaseRequest request);
         BaseResponse ConfigTest(BaseRequest request);
         PaymentTagResponse PaymentTags(BaseRequest request);

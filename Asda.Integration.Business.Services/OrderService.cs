@@ -53,9 +53,9 @@ namespace Asda.Integration.Business.Services
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var allSftpFiles = _ftp.GetAllSftpFiles(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
+                var allSftpFiles = _ftp.GetAllFiles(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
                 var sftpFiles = GetSftpFilesPerPage(allSftpFiles, request.PageNumber);
-                var purchaseOrders = _ftp.GetFilesFromFtp<PurchaseOrder>(user.FtpSettings, sftpFiles,
+                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, sftpFiles,
                     request.AuthorizationToken);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
                     p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);

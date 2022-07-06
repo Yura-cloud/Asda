@@ -22,7 +22,9 @@ namespace Asda.Integration.Business.Services.Adapters
         public UserConfig LoadByToken(string authorizationToken)
         {
             if (string.IsNullOrWhiteSpace(authorizationToken))
+            {
                 throw new ArgumentNullException("authorizationToken");
+            }
 
             if (!_fileRepository.FileExists(authorizationToken))
             {
@@ -80,7 +82,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     ReadFoldersNames(userConfig, configItems);
                     var errorMessage =
                         HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage);
-                    if (string.IsNullOrEmpty(errorMessage))
+                    if (!string.IsNullOrEmpty(errorMessage))
                     {
                         throw new Exception(errorMessage);
                     }
@@ -89,7 +91,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     break;
                 case ConfigStagesEnum.UserConfig:
                     userConfig.Location = configItems.FirstOrDefault(i => i.ConfigItemId == "Location");
-                    FillInRemoteFilesStorage(userConfig, configItems);
+                    FillInRemoteFilesStorageSettings(userConfig, configItems);
                     FillInFtpSettings(userConfig, configItems);
                     break;
             }
@@ -105,7 +107,7 @@ namespace Asda.Integration.Business.Services.Adapters
                 ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "UserName")).Trim();
         }
 
-        private static void FillInRemoteFilesStorage(UserConfig userConfig, ConfigItem[] configItems)
+        private static void FillInRemoteFilesStorageSettings(UserConfig userConfig, ConfigItem[] configItems)
         {
             userConfig.RemoteFileStorage.OrdersPath =
                 ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Orders")).Trim();
@@ -143,7 +145,6 @@ namespace Asda.Integration.Business.Services.Adapters
         public void Save(UserConfig userConfig)
         {
             var userConfigJson = Newtonsoft.Json.JsonConvert.SerializeObject(userConfig);
-
             _fileRepository.Save(userConfig.AuthorizationToken, userConfigJson);
         }
     }

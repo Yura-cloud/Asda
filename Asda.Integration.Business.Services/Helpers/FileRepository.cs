@@ -19,25 +19,25 @@ namespace Asda.Integration.Business.Services.Helpers
 
         public void Delete(string authorizationToken)
         {
-            File.Delete(PathTest(authorizationToken));
+            File.Delete(GetFileName(authorizationToken));
         }
 
         public bool FileExists(string authorizationToken)
         {
-            return File.Exists(PathTest(authorizationToken));
+            return File.Exists(GetFileName(authorizationToken));
         }
 
         public string Load(string authorizationToken)
         {
-            return File.ReadAllText(PathTest(authorizationToken));
+            return File.ReadAllText(GetFileName(authorizationToken));
         }
 
         public void Save(string authorizationToken, string contents)
         {
-            File.WriteAllText(PathTest(authorizationToken), contents);
+            File.WriteAllText(GetFileName(authorizationToken), contents);
         }
 
-        private string PathTest(string name)
+        private string GetFileName(string name)
         {
             return Path.Combine(_storeLocation, string.Concat(name, ".json"));
         }

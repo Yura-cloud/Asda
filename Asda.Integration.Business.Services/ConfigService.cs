@@ -21,7 +21,7 @@ namespace Asda.Integration.Business.Services
 
         private readonly IConfigStages _configStages;
 
-        private readonly IRepository _fileRepository;
+        private readonly IRepository _userTokenRepository;
 
         public ConfigService(IUserConfigAdapter userConfigAdapter, ILogger<ConfigService> logger,
             IConfigStages configStages, IConfiguration configuration)
@@ -29,24 +29,30 @@ namespace Asda.Integration.Business.Services
             _userConfigAdapter = userConfigAdapter;
             _logger = logger;
             _configStages = configStages;
-            _fileRepository = new FileRepository(configuration["AppSettings:UserTokenLocation"]);
+            _userTokenRepository = new FileRepository(configuration["AppSettings:UserTokenLocation"]);
         }
 
-        public AddNewUserResponse UpdateUserInfo(AddNewUserRequest request)
+        public AddNewUserResponse AddNewUser(AddNewUserRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))
+            {
                 return new AddNewUserResponse {Error = "Invalid Email"};
+            }
 
             if (string.IsNullOrWhiteSpace(request.AccountName))
+            {
                 return new AddNewUserResponse {Error = "Invalid AccountName"};
+            }
 
             if (request.LinnworksUniqueIdentifier == Guid.Empty)
+            {
                 return new AddNewUserResponse {Error = "Invalid LinnworksUniqueIdentifier"};
+            }
 
             try
             {
-                var file = _fileRepository.Load(request.LinnworksUniqueIdentifier.ToString("N"));
-                var tokenModel = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenModel>(file);
+                var userTokenFile = _userTokenRepository.Load(request.LinnworksUniqueIdentifier.ToString("N"));
+                var tokenModel = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenModel>(userTokenFile);
                 var userConfig = _userConfigAdapter.CreateNew(request.Email, request.LinnworksUniqueIdentifier,
                     request.AccountName, tokenModel.Token);
 

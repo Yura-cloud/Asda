@@ -32,7 +32,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Host",
                         Description = "FTP Host",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Host",
                         ReadOnly = false,
@@ -44,7 +44,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Port",
                         Description = "FTP Port",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Port",
                         ReadOnly = false,
@@ -56,7 +56,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Password",
                         Description = "FTP Password",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Password",
                         ReadOnly = false,
@@ -68,7 +68,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "UserName",
                         Description = "FTP User Name",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "User Name",
                         ReadOnly = false,
@@ -94,7 +94,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Orders",
                         Description = "Where the App will take purchase orders from",
-                        GroupName = "FoldersName",
+                        GroupName = "Folders",
                         MustBeSpecified = true,
                         Name = "Orders",
                         ReadOnly = false,
@@ -106,7 +106,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Dispatches",
                         Description = "Where dispatch files will be uploaded",
-                        GroupName = "FoldersName",
+                        GroupName = "Folders",
                         MustBeSpecified = true,
                         Name = "Dispatches",
                         ReadOnly = false,
@@ -118,7 +118,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Acknowledgments",
                         Description = "Where acknowledgment files will be uploaded",
-                        GroupName = "FoldersName",
+                        GroupName = "Folders",
                         MustBeSpecified = true,
                         Name = "Acknowledgments",
                         ReadOnly = false,
@@ -130,7 +130,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Cancellations",
                         Description = "Where cancellations files will be uploaded",
-                        GroupName = "FoldersName",
+                        GroupName = "Folders",
                         MustBeSpecified = true,
                         Name = "Cancellations",
                         ReadOnly = false,
@@ -142,7 +142,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "SnapInventories",
                         Description = "Where snapInventories files will be uploaded",
-                        GroupName = "FoldersName",
+                        GroupName = "Folders",
                         MustBeSpecified = true,
                         Name = "SnapInventories",
                         ReadOnly = false,
@@ -242,7 +242,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Host",
                         Description = "FTP Host",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Host",
                         ReadOnly = false,
@@ -254,7 +254,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Port",
                         Description = "FTP Port",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Port",
                         ReadOnly = false,
@@ -266,7 +266,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "Password",
                         Description = "FTP Password",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "Password",
                         ReadOnly = false,
@@ -278,7 +278,7 @@ namespace Asda.Integration.Business.Services.Adapters
                     {
                         ConfigItemId = "UserName",
                         Description = "FTP User Name",
-                        GroupName = "Ftp Settings",
+                        GroupName = "FTP Settings",
                         MustBeSpecified = true,
                         Name = "User Name",
                         ReadOnly = false,

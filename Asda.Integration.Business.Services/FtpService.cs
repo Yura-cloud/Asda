@@ -20,8 +20,7 @@ namespace Asda.Integration.Business.Services
             _logger = logger;
         }
 
-        public List<T> GetFilesFromFtp<T>(FtpSettingsModel ftpSettings,
-            List<SftpFile> files, string userToken)
+        public List<T> GetFiles<T>(FtpSettingsModel ftpSettings, List<SftpFile> files, string userToken)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -52,7 +51,7 @@ namespace Asda.Integration.Business.Services
             return purchaseOrders;
         }
 
-        public List<SftpFile> GetAllSftpFiles(FtpSettingsModel ftpSettings, string path)
+        public List<SftpFile> GetAllFiles(FtpSettingsModel ftpSettings, string path)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);

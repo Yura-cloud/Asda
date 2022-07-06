@@ -44,11 +44,6 @@ namespace Asda.Integration.Business.Services
                     UserId = session.UserId
                 };
                 var tokenConfigJson = Newtonsoft.Json.JsonConvert.SerializeObject(tokenModel);
-                if (!Directory.Exists(_configuration["AppSettings:UserTokenLocation"]))
-                {
-                    Directory.CreateDirectory(_configuration["AppSettings:UserTokenLocation"]);
-                }
-
                 _tokenRepository.Save(tokenModel.UserId.ToString("N"), tokenConfigJson);
             }
             catch (Exception e)

@@ -10,9 +10,9 @@ namespace Asda.Integration.Service.Interfaces
         void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
             List<XmlError> xmlErrors) where T : IGetFileName;
 
-        List<SftpFile> GetAllSftpFiles(FtpSettingsModel ftpSettings,string path);
+        List<SftpFile> GetAllFiles(FtpSettingsModel ftpSettings,string path);
 
-        List<T> GetFilesFromFtp<T>(FtpSettingsModel ftpSettings,
+        List<T> GetFiles<T>(FtpSettingsModel ftpSettings,
             List<SftpFile> files, string userToken);
     }
 }
