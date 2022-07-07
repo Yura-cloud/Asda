@@ -8,7 +8,7 @@ namespace Asda.Integration.Api.Mappers
 {
     public class CancellationMapper
     {
-        public static Cancellation MapToCancellation(OrderCancellation orderCancellation)
+        public static Cancellation MapToCancellation(OrderCancellation orderCancellation) 
         {
             var cancellation = new Cancellation
             {

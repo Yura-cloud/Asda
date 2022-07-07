@@ -177,12 +177,7 @@ namespace Asda.Integration.Business.Services
 
         private bool HasMorePage(int pageNumber, int filesCount)
         {
-            if ((pageNumber - 1) * MaxOrdersPerPage + MaxOrdersPerPage >= filesCount)
-            {
-                return false;
-            }
-
-            return true;
+            return (pageNumber - 1) * MaxOrdersPerPage + MaxOrdersPerPage < filesCount;
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
@@ -191,7 +186,7 @@ namespace Asda.Integration.Business.Services
             var messages = new StringBuilder();
             foreach (var xmlError in xmlErrors)
             {
-                messages.Append(xmlError.Message).AppendLine();
+                messages.AppendLine(xmlError.Message);
             }
 
             response.Error = messages.ToString();

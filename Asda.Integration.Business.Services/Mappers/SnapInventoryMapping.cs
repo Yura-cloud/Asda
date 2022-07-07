@@ -14,7 +14,7 @@ namespace Asda.Integration.Api.Mappers
                 PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com",
                 Lang = "en",
                 Text = "",
-                Timestamp = DateTime.Now,
+                Timestamp = DateTime.UtcNow,
                 Header = new Header
                 {
                     From = new From

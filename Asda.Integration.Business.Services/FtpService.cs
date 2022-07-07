@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
@@ -70,6 +71,8 @@ namespace Asda.Integration.Business.Services
                 throw new Exception($"{message}");
             }
 
+            
+       
             var files = client.ListDirectory(path)
                 .Where(f => f.IsRegularFile)
                 .OrderBy(f => f.LastWriteTimeUtc)
