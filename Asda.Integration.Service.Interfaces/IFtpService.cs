@@ -7,12 +7,11 @@ namespace Asda.Integration.Service.Interfaces
 {
     public interface IFtpService
     {
-        void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
-            List<XmlError> xmlErrors) where T : IGetFileName;
+        List<XmlError> CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken) where T : IGetFileName;
 
-        List<SftpFile> GetAllFiles(FtpSettingsModel ftpSettings,string path);
+        List<SftpFile> GetAllFilesPath(FtpSettingsModel ftpSettings,string path);
 
         List<T> GetFiles<T>(FtpSettingsModel ftpSettings,
-            List<SftpFile> files, string userToken);
+            List<string> filesPath, string userToken);
     }
 }

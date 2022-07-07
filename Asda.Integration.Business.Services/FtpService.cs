@@ -21,7 +21,7 @@ namespace Asda.Integration.Business.Services
             _logger = logger;
         }
 
-        public List<T> GetFiles<T>(FtpSettingsModel ftpSettings, List<SftpFile> files, string userToken)
+        public List<T> GetFiles<T>(FtpSettingsModel ftpSettings, List<string> filesPath, string userToken)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -35,16 +35,16 @@ namespace Asda.Integration.Business.Services
 
             var purchaseOrders = new List<T>();
             var serializer = new XmlSerializer(typeof(T));
-            foreach (var sftpFile in files)
+            foreach (var filePath in filesPath)
             {
                 try
                 {
-                    using var stream = client.OpenRead(sftpFile.FullName);
+                    using var stream = client.OpenRead(filePath);
                     purchaseOrders.Add((T) serializer.Deserialize(stream));
                 }
                 catch (Exception e)
                 {
-                    var message = $"Failed while deserialize, order =>{sftpFile.FullName}, with message: {e.Message}";
+                    var message = $"Failed while deserialize, order =>{filePath}, with message: {e.Message}";
                     _logger.LogError($"UserToken: {userToken}; Error: {message}");
                 }
             }
@@ -52,7 +52,7 @@ namespace Asda.Integration.Business.Services
             return purchaseOrders;
         }
 
-        public List<SftpFile> GetAllFiles(FtpSettingsModel ftpSettings, string path)
+        public List<SftpFile> GetAllFilesPath(FtpSettingsModel ftpSettings, string path)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -71,8 +71,6 @@ namespace Asda.Integration.Business.Services
                 throw new Exception($"{message}");
             }
 
-            
-       
             var files = client.ListDirectory(path)
                 .Where(f => f.IsRegularFile)
                 .OrderBy(f => f.LastWriteTimeUtc)
@@ -81,8 +79,8 @@ namespace Asda.Integration.Business.Services
             return files;
         }
 
-        public void CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken,
-            List<XmlError> xmlErrors) where T : IGetFileName
+        public List<XmlError> CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath,
+            string userToken) where T : IGetFileName
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);
@@ -101,6 +99,7 @@ namespace Asda.Integration.Business.Services
             }
 
             var filePath = string.Empty;
+            var xmlErrors = new List<XmlError>();
             for (var i = 0; i < models.Count; i++)
             {
                 try
@@ -123,6 +122,8 @@ namespace Asda.Integration.Business.Services
                     xmlErrors.Add(new XmlError {Index = i, Message = message});
                 }
             }
+
+            return xmlErrors;
         }
     }
 }

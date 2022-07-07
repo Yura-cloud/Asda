@@ -53,9 +53,9 @@ namespace Asda.Integration.Business.Services
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var allSftpFiles = _ftp.GetAllFiles(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
-                var sftpFiles = GetSftpFilesPerPage(allSftpFiles, request.PageNumber);
-                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, sftpFiles,
+                var allFilesPath = _ftp.GetAllFilesPath(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
+                var filesPath = GetFilesPathPerPage(allFilesPath, request.PageNumber);
+                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, filesPath,
                     request.AuthorizationToken);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
                     p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
@@ -67,11 +67,11 @@ namespace Asda.Integration.Business.Services
                 var orders = purchaseOrdersNew.Select(OrderMapper.MapToOrder);
                 var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
                 _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings, user.RemoteFileStorage.AcknowledgmentsPath,
-                    user.AuthorizationToken, new List<XmlError>());
+                    user.AuthorizationToken);
 
                 return new OrdersResponse
                 {
-                    Orders = orders.ToArray(), HasMorePages = HasMorePage(request.PageNumber, allSftpFiles.Count)
+                    Orders = orders.ToArray(), HasMorePages = request.PageNumber * MaxOrdersPerPage < allFilesPath.Count
                 };
             }
             catch (Exception e)
@@ -106,9 +106,9 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
-                var xmlErrors = new List<XmlError>();
-                _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings, user.RemoteFileStorage.DispatchesPath,
-                    user.AuthorizationToken, xmlErrors);
+                var xmlErrors =
+                    _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings, user.RemoteFileStorage.DispatchesPath,
+                        user.AuthorizationToken);
                 var response = new OrderDespatchResponse
                 {
                     Orders = request.Orders.Select(o => new OrderDespatchError {ReferenceNumber = o.ReferenceNumber})
@@ -150,9 +150,9 @@ namespace Asda.Integration.Business.Services
                 }
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
-                var xmlErrors = new List<XmlError>();
-                _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
-                    user.RemoteFileStorage.CancellationsPath, user.AuthorizationToken, xmlErrors);
+                var xmlErrors =
+                    _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
+                        user.RemoteFileStorage.CancellationsPath, user.AuthorizationToken);
 
                 return !xmlErrors.Any() ? new OrderCancelResponse {HasError = false} : ErrorCancelResponse(xmlErrors);
             }
@@ -165,19 +165,14 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        private List<SftpFile> GetSftpFilesPerPage(List<SftpFile> files, int pageNumber)
+        private List<string> GetFilesPathPerPage(List<SftpFile> files, int pageNumber)
         {
             var skip = (pageNumber - 1) * MaxOrdersPerPage;
             var take = skip + MaxOrdersPerPage > files.Count ? files.Count - skip : MaxOrdersPerPage;
-            var portion = files
+            var filesPerPage = files
                 .Skip(skip)
                 .Take(take);
-            return portion.ToList();
-        }
-
-        private bool HasMorePage(int pageNumber, int filesCount)
-        {
-            return (pageNumber - 1) * MaxOrdersPerPage + MaxOrdersPerPage < filesCount;
+            return filesPerPage.Select(f => f.FullName).ToList();
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)

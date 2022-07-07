@@ -5,6 +5,28 @@ namespace Asda.Integration.Domain.Models.Business.XML
 {
     public class HeaderBase
     {
+        public HeaderBase()
+        {
+            PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com";
+            Lang = "en";
+            Text = "";
+            Timestamp = DateTime.UtcNow;
+            Header = new Header
+            {
+                From = new From
+                {
+                    Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
+                },
+                To = new To
+                {
+                    Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA"}
+                },
+                Sender = new Sender
+                {
+                    Credential = new Credential {Domain = "Linnworks", Identity = "Linnworks"}
+                }
+            };
+        }
         [XmlElement(ElementName = "Header")]
         public Header Header { get; set; }
 

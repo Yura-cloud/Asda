@@ -12,26 +12,6 @@ namespace Asda.Integration.Api.Mappers
         {
             var cancellation = new Cancellation
             {
-                PayloadID = $"{Guid.NewGuid()}@linnworks.domain.com",
-                Lang = "en",
-                Text = "",
-                Timestamp = DateTime.UtcNow,
-
-                Header = new Header
-                {
-                    From = new From
-                    {
-                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
-                    },
-                    To = new To
-                    {
-                        Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA"}
-                    },
-                    Sender = new Sender
-                    {
-                        Credential = new Credential {Domain = "Linnworks", Identity = "Linnworks"}
-                    }
-                },
                 Request = new Request
                 {
                     ConfirmationRequest = new ConfirmationRequest
