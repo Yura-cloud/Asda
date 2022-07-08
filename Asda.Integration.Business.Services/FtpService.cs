@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Asda.Integration.Domain.Models.Business;
@@ -52,7 +51,7 @@ namespace Asda.Integration.Business.Services
             return purchaseOrders;
         }
 
-        public List<SftpFile> GetAllFilesPath(FtpSettingsModel ftpSettings, string path)
+        public List<SftpFile> GetAllFilesPaths(FtpSettingsModel ftpSettings, string path)
         {
             using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
                 ftpSettings.Password);

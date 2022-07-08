@@ -81,7 +81,7 @@ namespace Asda.Integration.Business.Services.Adapters
                 case ConfigStagesEnum.AddFoldersNames:
                     ReadFoldersNames(userConfig, configItems);
                     var errorMessage =
-                        HelperAdapter.CheckExistingFolders(userConfig.FtpSettings, userConfig.RemoteFileStorage);
+                        HelperAdapter.TestIfFoldersExist(userConfig.FtpSettings, userConfig.RemoteFileStorage);
                     if (!string.IsNullOrEmpty(errorMessage))
                     {
                         throw new Exception(errorMessage);
@@ -90,25 +90,14 @@ namespace Asda.Integration.Business.Services.Adapters
                     userConfig.StepName = ConfigStagesEnum.UserConfig.ToString();
                     break;
                 case ConfigStagesEnum.UserConfig:
-                    userConfig.Location = configItems.FirstOrDefault(i => i.ConfigItemId == "Location");
-                    FillInRemoteFilesStorageSettings(userConfig, configItems);
-                    FillInFtpSettings(userConfig, configItems);
+                    ReadAllUserConfigSettings(userConfig, configItems);
                     break;
             }
         }
 
-        private void FillInFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
+        private static void ReadAllUserConfigSettings(UserConfig userConfig, ConfigItem[] configItems)
         {
-            userConfig.FtpSettings.Host = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Host")).Trim();
-            userConfig.FtpSettings.Port = (int) configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
-            userConfig.FtpSettings.Password =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Password")).Trim();
-            userConfig.FtpSettings.UserName =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "UserName")).Trim();
-        }
-
-        private static void FillInRemoteFilesStorageSettings(UserConfig userConfig, ConfigItem[] configItems)
-        {
+            //Folders Paths
             userConfig.RemoteFileStorage.OrdersPath =
                 ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Orders")).Trim();
             userConfig.RemoteFileStorage.DispatchesPath =
@@ -119,6 +108,17 @@ namespace Asda.Integration.Business.Services.Adapters
                 ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations")).Trim();
             userConfig.RemoteFileStorage.SnapInventoriesPath =
                 ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories")).Trim();
+          
+            //Ftp Settings
+            userConfig.FtpSettings.Host = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Host")).Trim();
+            userConfig.FtpSettings.Port = (int) configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
+            userConfig.FtpSettings.Password =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Password")).Trim();
+            userConfig.FtpSettings.UserName =
+                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "UserName")).Trim();
+           
+            //Location Name
+            userConfig.Location = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Location")).Trim();
         }
 
         private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)

@@ -9,7 +9,7 @@ namespace Asda.Integration.Service.Interfaces
     {
         List<XmlError> CreateFiles<T>(List<T> models, FtpSettingsModel ftpSettings, string remotePath, string userToken) where T : IGetFileName;
 
-        List<SftpFile> GetAllFilesPath(FtpSettingsModel ftpSettings,string path);
+        List<SftpFile> GetAllFilesPaths(FtpSettingsModel ftpSettings,string path);
 
         List<T> GetFiles<T>(FtpSettingsModel ftpSettings,
             List<string> filesPath, string userToken);

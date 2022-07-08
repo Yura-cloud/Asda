@@ -53,12 +53,12 @@ namespace Asda.Integration.Business.Services
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var allFilesPath = _ftp.GetAllFilesPath(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
-                var filesPath = GetFilesPathPerPage(allFilesPath, request.PageNumber);
-                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, filesPath,
+                var allFilesPath = _ftp.GetAllFilesPaths(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
+                var pageFilePaths = GetFilesPathsPerPage(allFilesPath, request.PageNumber);
+                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, pageFilePaths,
                     request.AuthorizationToken);
                 var purchaseOrdersNew = purchaseOrders.Where(p =>
-                    p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() > request.UTCTimeFrom);
+                    p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() >= request.UTCTimeFrom);
                 if (!purchaseOrdersNew.Any())
                 {
                     return new OrdersResponse() {Orders = Array.Empty<Order>(), HasMorePages = false};
@@ -87,9 +87,9 @@ namespace Asda.Integration.Business.Services
         {
             if (request?.Orders == null || request.Orders?.Count == 0)
             {
-                var message = $" Orders are Null or empty";
+                var message = "Orders are Null or empty";
                 _logger.LogError(
-                    $"UserToken: {request.AuthorizationToken}; Failed while working with Dispatch Action, with message:{message}");
+                    $"UserToken: {request.AuthorizationToken}; Failed while working with Dispatch Action, with message: {message}");
                 return new OrderDespatchResponse {Error = message};
             }
 
@@ -165,7 +165,7 @@ namespace Asda.Integration.Business.Services
             }
         }
 
-        private List<string> GetFilesPathPerPage(List<SftpFile> files, int pageNumber)
+        private List<string> GetFilesPathsPerPage(List<SftpFile> files, int pageNumber)
         {
             var skip = (pageNumber - 1) * MaxOrdersPerPage;
             var take = skip + MaxOrdersPerPage > files.Count ? files.Count - skip : MaxOrdersPerPage;

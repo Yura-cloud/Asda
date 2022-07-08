@@ -41,6 +41,7 @@ namespace Asda.Integration.Api.Mappers
                     Town = address.PostalAddress.City
                 },
                 ChannelBuyerName = "Asda",
+                //From Asda specification we should use GBP here
                 Currency = "GBP",
                 DispatchBy = header.ReqShipDate,
                 ReferenceNumber = header.OrderID.ToString(),

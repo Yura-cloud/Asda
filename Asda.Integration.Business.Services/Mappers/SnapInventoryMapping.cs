@@ -1,5 +1,4 @@
 using System;
-using Asda.Integration.Domain.Models.Business.XML;
 using Asda.Integration.Domain.Models.Business.XML.InventorySnapshot;
 using LinnworksAPI;
 
@@ -17,7 +16,7 @@ namespace Asda.Integration.Api.Mappers
                     {
                         InventorySnapshotRequestHeader = new InventorySnapshotRequestHeader
                         {
-                            SnapshotDate = DateTime.Now.ToString(),
+                            SnapshotDate = DateTime.UtcNow.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss"),
                             Description = "",
                             ListId = ""
                         },

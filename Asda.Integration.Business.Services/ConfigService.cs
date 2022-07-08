@@ -97,7 +97,7 @@ namespace Asda.Integration.Business.Services
                 }
 
                 HelperAdapter.TestFtpConnection(user.FtpSettings);
-                var errorMessage = HelperAdapter.CheckExistingFolders(user.FtpSettings, user.RemoteFileStorage);
+                var errorMessage = HelperAdapter.TestIfFoldersExist(user.FtpSettings, user.RemoteFileStorage);
                 if (string.IsNullOrEmpty(errorMessage))
                 {
                     return new BaseResponse {Error = errorMessage};
@@ -187,7 +187,7 @@ namespace Asda.Integration.Business.Services
                 var user = _userConfigAdapter.LoadByToken(request.AuthorizationToken);
                 if (user == null)
                 {
-                    var message = "User config is at invalid stage";
+                    var message = "User not found";
                     _logger.LogError(
                         $"AuthorizationToken: {request.AuthorizationToken}; Failed while using UserConfig with message: {message}");
                     return new UserConfigResponse {Error = message};
@@ -211,7 +211,7 @@ namespace Asda.Integration.Business.Services
 
                 if (request.StepName != userConfig.StepName)
                 {
-                    var message = $"Invalid step name expected {userConfig.StepName}";
+                    var message = $"Invalid step name. {userConfig.StepName} expected";
                     _logger.LogError($"AuthorizationToken: {request.AuthorizationToken}; Error: {message}");
                     return new UserConfigResponse {Error = message};
                 }

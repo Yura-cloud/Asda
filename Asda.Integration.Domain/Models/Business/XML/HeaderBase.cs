@@ -15,6 +15,7 @@ namespace Asda.Integration.Domain.Models.Business.XML
             {
                 From = new From
                 {
+                    //TO DO => asked Alexandra about details for this property. Waiting for the answer
                     Credential = new Credential {Domain = "AsdaOrganisation", Identity = "ASDA-123456-DC"}
                 },
                 To = new To

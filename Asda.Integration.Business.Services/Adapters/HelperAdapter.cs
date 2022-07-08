@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Asda.Integration.Domain.Models.Business;
 using Renci.SshNet;
 
@@ -20,42 +21,42 @@ namespace Asda.Integration.Business.Services.Adapters
             }
         }
 
-        public static string CheckExistingFolders(FtpSettingsModel settings, RemoteFileStorageModel remoteFiles)
+        public static string TestIfFoldersExist(FtpSettingsModel settings, RemoteFileStorageModel remoteFiles)
         {
             using var client = new SftpClient(settings.Host, settings.Port, settings.UserName, settings.Password);
             client.Connect();
+            var pathsErrors = new StringBuilder();
             if (!client.Exists(remoteFiles.OrdersPath))
             {
-                return GetErrorMessage(nameof(remoteFiles.OrdersPath));
+                pathsErrors.Append("Orders, ");
             }
 
             if (!client.Exists(remoteFiles.DispatchesPath))
             {
-                return GetErrorMessage(nameof(remoteFiles.DispatchesPath));
+                pathsErrors.Append("Dispatches, ");
             }
 
             if (!client.Exists(remoteFiles.AcknowledgmentsPath))
             {
-                return GetErrorMessage(nameof(remoteFiles.AcknowledgmentsPath));
+                pathsErrors.Append("Acknowledgments, ");
             }
 
             if (!client.Exists(remoteFiles.CancellationsPath))
             {
-                return GetErrorMessage(nameof(remoteFiles.CancellationsPath));
+                pathsErrors.Append("Cancellations, ");
             }
 
             if (!client.Exists(remoteFiles.SnapInventoriesPath))
             {
-                return GetErrorMessage(nameof(remoteFiles.SnapInventoriesPath));
+                pathsErrors.Append("SnapInventories, ");
             }
 
-            return string.Empty;
-        }
+            if (pathsErrors.Length > 0)
+            {
+                pathsErrors.Append("folder(s) does not exist on your FTP server!");
+            }
 
-        private static string GetErrorMessage(string folderPath)
-        {
-            var propertyName = folderPath.Replace("Path", "");
-            return $"Path to the {propertyName} does not exist on your FTP server!";
+            return pathsErrors.ToString();
         }
     }
 }

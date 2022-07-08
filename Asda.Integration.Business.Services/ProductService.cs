@@ -72,7 +72,7 @@ namespace Asda.Integration.Business.Services
                 if (xmlErrors.Count != 0)
                 {
                     request.Products = request.Products
-                        .Where(p => !xmlErrors.Select(e => e.SKU).Contains(p.SKU))
+                        .Where(p => xmlErrors.All(e => e.SKU != p.SKU))
                         .ToArray();
                 }
 
@@ -109,7 +109,7 @@ namespace Asda.Integration.Business.Services
             List<StockItemLevel> stockItemsLevel, List<XmlError> xmlErrors)
         {
             var productsWithFailedItemId = request.Products
-                .Where(p => !stockItemsLevel.Select(o => o.SKU).Contains(p.SKU));
+                .Where(p => stockItemsLevel.All(s => s.SKU != p.SKU));
             foreach (var productInventory in productsWithFailedItemId)
             {
                 _logger.LogError(
@@ -129,13 +129,13 @@ namespace Asda.Integration.Business.Services
             foreach (var productInventory in itemsWithNonCorrectId)
             {
                 _logger.LogError(
-                    $"userToken: {request.AuthorizationToken};Item id is not Guid or empty, SKU: {productInventory.SKU}");
+                    $"userToken: {request.AuthorizationToken}; Item id is empty or not Guid, SKU: {productInventory.SKU}");
             }
 
             var xmlErrors = itemsWithNonCorrectId
                 .Select(p => new XmlError
                 {
-                    Message = "Item id is not Guid or empty",
+                    Message = "Item id is empty or not Guid",
                     SKU = p.SKU
                 }).ToList();
 

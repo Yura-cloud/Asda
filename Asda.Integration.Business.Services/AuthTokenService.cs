@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Net;
 using System.Web.Mvc;
 using Asda.Integration.Business.Services.Helpers;
