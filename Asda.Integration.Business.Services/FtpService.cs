@@ -20,25 +20,15 @@ namespace Asda.Integration.Business.Services
             _logger = logger;
         }
 
-        public List<T> GetFiles<T>(FtpSettingsModel ftpSettings, List<string> filesPath, string userToken)
+        public List<T> GetFiles<T>(SftpClient sftpClient, List<string> filesPath, string userToken)
         {
-            using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
-                ftpSettings.Password);
-            client.Connect();
-            if (!client.IsConnected)
-            {
-                var message = "Client was not connected";
-                _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
-                throw new Exception(message);
-            }
-
             var purchaseOrders = new List<T>();
             var serializer = new XmlSerializer(typeof(T));
             foreach (var filePath in filesPath)
             {
                 try
                 {
-                    using var stream = client.OpenRead(filePath);
+                    using var stream = sftpClient.OpenRead(filePath);
                     purchaseOrders.Add((T) serializer.Deserialize(stream));
                 }
                 catch (Exception e)
@@ -51,26 +41,9 @@ namespace Asda.Integration.Business.Services
             return purchaseOrders;
         }
 
-        public List<SftpFile> GetAllFilesPaths(FtpSettingsModel ftpSettings, string path)
+        public List<SftpFile> GetAllSortedFilesInfo(SftpClient sftpClient, string path)
         {
-            using var client = new SftpClient(ftpSettings.Host, ftpSettings.Port, ftpSettings.UserName,
-                ftpSettings.Password);
-            client.Connect();
-            if (!client.IsConnected)
-            {
-                var message = "Client was not connected";
-                _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
-                throw new Exception(message);
-            }
-
-            if (!client.Exists(path))
-            {
-                var message = $"No such folder: {path}";
-                _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
-                throw new Exception($"{message}");
-            }
-
-            var files = client.ListDirectory(path)
+            var files = sftpClient.ListDirectory(path)
                 .Where(f => f.IsRegularFile)
                 .OrderBy(f => f.LastWriteTimeUtc)
                 .ToList();

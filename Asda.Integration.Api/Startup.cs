@@ -35,7 +35,7 @@ namespace SampleChannel
 
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IFtpService, FtpService>();
+            services.AddTransient<IFtpService, FtpService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<IConfigStages, ConfigStages>();
             services.AddScoped<IUserConfigAdapter, UserConfigAdapter>();

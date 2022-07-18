@@ -210,6 +210,7 @@ namespace Asda.Integration.Business.Services
         private static ProductInventoryUpdateResponse ErrorResponse(IEnumerable<XmlError> xmlErrors,
             List<InventorySnapshot> products)
         {
+      
             var response = new ProductInventoryUpdateResponse
             {
                 Products = xmlErrors.Select(e => new ProductInventoryResponse

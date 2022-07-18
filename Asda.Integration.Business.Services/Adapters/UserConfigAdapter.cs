@@ -97,49 +97,36 @@ namespace Asda.Integration.Business.Services.Adapters
 
         private static void ReadAllUserConfigSettings(UserConfig userConfig, ConfigItem[] configItems)
         {
-            //Folders Paths
-            userConfig.RemoteFileStorage.OrdersPath =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Orders")).Trim();
-            userConfig.RemoteFileStorage.DispatchesPath =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches")).Trim();
-            userConfig.RemoteFileStorage.AcknowledgmentsPath =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments")).Trim();
-            userConfig.RemoteFileStorage.CancellationsPath =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations")).Trim();
-            userConfig.RemoteFileStorage.SnapInventoriesPath =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories")).Trim();
-          
-            //Ftp Settings
-            userConfig.FtpSettings.Host = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Host")).Trim();
-            userConfig.FtpSettings.Port = (int) configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
-            userConfig.FtpSettings.Password =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Password")).Trim();
-            userConfig.FtpSettings.UserName =
-                ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "UserName")).Trim();
-           
+            ReadFoldersNames(userConfig, configItems);
+            ReadFtpSettings(userConfig, configItems);
             //Location Name
-            userConfig.Location = ((string) configItems.FirstOrDefault(i => i.ConfigItemId == "Location")).Trim();
+            userConfig.Location =
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Location")?.SelectedValue.Trim();
         }
 
-        private void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
+        private static void ReadFoldersNames(UserConfig userConfig, ConfigItem[] configItems)
         {
-            userConfig.RemoteFileStorage.OrdersPath = configItems.FirstOrDefault(i => i.ConfigItemId == "Orders");
+            userConfig.RemoteFileStorage.OrdersPath =
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Orders")?.SelectedValue.Trim();
             userConfig.RemoteFileStorage.DispatchesPath =
-                configItems.FirstOrDefault(i => i.ConfigItemId == "Dispatches");
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Dispatches")?.SelectedValue.Trim();
             userConfig.RemoteFileStorage.AcknowledgmentsPath =
-                configItems.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments");
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Acknowledgments")?.SelectedValue.Trim();
             userConfig.RemoteFileStorage.CancellationsPath =
-                configItems.FirstOrDefault(i => i.ConfigItemId == "Cancellations");
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Cancellations")?.SelectedValue.Trim();
             userConfig.RemoteFileStorage.SnapInventoriesPath =
-                configItems.FirstOrDefault(i => i.ConfigItemId == "SnapInventories");
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "SnapInventories")?.SelectedValue.Trim();
         }
 
-        private void ReadFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
+        private static void ReadFtpSettings(UserConfig userConfig, ConfigItem[] configItems)
         {
-            userConfig.FtpSettings.Host = configItems.FirstOrDefault(i => i.ConfigItemId == "Host");
-            userConfig.FtpSettings.Port = configItems.FirstOrDefault(i => i.ConfigItemId == "Port");
-            userConfig.FtpSettings.Password = configItems.FirstOrDefault(i => i.ConfigItemId == "Password");
-            userConfig.FtpSettings.UserName = configItems.FirstOrDefault(i => i.ConfigItemId == "UserName");
+            userConfig.FtpSettings.Host =
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Host")?.SelectedValue.Trim();
+            userConfig.FtpSettings.Port = configItems?.FirstOrDefault(i => i.ConfigItemId == "Port");
+            userConfig.FtpSettings.Password =
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "Password")?.SelectedValue.Trim();
+            userConfig.FtpSettings.UserName =
+                configItems?.FirstOrDefault(i => i.ConfigItemId == "UserName")?.SelectedValue.Trim();
         }
 
         public void Save(UserConfig userConfig)

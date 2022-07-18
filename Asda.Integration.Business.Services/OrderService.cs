@@ -10,13 +10,14 @@ using Asda.Integration.Domain.Models.Order;
 using Asda.Integration.Service.Intefaces;
 using Asda.Integration.Service.Interfaces;
 using Microsoft.Extensions.Logging;
+using Renci.SshNet;
 using Renci.SshNet.Sftp;
 
 namespace Asda.Integration.Business.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IFtpService _ftp;
+        private readonly IFtpService _ftpService;
 
         private readonly IUserConfigAdapter _userConfigAdapter;
 
@@ -24,9 +25,9 @@ namespace Asda.Integration.Business.Services
 
         private const int MaxOrdersPerPage = 50;
 
-        public OrderService(IFtpService ftp, IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
+        public OrderService(IFtpService ftpService, IUserConfigAdapter userConfigAdapter, ILogger<OrderService> logger)
         {
-            _ftp = ftp;
+            _ftpService = ftpService;
             _userConfigAdapter = userConfigAdapter;
             _logger = logger;
         }
@@ -53,26 +54,49 @@ namespace Asda.Integration.Business.Services
                     return new OrdersResponse {Error = errorMessage};
                 }
 
-                var allFilesPath = _ftp.GetAllFilesPaths(user.FtpSettings, user.RemoteFileStorage.OrdersPath);
-                var pageFilePaths = GetFilesPathsPerPage(allFilesPath, request.PageNumber);
-                var purchaseOrders = _ftp.GetFiles<PurchaseOrder>(user.FtpSettings, pageFilePaths,
-                    request.AuthorizationToken);
-                var purchaseOrdersNew = purchaseOrders.Where(p =>
-                    p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() >= request.UTCTimeFrom);
-                if (!purchaseOrdersNew.Any())
+                using (var sftpClient = new SftpClient(user.FtpSettings.Host, user.FtpSettings.Port,
+                           user.FtpSettings.UserName, user.FtpSettings.Password))
                 {
-                    return new OrdersResponse() {Orders = Array.Empty<Order>(), HasMorePages = false};
+                    sftpClient.Connect();
+                    if (!sftpClient.IsConnected)
+                    {
+                        var message = "Client was not connected";
+                        _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
+                        throw new Exception(message);
+                    }
+
+                    if (!sftpClient.Exists(user.RemoteFileStorage.OrdersPath))
+                    {
+                        var message = $"No such folder: {user.RemoteFileStorage.OrdersPath}";
+                        _logger.LogError($"Failed while working with GetPurchaseOrderFromFtp with message: {message}");
+                        throw new Exception($"{message}");
+                    }
+
+                    var filesInfo =
+                        _ftpService.GetAllSortedFilesInfo(sftpClient, user.RemoteFileStorage.OrdersPath);
+                    var filesPathsPerPage = GetFilesPathsPerPage(filesInfo, request.PageNumber);
+                    var purchaseOrders =
+                        _ftpService.GetFiles<PurchaseOrder>(sftpClient, filesPathsPerPage, request.AuthorizationToken);
+                    var purchaseOrdersNew = purchaseOrders.Where(p =>
+                        p.Request.OrderRequest.OrderRequestHeader.OrderDate.ToUniversalTime() >= request.UTCTimeFrom);
+                    if (!purchaseOrdersNew.Any())
+                    {
+                        return new OrdersResponse() {Orders = Array.Empty<Order>(), HasMorePages = false};
+                    }
+
+                    var orders = purchaseOrdersNew.Select(OrderMapper.MapToOrder);
+                    var acknowledgments =
+                        orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
+                    _ftpService.CreateFiles(acknowledgments.ToList(), user.FtpSettings,
+                        user.RemoteFileStorage.AcknowledgmentsPath,
+                        user.AuthorizationToken);
+
+                    return new OrdersResponse
+                    {
+                        Orders = orders.ToArray(),
+                        HasMorePages = request.PageNumber * MaxOrdersPerPage < filesInfo.Count
+                    };
                 }
-
-                var orders = purchaseOrdersNew.Select(OrderMapper.MapToOrder);
-                var acknowledgments = orders.Select(o => AcknowledgmentMapper.MapToAcknowledgment(o.ReferenceNumber));
-                _ftp.CreateFiles(acknowledgments.ToList(), user.FtpSettings, user.RemoteFileStorage.AcknowledgmentsPath,
-                    user.AuthorizationToken);
-
-                return new OrdersResponse
-                {
-                    Orders = orders.ToArray(), HasMorePages = request.PageNumber * MaxOrdersPerPage < allFilesPath.Count
-                };
             }
             catch (Exception e)
             {
@@ -107,7 +131,8 @@ namespace Asda.Integration.Business.Services
 
                 var shipmentConfirmations = request.Orders.Select(ShipmentMapper.MapToShipmentConfirmation).ToList();
                 var xmlErrors =
-                    _ftp.CreateFiles(shipmentConfirmations, user.FtpSettings, user.RemoteFileStorage.DispatchesPath,
+                    _ftpService.CreateFiles(shipmentConfirmations, user.FtpSettings,
+                        user.RemoteFileStorage.DispatchesPath,
                         user.AuthorizationToken);
                 var response = new OrderDespatchResponse
                 {
@@ -151,7 +176,7 @@ namespace Asda.Integration.Business.Services
 
                 var cancellation = CancellationMapper.MapToCancellation(request.Cancellation);
                 var xmlErrors =
-                    _ftp.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
+                    _ftpService.CreateFiles(new List<Cancellation> {cancellation}, user.FtpSettings,
                         user.RemoteFileStorage.CancellationsPath, user.AuthorizationToken);
 
                 return !xmlErrors.Any() ? new OrderCancelResponse {HasError = false} : ErrorCancelResponse(xmlErrors);
@@ -169,10 +194,10 @@ namespace Asda.Integration.Business.Services
         {
             var skip = (pageNumber - 1) * MaxOrdersPerPage;
             var take = skip + MaxOrdersPerPage > files.Count ? files.Count - skip : MaxOrdersPerPage;
-            var filesPerPage = files
+            var filesPathsPerPage = files
                 .Skip(skip)
                 .Take(take);
-            return filesPerPage.Select(f => f.FullName).ToList();
+            return filesPathsPerPage.Select(f => f.FullName).ToList();
         }
 
         private OrderCancelResponse ErrorCancelResponse(List<XmlError> xmlErrors)
